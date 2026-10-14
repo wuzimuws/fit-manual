@@ -44,6 +44,10 @@ for fn in files:
         if got != want:
             err.append(f"{fn}: 栏位「{f}」数量不符（{got}，应为 {want}）")
 
+    # 半角标点不得夹在中文里
+    for m_ in re.finditer(r"[\u4e00-\u9fff][,;:!?]|[,;:!?][\u4e00-\u9fff]", t):
+        err.append(f"{fn}: 中文里混了半角标点「{m_.group(0)}」")
+
     # 不要用「（N）」行式枚举——统一用「  - 」子项，否则网页上没有项目符号
     for m_ in re.finditer(r"^\s*（\d+）", t, re.M):
         err.append(f"{fn}: 行首枚举「{m_.group(0).strip()}」应改成「  - 」子项")
@@ -84,6 +88,10 @@ for path in EXTRA:
     if not os.path.exists(path):
         continue
     t = open(path, encoding="utf-8").read()
+    # 半角标点不得夹在中文里
+    for m_ in re.finditer(r"[\u4e00-\u9fff][,;:!?]|[,;:!?][\u4e00-\u9fff]", t):
+        err.append(f"{fn}: 中文里混了半角标点「{m_.group(0)}」")
+
     # 不要用「（N）」行式枚举——统一用「  - 」子项，否则网页上没有项目符号
     for m_ in re.finditer(r"^\s*（\d+）", t, re.M):
         err.append(f"{fn}: 行首枚举「{m_.group(0).strip()}」应改成「  - 」子项")
