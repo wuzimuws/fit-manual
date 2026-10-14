@@ -124,8 +124,9 @@ def standalone(fname, heading=None):
 def disclaimer():
     t = open(os.path.join(ROOT, "README.md"), encoding="utf-8").read()
     b = t[t.index("## 免责声明"):t.index("## 怎么读")]
-    paras = [p.strip() for p in b.replace("## 免责声明", "").split("\n") if p.strip() and p.strip() != "---"]
-    return "　".join(inline(p) for p in paras)
+    paras = [p.strip() for p in b.replace("## 免责声明", "").split("\n")
+             if p.strip() and p.strip() != "---"]
+    return "".join(f"<p>{inline(p)}</p>" for p in paras)
 
 
 TPL = r"""<!DOCTYPE html>
@@ -142,19 +143,31 @@ header{padding:34px 22px 20px;border-bottom:1px solid var(--line);background:var
 h1{margin:0 0 10px;font-size:27px;letter-spacing:-.5px}
 .sub{color:var(--dim);font-size:14px;max-width:800px}
 .sub b{color:var(--ink)}
-.wrap{max-width:900px;margin:0 auto;padding:0 22px}
-nav{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 0}
-nav button{border:1px solid var(--line);background:var(--card);color:var(--ink);
-padding:7px 13px;border-radius:999px;font-size:14px;cursor:pointer;font-family:inherit}
-nav button:hover{border-color:#c9c3b8}
-nav button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0 14px}
-input[type=search]{flex:1;min-width:180px;padding:9px 14px;border:1px solid var(--line);
-border-radius:10px;font-size:15px;font-family:inherit;background:var(--card)}
-.chip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--card);
-padding:6px 12px;border-radius:999px;font-size:13px;cursor:pointer;user-select:none}
+.sub p{margin:0 0 7px}.sub p:last-child{margin:0}
+.disc-h{font-weight:600;color:var(--ink);margin-bottom:8px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+.layout{display:grid;grid-template-columns:208px minmax(0,1fr);gap:30px;align-items:start;padding-top:22px}
+.side{position:sticky;top:16px;display:flex;flex-direction:column}
+.side-h{font-size:12px;color:var(--dim);letter-spacing:.07em;margin:16px 0 6px}
+nav{display:flex;flex-direction:column;gap:2px}
+nav button{text-align:left;border:1px solid transparent;background:none;color:var(--ink);
+padding:7px 10px;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit;line-height:1.35}
+nav button:hover{background:#f1efe9}
+nav button.on{background:var(--ink);color:#fff}
+input[type=search]{width:100%;padding:8px 12px;border:1px solid var(--line);
+border-radius:9px;font-size:14px;font-family:inherit;background:var(--card)}
+.levels{display:flex;gap:6px}
+.chip{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);
+background:var(--card);padding:5px 14px;border-radius:8px;font-size:13px;cursor:pointer;user-select:none}
 .chip.on{background:#eef5f1;border-color:var(--acc);color:var(--acc)}
-.count{color:var(--dim);font-size:13px;margin-left:auto;white-space:nowrap}
+.count{color:var(--dim);font-size:12px;margin-top:14px;line-height:1.55}
+@media(max-width:860px){
+.layout{grid-template-columns:1fr;gap:0}
+.side{position:static;margin-bottom:18px}
+nav{flex-direction:row;flex-wrap:wrap}
+nav button{border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+.levels{flex-wrap:wrap}
+}
 .intro{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;
 margin-bottom:20px;color:var(--dim);font-size:15px}
 .intro p{margin:0 0 8px}.intro p:last-child{margin:0}
@@ -170,6 +183,11 @@ font-size:12px;font-weight:700;color:#fff;margin-top:2px}
 padding:1px 7px;font-size:12px;margin-left:auto;flex:none}
 .f{margin:0 0 11px;display:flex;gap:10px;align-items:baseline}
 .f:last-child{margin:0}
+/* 总结性建议：强调底色（参考 How-to-Train-Better 的 .human 盒） */
+.f.hl{background:rgba(26,107,74,.09);border-left:2px solid var(--acc);
+border-radius:0 6px 6px 0;padding:10px 14px;margin:0 0 11px}
+.f.hl .k{color:var(--acc);font-weight:600}
+.f.hl .v{width:100%}
 .k{flex:none;width:96px;color:var(--dim);font-size:13px}
 .v{flex:1;min-width:0}
 .v p{margin:0 0 6px}.v p:last-child{margin:0}
@@ -196,19 +214,25 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
 </style></head><body>
 <header><div class="wrap">
 <h1>高性价比新手小白健身指南</h1>
-<div class="sub"><b>免责声明</b>　__DISCLAIMER__</div>
-<nav id="nav"></nav>
+<div class="sub"><div class="disc-h">免责声明</div>__DISCLAIMER__</div>
 </div></header>
-<div class="wrap">
-  <div class="tools" id="tools">
-    <input type="search" id="q" placeholder="搜：一组做几次、蛋白粉、教练…（可跨节搜）">
-    <span class="chip on" data-lv="A">A</span>
-    <span class="chip on" data-lv="B">B</span>
-    <span class="chip on" data-lv="C">C</span>
+<div class="wrap layout">
+  <aside class="side" id="side">
+    <input type="search" id="q" placeholder="搜索（可跨章）">
+    <div class="side-h">章节</div>
+    <nav id="nav"></nav>
+    <div class="side-h">证据等级</div>
+    <div class="levels">
+      <span class="chip on" data-lv="A">A</span>
+      <span class="chip on" data-lv="B">B</span>
+      <span class="chip on" data-lv="C">C</span>
+    </div>
     <span class="count" id="cnt"></span>
-  </div>
-  <div id="body"></div>
-  <footer>共 __TOTAL__ 条 · __SECTIONS__ 节 · 作者个人经验，仅供参考</footer>
+  </aside>
+  <main>
+    <div id="body"></div>
+    <footer>共 __TOTAL__ 条 · __SECTIONS__ 节 · 作者个人经验，仅供参考</footer>
+  </main>
 </div>
 <script>
 const DATA=__DATA__, PAGES=__PAGES__;
@@ -230,6 +254,8 @@ function card(it,showSec){
     ${mir}${["总结性建议","具体地","为什么这样建议","来源"].map(f=>{
       let v=it[f];
       if(f==="来源"&&!it.src_done) v=`<span class="todo">〔待补〕</span>`;
+      if (f === "总结性建议")                 /* 高亮框本身就是"答案"，不再重复标签 */
+        return `<div class="f hl"><div class="v">${v}</div></div>`;
       return `<div class="f"><div class="k">${f}</div><div class="v">${v}</div></div>`;
     }).join("")}</div>`;
 }
@@ -249,7 +275,7 @@ document.addEventListener("click",e=>{
 function draw(){
   nav.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.k===cur));
   const isList=!("pre end app".split(" ").includes(cur));
-  $("#tools").style.display=isList?"flex":"none";
+  $("#side").style.display=isList?"flex":"none";
   if(!isList){$("#body").innerHTML=`<div class="page">${PAGES[cur].html}</div>`;return;}
   if(q){                                   /* 有搜索词 → 全书跨节搜 */
     const hits=[];

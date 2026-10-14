@@ -223,7 +223,29 @@ document.querySelector('#c-1-4 .v').innerHTML   // 是 <ul> 还是带字面 "- "
 
 ---
 
-## 八、其他注意
+## 八、验证网页改动：用 DOM 量，不要截图
+
+**作者的服务端会拒收截图**（HTTP 400 unsupported image）。所以核对网页效果一律用
+`browser_console` 执行 JS 读真实渲染值，**不要用 `browser_vision` 截图**。
+
+```js
+// 例：核对左栏 + 高亮框
+const s=document.querySelector('.side');
+getComputedStyle(s).position            // "sticky"
+document.querySelector('.layout').gridTemplateColumns   // "208px 838px"
+document.querySelector('#c-1-1 .f.hl').getBoundingClientRect().width
+```
+
+好处：比看图准（能拿到 px）、省 token、不触发报错。
+排查「源文件对、渲染不对」的偏差时，**看 DOM 的 innerHTML / getComputedStyle**：
+
+```js
+document.querySelector('#c-1-4 .v').innerHTML    // <ul> 还是带字面 "- " 的 <p>？
+```
+
+---
+
+## 九、其他注意
 
 - **章节内引用不带节号时按本节解析**（`verify_refs.py` 已处理）
 - **网上新写的条容易被 check.sh 拦**——AI 腔检查对"自己刚写的句子"命中率很高，这正常，改掉就行
