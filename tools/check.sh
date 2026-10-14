@@ -44,6 +44,10 @@ for fn in files:
         if got != want:
             err.append(f"{fn}: 栏位「{f}」数量不符（{got}，应为 {want}）")
 
+    # 不要用「（N）」行式枚举——统一用「  - 」子项，否则网页上没有项目符号
+    for m_ in re.finditer(r"^\s*（\d+）", t, re.M):
+        err.append(f"{fn}: 行首枚举「{m_.group(0).strip()}」应改成「  - 」子项")
+
     for w in ["我觉得", "其实", "我建议", "我发现"]:
         if w in t:
             err.append(f"{fn}: 残留软化词「{w}」")
@@ -80,6 +84,10 @@ for path in EXTRA:
     if not os.path.exists(path):
         continue
     t = open(path, encoding="utf-8").read()
+    # 不要用「（N）」行式枚举——统一用「  - 」子项，否则网页上没有项目符号
+    for m_ in re.finditer(r"^\s*（\d+）", t, re.M):
+        err.append(f"{fn}: 行首枚举「{m_.group(0).strip()}」应改成「  - 」子项")
+
     for w in ["我觉得", "其实", "我建议", "我发现"]:
         if w in t:
             err.append(f"{path}: 残留软化词「{w}」")
