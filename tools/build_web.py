@@ -7,9 +7,12 @@
 """
 import os, re, json, sys
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-B = os.path.join(ROOT, "book")
-FIELDS = ["总结性建议", "具体地", "为什么这样建议", "主观证据等级", "来源"]
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import refs  # noqa: E402  与 build_book.py 共用解析 / 镜像展开逻辑
+
+ROOT = refs.ROOT
+B = refs.B
+FIELDS = refs.FIELDS
 TODO = "〔待你补〕"
 
 
@@ -83,27 +86,30 @@ def md_block(txt, heads=True):
 
 
 def parse_sections():
+    secs_raw, index, problems = refs.load()
+    if problems:
+        for p in problems:
+            print("❌", p)
+        sys.exit(1)
     secs = []
-    for fn in sorted(f for f in os.listdir(B) if f.endswith(".md")):
-        t = open(os.path.join(B, fn), encoding="utf-8").read()
-        m = re.search(r"^# (\d+)\. ([^\n]+)", t, re.M)
-        if not m:
-            continue
-        sec_no, sec_name = int(m.group(1)), m.group(2).strip()
-        intro_raw = t[m.end():t.index("### 1.")].strip()
+    for s in secs_raw:
         items = []
-        for im in re.finditer(r"^### (\d+)\. ([^\n]+)\n(.*?)(?=^### \d+\. |\Z)", t, re.M | re.S):
-            body = im.group(3)
-            d = {"no": int(im.group(1)), "title": im.group(2).strip(), "sec": sec_name}
+        for it in s["items"]:
+            d = {"no": it["no"], "title": it["title"], "sec": s["name"], "sec_no": s["no"],
+                 "anchor": f"c-{s['no']}-{it['no']}", "mirror": it["mirror"]}
             for f in FIELDS:
-                mm = re.search(r"^- \*\*" + f + r"\*\*：?(.*?)(?=\n- \*\*|\Z)", body, re.M | re.S)
-                val = (mm.group(1).strip() if mm else "")
+                val = it[f]
                 d[f] = md_block(val) if f == "具体地" else inline(val.replace("\n", " ").strip())
             lv = re.sub(r"<[^>]+>", "", d["主观证据等级"]).strip()
             d["level"] = lv if lv in ("A", "B", "C") else "B"
             d["src_done"] = TODO not in d["来源"]
+            if it["mirror"]:
+                sn, ino = it["mirror"]
+                d["mirror_label"] = f"{sn} 节 · 第 {ino} 条"
+                d["mirror_anchor"] = f"c-{sn}-{ino}"
+                d["mirror_title"] = it.get("mirror_title", "")
             items.append(d)
-        secs.append({"no": sec_no, "name": sec_name, "intro": md_block(intro_raw), "items": items})
+        secs.append({"no": s["no"], "name": s["name"], "intro": md_block(s["intro"]), "items": items})
     return secs
 
 
@@ -171,6 +177,11 @@ padding:1px 7px;font-size:12px;margin-left:auto;flex:none}
 .v th{background:#f6f4f0;font-weight:600}
 .v blockquote{margin:6px 0;padding:8px 13px;border-left:3px solid var(--line);color:var(--dim)}
 .todo{color:#c0392b;font-size:13px;font-style:italic}
+.mirror{background:#f4f8f6;border:1px solid #d8e8e0;border-radius:8px;padding:8px 12px;
+margin:0 0 12px;font-size:13px;color:var(--dim);line-height:1.6}
+.mirror a{color:var(--acc);font-weight:600;text-decoration:none}
+.mirror a:hover{text-decoration:underline}
+.card,.page{scroll-margin-top:24px}
 .page{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:26px 30px}
 .page h1{font-size:24px;margin:0 0 18px}
 .page h2,.page h4{font-size:18px;margin:26px 0 10px}
@@ -209,15 +220,29 @@ document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{
 $("#q").oninput=e=>{q=e.target.value.trim().toLowerCase();draw();};
 const hay=it=>[it.title,it["总结性建议"],it["具体地"],it["为什么这样建议"]].join(" ").replace(/<[^>]+>/g,"").toLowerCase();
 function card(it,showSec){
-  return `<div class="card"><h3><span class="num">${it.no}</span>
+  const mir=it.mirror?`<div class="mirror">本条正文与 <a href="#${it.mirror_anchor}" data-go="${it.mirror_anchor}">${it.mirror_label}</a>「${it.mirror_title}」相同，<b>正文以该条为准</b></div>`:"";
+  return `<div class="card" id="${it.anchor}"><h3><span class="num">${it.no}</span>
     <span class="lv ${it.level}">${it.level}</span><span>${it.title}</span>
     ${showSec?`<span class="sec-tag">${it.sec}</span>`:""}</h3>
-    ${["总结性建议","具体地","为什么这样建议","来源"].map(f=>{
+    ${mir}${["总结性建议","具体地","为什么这样建议","来源"].map(f=>{
       let v=it[f];
       if(f==="来源"&&!it.src_done) v=`<span class="todo">〔待补〕</span>`;
       return `<div class="f"><div class="k">${f}</div><div class="v">${v}</div></div>`;
     }).join("")}</div>`;
 }
+function goTo(anchor){                       /* 跳到镜像条的源条 */
+  const m=anchor.match(/^c-(\d+)-(\d+)$/); if(!m) return;
+  lv={A:1,B:1,C:1};
+  document.querySelectorAll(".chip").forEach(c=>c.classList.add("on"));
+  q=""; $("#q").value="";
+  cur=m[1]; draw();
+  const el=document.getElementById(anchor);
+  if(el) el.scrollIntoView({block:"center",behavior:"smooth"});
+}
+document.addEventListener("click",e=>{
+  const a=e.target.closest("a[data-go]"); if(!a) return;
+  e.preventDefault(); goTo(a.dataset.go);
+});
 function draw(){
   nav.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.k===cur));
   const isList=!("pre end app".split(" ").includes(cur));
