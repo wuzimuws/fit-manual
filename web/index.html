@@ -123,8 +123,11 @@ margin-bottom:20px;color:var(--dim);font-size:15px}
 .intro p{margin:0 0 8px}.intro p:last-child{margin:0}
 .intro h4{color:var(--ink);font-size:15px;margin:14px 0 6px}
 .intro h4:first-child{margin-top:0}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:14px}
-.card h4{margin:0 0 14px;font-size:18px;line-height:1.5;display:flex;gap:10px;align-items:flex-start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:22px 24px 18px;margin-bottom:16px;
+font-size:14px;line-height:1.75}      /* 卡内基准 14px：正文比标题低一级，层级才分得开 */
+.card h4{margin:0 0 14px;font-size:18px;font-weight:600;line-height:28px;
+display:flex;gap:10px;align-items:flex-start}
 .num{color:#b9b3a8;font-size:14px;font-variant-numeric:tabular-nums;padding-top:3px;min-width:22px}
 .lv{flex:none;width:23px;height:23px;border-radius:6px;display:grid;place-items:center;
 font-size:12px;font-weight:700;color:#fff;margin-top:2px}
@@ -135,15 +138,16 @@ padding:1px 7px;font-size:12px;margin-left:auto;flex:none}
 .f:last-child{margin:0}
 /* 总结性建议：强调底色（参考 How-to-Train-Better 的 .human 盒） */
 .f.hl{background:rgba(26,107,74,.09);border-left:2px solid var(--acc);
-border-radius:0 6px 6px 0;padding:10px 14px;margin:0 0 11px}
+border-radius:0 6px 6px 0;padding:10px 14px;margin:0 0 11px;
+font-size:15px;line-height:1.75}       /* 照模板 .human：比正文大一级 */
 .f.hl .k{color:var(--acc);font-weight:600}
 .f.hl .v{width:100%}
-.k{flex:none;width:96px;color:var(--dim);font-size:13px}
+.k{flex:none;width:96px;color:var(--dim);font-size:13px;font-weight:500;line-height:1.75}
 .v{flex:1;min-width:0}
 .v p{margin:0 0 6px}.v p:last-child{margin:0}
 .v ul,.v ol{margin:0 0 6px;padding-left:20px}.v li{margin:2px 0}
 .v li[data-i="1"]{margin-left:18px}.v li[data-i="2"]{margin-left:36px}.v li[data-i="3"]{margin-left:54px}
-.v table{border-collapse:collapse;margin:8px 0;font-size:14px;width:100%}
+.v table{border-collapse:collapse;margin:8px 0;font-size:13px;width:100%}
 .v th,.v td{border:1px solid var(--line);padding:6px 9px;text-align:left}
 .v th{background:#f6f4f0;font-weight:600}
 .v blockquote{margin:6px 0;padding:8px 13px;border-left:3px solid var(--line);color:var(--dim)}
