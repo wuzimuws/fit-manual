@@ -34,8 +34,33 @@ def render_item(it, expanded=True):
     return "\n".join(out)
 
 
+def render_index(s):
+    """章节简介区的「内置主题分类 + 快速索引」，与网页版同一套内容。
+
+    网页版的「第 N 条」是可点跳转；通读版是纯文本，读者靠条号自己翻。
+    """
+    themes = s.get("themes") or []
+    if not themes:
+        return ""
+    by = {}
+    for it in s["items"]:
+        by.setdefault(it.get("theme") or "", []).append(it)
+    out = ["本节条目按主题分成下面几块，括号里是条号。", ""]
+    for th in themes:
+        arr = by.get(th["name"]) or []
+        if not arr:
+            continue
+        joined = "，".join(f"{it['title']}（第 {it['no']} 条）" for it in arr)
+        out += [f"**{th['name']}**：{joined}", ""]
+    return "\n".join(out).rstrip()
+
+
 def render_section(s):
-    out = [f"# {s['no']}. {s['name']}", "", s["intro"], "", "---", ""]
+    out = [f"# {s['no']}. {s['name']}", "", s["intro"], ""]
+    idx = render_index(s)
+    if idx:
+        out += [idx, ""]
+    out += ["---", ""]
     for it in s["items"]:
         out.append(render_item(it))
     out.append("---")
