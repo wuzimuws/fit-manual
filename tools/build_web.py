@@ -168,6 +168,50 @@ h1{margin:0 0 10px;font-size:27px;letter-spacing:-.5px}
 border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:9px}
 .sec-h .sec-n{font-size:12px;color:var(--dim);font-weight:400}
 .sec-h:first-child{margin-top:0}
+/* 审核模式：一次只看一条 */
+#rvBtn{flex:none;border:1px solid var(--line);background:var(--card);color:var(--dim);
+font-size:12.5px;padding:5px 12px;border-radius:999px;cursor:pointer;font-family:inherit}
+#rvBtn:hover{color:var(--acc);border-color:var(--acc)}
+#rvBtn.on{background:#eaf3ee;border-color:var(--acc);color:var(--acc);font-weight:600}
+.rv-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 16px;
+padding:10px 14px;background:#fbfaf8;border:1px solid var(--line);border-radius:9px}
+.rv-bar button{border:1px solid var(--line);background:var(--card);color:var(--dim);
+font-size:12.5px;padding:4px 11px;border-radius:999px;cursor:pointer;font-family:inherit}
+.rv-bar button:hover{color:var(--acc);border-color:var(--acc)}
+.rv-bar button.on{background:#eaf3ee;border-color:var(--acc);color:var(--acc);font-weight:600}
+.rv-pos{font-size:13.5px;font-weight:600}
+.rv-sec{font-size:13px;color:var(--dim)}
+.rv-done{font-size:12.5px;color:var(--dim);margin-left:auto}
+.rv-acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:18px 0 12px}
+.rv-acts button{border:1px solid var(--line);background:var(--card);color:var(--dim);
+font-size:13px;padding:7px 16px;border-radius:999px;cursor:pointer;font-family:inherit}
+.rv-acts button:hover:not(:disabled){color:var(--acc);border-color:var(--acc)}
+.rv-acts button:disabled{opacity:.4;cursor:default}
+.rv-acts button.on{color:#fff;font-weight:600}
+#rvOk.on{background:var(--A);border-color:var(--A)}
+#rvFix.on{background:var(--C);border-color:var(--C)}
+#rvSrc{width:100%;min-height:340px;box-sizing:border-box;border:1px solid var(--line);
+border-radius:9px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;
+line-height:1.7;color:var(--ink);background:#fbfaf8;resize:vertical}
+#rvSrc:focus{outline:none;border-color:var(--acc)}
+.rv-edit-acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0 0}
+.rv-edit-acts button{border:1px solid var(--line);background:var(--card);color:var(--dim);
+font-size:13px;padding:7px 16px;border-radius:999px;cursor:pointer;font-family:inherit}
+.rv-edit-acts button:hover{color:var(--acc);border-color:var(--acc)}
+#rvSave{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+#rvSave:hover{background:#155c3f;color:#fff}
+#rvMsg{font-size:12.5px;color:var(--dim)}
+.rv-hint{margin:10px 0 0;padding:10px 13px;background:#fdf6e9;border:1px solid #eadfc6;
+border-radius:9px;font-size:12.5px;line-height:1.8;color:#7a6a4a}
+.rv-hint code{background:#f4ecdc;padding:1px 5px;border-radius:4px;
+font-family:ui-monospace,Menlo,monospace}
+#rvNote{width:100%;min-height:74px;box-sizing:border-box;border:1px solid var(--line);
+border-radius:9px;padding:10px 12px;font-family:inherit;font-size:14px;line-height:1.7;
+color:var(--ink);background:var(--card);resize:vertical}
+#rvNote:focus{outline:none;border-color:var(--acc)}
+.rv-tip{font-size:12px;color:var(--dim);margin:8px 0 0}
+.rv-done-all{text-align:center;padding:60px 0;color:var(--dim);font-size:15px}
+
 /* 回到顶部：滚过一屏才出现，右下角固定 */
 #toTop{position:fixed;right:24px;bottom:24px;width:44px;height:44px;border-radius:50%;
 background:var(--acc);border:1px solid var(--acc);color:#fff;font-size:19px;font-weight:700;
@@ -310,6 +354,7 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
   <span class="logo">健身</span>
   <a class="top-title" href="#" title="回到全书">新手小白健身指南</a>
   <input type="search" id="q" placeholder="搜索条目（可跨章）">
+  <button id="rvBtn" type="button" title="一条一条过">审核模式</button>
 </div></header>
 <aside class="side" id="side">
     <div class="grp">
@@ -370,6 +415,7 @@ nav.onclick=e=>{
   const k=b.dataset.k;
   if(k===cur && b.closest(".ch")){                     /* 再点当前章 → 收起目录 */
     tocClosed=!tocClosed;syncToc();return;}
+  if(rvOn){rvOn=false;$("#rvBtn").classList.remove("on");$("#rvBtn").textContent="审核模式";}
   cur=k;tocClosed=false;                               /* 换章 = 选中 + 展开 */
   /* 先把选中态画上，再重建正文：否则高亮要等 94 张卡片重建完才上色，看着就是「点慢了」 */
   document.querySelectorAll("nav button")
@@ -458,7 +504,167 @@ document.addEventListener("click",e=>{
   const a=e.target.closest("a[data-go]"); if(!a) return;
   e.preventDefault(); goTo(a.dataset.go);
 });
+/* ================= 审核模式：一次只看一条，逐条标记 ================= */
+const RKEY="fitman-review-v1";
+let RV={};                                    /* anchor -> {s:"ok"|"fix", n:"备注"} */
+try{RV=JSON.parse(localStorage.getItem(RKEY)||"{}");}catch(e){RV={};}
+let rvOn=false, rvOnly=false;
+let rvIdx=parseInt(localStorage.getItem("fitman-review-idx")||"0",10)||0;
+let rvEditing=false, rvSrc="", rvMsg="";
+const SAMEORIGIN=location.protocol==="http:"||location.protocol==="https:";
+function rvSave(){try{
+  localStorage.setItem(RKEY,JSON.stringify(RV));
+  localStorage.setItem("fitman-review-idx",String(rvIdx));   /* 刷新后回到原来那条 */
+}catch(e){}}
+function rvAll(){const a=[];DATA.forEach(s=>s.items.forEach(it=>a.push(it)));return a;}
+function rvList(){const a=rvAll();return rvOnly?a.filter(it=>!RV[it.anchor]):a;}
+function rvSet(anchor,field,val){
+  RV[anchor]=RV[anchor]||{s:"",n:""};RV[anchor][field]=val;rvSave();
+}
+function rvRender(){
+  const list=rvList();
+  if(rvIdx>=list.length)rvIdx=Math.max(0,list.length-1);
+  const it=list[rvIdx];
+  const done=Object.keys(RV).filter(a=>RV[a]&&RV[a].s).length;
+  const bar=`<div class="rv-bar">
+      <span class="rv-pos">第 ${list.length?rvIdx+1:0} / ${list.length} 条</span>
+      <span class="rv-sec">${it?it.sec_no+". "+esc(it.sec):""}</span>
+      <span class="rv-done">已审 ${done} / ${TOTAL}</span>
+      <button id="rvOnly" class="${rvOnly?"on":""}">只看未审</button>
+      <button id="rvExport">导出结果</button>
+      <button id="rvClear">清空标记</button>
+    </div>`;
+  if(!it){
+    $("#body").innerHTML=bar+`<div class="rv-done-all">这一批都审完了 ✓<br>
+      <span style="font-size:13px">点上面的「只看未审」切回全部，或「导出结果」把结论发我</span></div>`;
+    rvBind();return;
+  }
+  const rec=RV[it.anchor]||{s:"",n:""};
+  const acts=`<div class="rv-acts">
+        <button id="rvPrev"${rvIdx===0?" disabled":""}>← 上一条</button>
+        <button id="rvOk" class="${rec.s==="ok"?"on":""}">通过</button>
+        <button id="rvFix" class="${rec.s==="fix"?"on":""}">要改</button>
+        <button id="rvNext"${rvIdx>=list.length-1?" disabled":""}>下一条 →</button>
+        <button id="rvEdit" title="直接改这一条的 markdown 原文">编辑原文</button>
+      </div>`;
+  if(rvEditing){
+    $("#body").innerHTML=bar+`<div class="rv-edit">
+        <textarea id="rvSrc" spellcheck="false">${esc(rvSrc)}</textarea>
+        <div class="rv-edit-acts">
+          <button id="rvSave">保存并重建</button>
+          <button id="rvCancel">取消</button>
+          <span id="rvMsg">${rvMsg||"改完点保存，会写回 book/ 并自动重建"}</span>
+        </div></div>`+acts;
+    rvBind();rvBindEdit();return;
+  }
+  $("#body").innerHTML=bar+card(it,false,false)+acts+`
+      <textarea id="rvNote" placeholder="这一条要改什么？写一句（留空也行）">${esc(rec.n||"")}</textarea>
+      <div class="rv-tip">快捷键：← → 翻条 · 1 通过 · 2 要改 · 拼音输入法打字时快捷键不触发</div>`;
+  rvBind();
+}
+function rvBind(){
+  const list=rvList(), it=list[rvIdx];
+  on("rvOnly",()=>{rvOnly=!rvOnly;rvIdx=0;rvRender();});
+  on("rvClear",()=>{if(confirm("清空所有审核标记？")){RV={};rvIdx=0;rvSave();rvRender();}});
+  on("rvExport",rvExport);
+  const mv=d=>{rvEditing=false;rvMsg="";rvIdx+=d;rvSave();rvRender();window.scrollTo({top:0});};
+  on("rvPrev",()=>{if(rvIdx>0)mv(-1);});
+  on("rvNext",()=>{if(rvIdx<list.length-1)mv(1);});
+  const ed=document.getElementById("rvEdit");
+  if(ed)ed.onclick=rvEdit;
+  on("rvOk",()=>{if(it){rvSet(it.anchor,"s","ok");rvNextOr();}});
+  on("rvFix",()=>{if(it){rvSet(it.anchor,"s","fix");rvCount();   /* 标完先把计数刷新，再让去写备注 */
+    const n=document.getElementById("rvNote");if(n)n.focus();}});
+  const note=document.getElementById("rvNote");
+  if(note&&it)note.oninput=()=>rvSet(it.anchor,"n",note.value);
+}
+function rvEdit(){                                  /* 取这一条的 markdown 原文，进来直接改 */
+  const list=rvList(), it=list[rvIdx]; if(!it)return;
+  if(!SAMEORIGIN){
+    rvEditing=true;rvSrc="";
+    rvMsg=`网页是用 file:// 打开的，浏览器不让它写本地文件。<br>
+      先在本机跑一次 <code>python3 tools/review_server.py</code>，
+      再打开 <code>http://127.0.0.1:8787/</code> 就有保存功能（现在就这一个功能需要）。`;
+    rvRender();return;
+  }
+  fetch(`/api/raw?sec=${it.sec_no}&no=${it.no}`)
+    .then(r=>r.json())
+    .then(d=>{rvEditing=true;rvSrc=d.text||"";rvMsg="";rvRender();})
+    .catch(e=>{rvEditing=true;rvSrc="";rvMsg="取原文失败："+e.message;rvRender();});
+}
+function rvBindEdit(){
+  const ta=document.getElementById("rvSrc");
+  if(ta)ta.oninput=()=>{rvSrc=ta.value;};
+  on("rvCancel",()=>{rvEditing=false;rvMsg="";rvRender();});
+  on("rvSave",()=>{
+    const list=rvList(), it=list[rvIdx]; if(!it)return;
+    const msg=document.getElementById("rvMsg");
+    if(msg)msg.innerHTML="保存中…";
+    fetch("/api/save",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({sec:it.sec_no,no:it.no,text:rvSrc})})
+      .then(r=>r.json())
+      .then(d=>{
+        if(d.error){if(msg)msg.innerHTML="❌ "+esc(d.error);return;}
+        const okTxt=d.ok?"✅ 校验全部通过":"⚠️ 已写入，但校验有报错";
+        if(msg)msg.innerHTML=`${okTxt} · 已写回 ${esc(d.file)}<br>
+          <button id="rvReload" style="margin-top:6px">刷新页面看结果</button>
+          <pre style="white-space:pre-wrap;font-size:11.5px;margin:8px 0 0">${esc(d.check||"")}</pre>`;
+        const rb=document.getElementById("rvReload");
+        if(rb)rb.onclick=()=>location.reload();
+      })
+      .catch(e=>{if(msg)msg.innerHTML="❌ 保存失败："+esc(e.message);});
+  });
+}
+const on=(id,fn)=>{const e=document.getElementById(id);if(e)e.onclick=fn;};
+function rvCount(){                            /* 只刷新计数，不重绘（重绘会丢掉备注框焦点） */
+  const el=document.querySelector(".rv-done");
+  if(el)el.textContent=`已审 ${Object.keys(RV).filter(a=>RV[a]&&RV[a].s).length} / ${TOTAL}`;
+}
+function rvNextOr(){
+  const list=rvList();
+  rvEditing=false;rvMsg="";
+  if(rvIdx<list.length-1){rvIdx++;rvSave();rvRender();window.scrollTo({top:0});}
+  else rvRender();
+}
+function rvExport(){
+  const all=rvAll(), ok=[], fix=[], pend=[];
+  all.forEach(it=>{const r=RV[it.anchor];
+    if(!r||!r.s)pend.push(it);
+    else if(r.s==="ok")ok.push(it); else fix.push(it);});
+  const line=it=>`- [${it.sec_no}·${it.no}] ${it.title}${(RV[it.anchor]&&RV[it.anchor].n)?"\n  - 备注："+RV[it.anchor].n:""}`;
+  const md=[`# 审核结果`,"",`共 ${all.length} 条 · 通过 ${ok.length} · 要改 ${fix.length} · 未审 ${pend.length}`,""];
+  if(fix.length)md.push("## 要改","",...fix.map(line),"");
+  if(ok.length)md.push("## 通过","",...ok.map(line),"");
+  if(pend.length)md.push("## 未审","",...pend.map(it=>`- [${it.sec_no}·${it.no}] ${it.title}`),"");
+  const txt=md.join("\n");
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([txt],{type:"text/markdown"}));
+  a.download="审核结果.md";a.click();URL.revokeObjectURL(a.href);
+  try{navigator.clipboard.writeText(txt);}catch(e){}
+  alert(`已导出 审核结果.md（同时复制到剪贴板）\n通过 ${ok.length} · 要改 ${fix.length} · 未审 ${pend.length}`);
+}
+addEventListener("keydown",e=>{
+  if(!rvOn)return;
+  const tag=(e.target.tagName||"").toLowerCase();
+  if(tag==="input"||tag==="textarea")return;
+  if(e.metaKey||e.ctrlKey||e.altKey)return;
+  if(e.key==="ArrowLeft"){const b=document.getElementById("rvPrev");if(b&&!b.disabled)b.click();}
+  else if(e.key==="ArrowRight"){const b=document.getElementById("rvNext");if(b&&!b.disabled)b.click();}
+  else if(e.key==="1"){const b=document.getElementById("rvOk");if(b)b.click();}
+  else if(e.key==="2"){const b=document.getElementById("rvFix");if(b)b.click();}
+});
+$("#rvBtn").onclick=()=>{
+  rvOn=!rvOn;
+  $("#rvBtn").classList.toggle("on",rvOn);
+  $("#rvBtn").textContent=rvOn?"退出审核":"审核模式";
+  draw();
+  window.scrollTo({top:0});
+};
+
 function draw(){
+  if(rvOn){$("#side").style.display="flex";$("#doc").style.display="none";
+    document.querySelectorAll("nav button").forEach(b=>b.classList.remove("on"));
+    rvRender();return;}
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.k===cur));
   const isList=!("pre end app".split(" ").includes(cur));
   $("#side").style.display="flex";        /* 侧栏就是导航，任何视图都留着 */

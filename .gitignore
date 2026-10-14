@@ -2,3 +2,4 @@ __pycache__/
 *.pyc
 .sync-conflict-*
 .stversions/
+.DS_Store
