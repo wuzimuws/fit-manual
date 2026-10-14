@@ -190,8 +190,11 @@ transition:transform .18s;cursor:pointer;border-radius:4px}
 .toc-sub{display:flex;flex-direction:column;padding:1px 0 7px}
 .toc-sub[hidden]{display:none}
 .toc-sub a{display:flex;gap:6px;font-size:12.5px;color:var(--dim);text-decoration:none;
-padding:3px 6px 3px 14px;line-height:1.45;border-radius:0 6px 6px 0}
+padding:3px 6px 3px 11px;line-height:1.45;border-left:2px solid transparent;
+border-radius:0 6px 6px 0}
 .toc-sub a:hover{color:var(--acc);background:#f2f6f3}
+.toc-sub a.on{color:var(--acc);border-left-color:var(--acc);font-weight:600}
+.toc-sub a.on i{opacity:1}
 .toc-sub a i{font-style:normal;flex:none;min-width:13px;text-align:right;opacity:.7}
 .toc-sub a span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 input[type=search]{width:100%;padding:8px 12px;border:1px solid var(--line);
@@ -292,7 +295,7 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
 </div>
 <script>
 const DATA=__DATA__, PAGES=__PAGES__, TOTAL=__TOTAL__;
-let cur="1", q="", lv={A:1,B:1,C:1};
+let cur="1", q="", lv={A:1,B:1,C:1}, selAnchor=null;
 const $=s=>document.querySelector(s), nav=$("#nav");
 const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 const tabs=[{k:"all",t:"全部 · "+TOTAL+" 条"},{k:"pre",t:"前言"},
@@ -309,11 +312,38 @@ nav.innerHTML=tabs.map(t=>{
     +`<div class="toc-sub" hidden>${inner}</div></div>`;
 }).join("");
 nav.onclick=e=>{
-  const fold=e.target.closest(".fold");                 /* 箭头 → 展开/收起本章目录 */
+  const fold=e.target.closest(".fold");                 /* 小箭头 → 单独收起 */
   if(fold){const ch=fold.closest(".ch");const sub=ch.querySelector(".toc-sub");
     const open=ch.classList.toggle("open");sub.hidden=!open;return;}
-  const b=e.target.closest("button");if(!b)return;cur=b.dataset.k;draw();
-  window.scrollTo({top:0,behavior:"smooth"});};
+  const b=e.target.closest("button");if(!b)return;
+  cur=b.dataset.k;                                     /* 点整行 = 选中 + 展开（draw 里 syncToc） */
+  window.scrollTo({top:0,behavior:"smooth"});draw();};
+
+/* 侧栏目录与正文联动：当前章展开（手风琴），当前条目加选中竖线 */
+function syncToc(){
+  const secNo=/^\d+$/.test(cur)?cur:null;
+  document.querySelectorAll(".ch").forEach(ch=>{
+    const open=(ch.querySelector("button").dataset.k===secNo);
+    ch.classList.toggle("open",open);
+    const sub=ch.querySelector(".toc-sub");if(sub)sub.hidden=!open;
+  });
+  document.querySelectorAll(".toc-sub a").forEach(a=>
+    a.classList.toggle("on",a.dataset.go===selAnchor));
+}
+let raf=0;
+addEventListener("scroll",()=>{if(raf)return;
+  raf=requestAnimationFrame(()=>{raf=0;spy();});}, {passive:true});
+function spy(){                                        /* 滚动时把选中标志挪到当前读到的条目 */
+  const cards=[...document.querySelectorAll(".card")];
+  if(!cards.length)return;
+  const mark=innerHeight*0.34;let best=null;
+  for(const c of cards){if(c.getBoundingClientRect().top<=mark)best=c;else break;}
+  const id=(best||cards[0]).id;
+  if(id===selAnchor)return;
+  selAnchor=id;
+  document.querySelectorAll(".toc-sub a").forEach(a=>
+    a.classList.toggle("on",a.dataset.go===id));
+}
 document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{
   lv[c.dataset.lv]=!lv[c.dataset.lv];c.classList.toggle("on");draw();});
 $("#q").oninput=e=>{q=e.target.value.trim().toLowerCase();draw();};
@@ -351,7 +381,7 @@ document.addEventListener("click",e=>{
   e.preventDefault(); goTo(a.dataset.go);
 });
 function draw(){
-  nav.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.k===cur));
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.k===cur));
   const isList=!("pre end app".split(" ").includes(cur));
   $("#side").style.display="flex";        /* 侧栏就是导航，任何视图都留着 */
   $("#doc").style.display=isList?"block":"none";
@@ -368,6 +398,7 @@ function draw(){
     });
     $("#cnt").textContent=q?`全书命中 ${n} 条`:`${n} / ${TOTAL} 条（全书）`;
     $("#body").innerHTML=html||'<div class="card">没有符合条件的条目。</div>';
+    syncToc();
     return;
   }
   if(q){                                   /* 有搜索词 → 全书跨节搜 */
@@ -383,9 +414,27 @@ function draw(){
   const items=s.items.filter(it=>lv[it.level]);
   $("#cnt").textContent=`${items.length} / ${s.items.length} 条`;
   $("#body").innerHTML=`<div class="intro">${s.intro}</div>`+items.map(it=>card(it,false)).join("");
+  syncToc(); spy();
 }
 draw();
 </script></body></html>"""
+
+
+def _js_check(html):
+    """抽出 <script> 跑 node --check —— 防止手改模板时打错符号却只在线上下线才炸。"""
+    import shutil, subprocess, tempfile
+    if not shutil.which("node"):
+        print("   （未装 node，跳过 JS 语法检查）"); return
+    js = html[html.index("<script>") + 8: html.rindex("</script>")]
+    with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8") as f:
+        f.write(js); path = f.name
+    try:
+        r = subprocess.run(["node", "--check", path], capture_output=True, text=True)
+        if r.returncode:
+            print("❌ JS 语法错误："); print(r.stderr.strip()[:600]); raise SystemExit(1)
+        print("   JS 语法 ✅")
+    finally:
+        os.unlink(path)
 
 
 def main():
@@ -409,6 +458,7 @@ def main():
               ensure_ascii=False, indent=1)
     outp = os.path.join(ROOT, "web", "index.html")
     open(outp, "w", encoding="utf-8").write(html)
+    _js_check(html)
     todo = sum(1 for s in secs for i in s["items"] if not i["src_done"])
     print(f"✅ {len(secs)} 节 / {total} 条 → web/index.html ({os.path.getsize(outp)//1024} KB)")
     print(f"   来源待补：{todo} / {total}")

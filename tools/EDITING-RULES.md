@@ -245,7 +245,17 @@ document.querySelector('#c-1-4 .v').innerHTML    // <ul> 还是带字面 "- " �
 
 ---
 
-## 九、其他注意
+## 九、改 build_web.py 的两条硬规矩
+
+**① 模板里的 JS 改完必须过 `node --check`** —— 已经内置：`build_web.py` 会抽出 `<script>` 跑语法检查，有错直接 `exit 1`。
+
+踩过的坑：一次批量替换时把 `document.querySelectorAll("nav button")` 的尾巴接上了原句遗留的 `.forEach(`，生成出 `...forEach.forEach(...)`，**页面整块白掉**（5 个 JS 异常），而 `check.sh` 全绿——它只看 markdown。
+
+**② 替换字符串时，尾巴不要接上原句的后半截。** 用 `str.replace(old, new)` 前先确认 `old` 覆盖了整条语句，别只替换前缀。
+
+---
+
+## 十、其他注意
 
 - **章节内引用不带节号时按本节解析**（`verify_refs.py` 已处理）
 - **网上新写的条容易被 check.sh 拦**——AI 腔检查对"自己刚写的句子"命中率很高，这正常，改掉就行
