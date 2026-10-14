@@ -20,6 +20,12 @@ for fn in files:
             err.append(f"{fn}: 栏位「{f}」数量不符")
     for w in ["我觉得","其实","我建议","我发现"]:
         if w in t: err.append(f"{fn}: 残留软化词「{w}」")
+    # AI 腔调：对偶式「不是 X，是 Y」
+    for p_ in [r"不是[^。！？\n]{1,40}?，是", r"不是[^。！？\n]{1,40}?，?而是",
+               r"不是[^。！？\n]{1,30}?。\s*是", r"问题不在[^。！？\n]{1,30}?，?在",
+               r"真正[^。！？\n]{0,20}?的不是"]:
+        m_ = re.search(p_, t)
+        if m_: err.append(f"{fn}: AI 腔调「{m_.group(0)}」")
 
 # 条号引用越界
 pat = re.compile(r"(?:(\d{2}) 节)?第 ([\d、,，]+) 条")
