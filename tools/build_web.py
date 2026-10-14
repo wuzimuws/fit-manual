@@ -198,8 +198,8 @@ nav{display:flex;flex-direction:column;gap:2px}
 nav button{text-align:left;border:1px solid transparent;background:none;color:var(--ink);
 padding:7px 10px;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit;line-height:1.35}
 nav button:hover{background:#f1efe9}
-nav button.on{background:var(--ink);color:#fff}
-nav button.on .sn,nav button.on i,nav button.on .fold{color:rgba(255,255,255,.75)}
+nav button.on{background:#eaf3ee;color:var(--acc);font-weight:600}
+nav button.on .sn,nav button.on i,nav button.on .fold{color:var(--acc);opacity:.75}
 .ch-b{display:flex;align-items:center;gap:7px;width:100%}
 .ch-b .sn{color:var(--dim);flex:none}
 .ch-b .st{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -294,7 +294,7 @@ padding:30px 34px;margin-top:34px}
 footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
 </style></head><body>
 <header class="topbar"><div class="top-in">
-  <span class="logo">指南</span>
+  <span class="logo">健身</span>
   <a class="top-title" href="#" title="回到全书">新手小白健身指南</a>
   <input type="search" id="q" placeholder="搜索条目（可跨章）">
 </div></header>
