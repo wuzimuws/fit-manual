@@ -27,7 +27,7 @@ python3 tools/verify_refs.py  # 5. 列出所有条号引用 → 手工核（插�
 ### check.sh 的 11 项
 
 ```
-栏位齐全          每条 5 栏（总结性建议/具体地/为什么这样建议/主观证据等级/来源）
+栏位齐全          每条 5 栏（总结性建议/具体地/为什么/主观证据等级/来源）
 条号连续          1..N 不得跳号
 引用不越界        「第 N 条」目标必须存在
 镜像引用有效      <!-- 引用：NN 节第 M 条 --> 目标必须存在
@@ -172,7 +172,7 @@ python3 tools/verify_refs.py
 ### 子项一律用 `  - `，不用 `（N）` 行式枚举
 
 ```markdown
-- **为什么这样建议**：
+- **为什么**：
   - 健身房器械全面，性价比最高。
   - 健身房的健身人群众多，有良好的氛围。
 ```
@@ -190,13 +190,13 @@ python3 tools/verify_refs.py
 d[f] = md_block(val) if f == "具体地" else inline(val.replace("\n", " ").strip())
 ```
 
-`inline()` **会把换行压成空格**，于是「为什么这样建议」里的 `  - ` 子项被原样输出成一整段
+`inline()` **会把换行压成空格**，于是「为什么」里的 `  - ` 子项被原样输出成一整段
 （网页上就是一大段带着字面 `- ` 的长文本，**不换行**）。
 
 修法：多行字段都交给 `md_block`：
 
 ```python
-multi = f in ("具体地", "为什么这样建议", "总结性建议") and "\n" in val
+multi = f in ("具体地", "为什么", "总结性建议") and "\n" in val
 d[f] = md_block(val) if multi else inline(val.replace("\n", " ").strip())
 ```
 

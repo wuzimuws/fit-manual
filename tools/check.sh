@@ -8,7 +8,7 @@ import subprocess
 
 B = "book"
 files = sorted(f for f in os.listdir(B) if f.endswith(".md"))
-fields = ["总结性建议", "具体地", "为什么这样建议", "主观证据等级", "来源"]
+fields = ["总结性建议", "具体地", "为什么", "主观证据等级", "来源"]
 RE_MIRROR = re.compile(r"<!-- 引用：(\d{1,2}) 节第 (\d+) 条 -->")
 err = []
 
