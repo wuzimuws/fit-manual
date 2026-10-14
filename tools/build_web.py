@@ -513,6 +513,7 @@ let rvIdx=parseInt(localStorage.getItem("fitman-review-idx")||"0",10)||0;
 let rvEditing=false, rvSrc="", rvMsg="";
 let rvEditDefault=true;      /* 进审核模式默认就是编辑态；点「查看」切回渲染版 */
 let rvBusy=false;            /* 正在取原文，别重复发请求 */
+let rvSrc0="";               /* 载入时的原文，用来判断有没有改过 */
 const SAMEORIGIN=location.protocol==="http:"||location.protocol==="https:";
 function rvSave(){try{
   localStorage.setItem(RKEY,JSON.stringify(RV));
@@ -556,7 +557,7 @@ function rvRender(){
         <div class="rv-edit-acts">
           <button id="rvSave">保存并重建</button>
           <button id="rvCancel">取消</button>
-          <span id="rvMsg">${rvMsg||"改完点保存，会写回 book/ 并自动重建"}</span>
+          <span id="rvMsg">${rvMsg||"改完直接点「下一条」就会存；也可以点「保存并重建」"}</span>
         </div></div>`+acts;
     rvBind();rvBindEdit();return;
   }
@@ -571,15 +572,14 @@ function rvBind(){
   on("rvOnly",()=>{rvOnly=!rvOnly;rvIdx=0;rvRender();});
   on("rvClear",()=>{if(confirm("清空所有审核标记？")){RV={};rvIdx=0;rvSave();rvRender();}});
   on("rvExport",rvExport);
-  const mv=d=>{rvEditing=false;rvMsg="";rvIdx+=d;rvSave();rvRender();window.scrollTo({top:0});};
-  on("rvPrev",()=>{if(rvIdx>0)mv(-1);});
-  on("rvNext",()=>{if(rvIdx<list.length-1)mv(1);});
+  on("rvPrev",()=>{if(rvIdx>0)rvCommit(()=>rvStep(-1));});
+  on("rvNext",()=>{if(rvIdx<list.length-1)rvCommit(()=>rvStep(1));});
   const ed=document.getElementById("rvEdit");
   if(ed)ed.onclick=()=>{
     if(rvEditing){rvEditDefault=false;rvEditing=false;rvMsg="";rvRender();}
     else{rvEditDefault=true;rvRender();}
   };
-  on("rvOk",()=>{if(it){rvSet(it.anchor,"s","ok");rvNextOr();}});
+  on("rvOk",()=>{if(it)rvCommit(()=>{rvSet(it.anchor,"s","ok");rvStep(1);});});
   on("rvFix",()=>{if(it){rvSet(it.anchor,"s","fix");rvCount();   /* 标完先把计数刷新，再让去写备注 */
     const n=document.getElementById("rvNote");if(n)n.focus();}});
   const note=document.getElementById("rvNote");
@@ -598,7 +598,7 @@ function rvAutoEdit(){                              /* 取这一条的 markdown 
   rvBusy=true;rvEditing=true;rvSrc="";rvMsg="载入原文…";rvRender();
   fetch(`/api/raw?sec=${it.sec_no}&no=${it.no}`)
     .then(r=>r.json())
-    .then(d=>{rvBusy=false;rvSrc=d.text||"";rvMsg="";rvRender();})
+    .then(d=>{rvBusy=false;rvSrc=d.text||"";rvSrc0=rvSrc;rvMsg="";rvRender();})
     .catch(e=>{rvBusy=false;rvSrc="";rvMsg="取原文失败："+e.message;rvRender();});
 }
 function rvBindEdit(){
@@ -629,11 +629,32 @@ function rvCount(){                            /* 只刷新计数，不重绘（
   const el=document.querySelector(".rv-done");
   if(el)el.textContent=`已审 ${Object.keys(RV).filter(a=>RV[a]&&RV[a].s).length} / ${TOTAL}`;
 }
-function rvNextOr(){
+function rvStep(d){                                  /* 翻条：退出编辑态、记位置 */
   const list=rvList();
   rvEditing=false;rvMsg="";
-  if(rvIdx<list.length-1){rvIdx++;rvSave();rvRender();window.scrollTo({top:0});}
+  if(rvIdx+d>=0&&rvIdx+d<list.length){rvIdx+=d;rvSave();rvRender();window.scrollTo({top:0});}
   else rvRender();
+}
+function rvDirty(){return rvEditing&&rvSrc!==rvSrc0;}
+/* 翻条前先把改动落盘。保存不了（或写进去了但校验没过）就不翻，留在原地让人看见 */
+function rvCommit(after){
+  const it=rvList()[rvIdx];
+  if(!it||!rvDirty()){after();return;}
+  const msg=document.getElementById("rvMsg");
+  if(msg)msg.innerHTML="保存中…";
+  fetch("/api/save",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({sec:it.sec_no,no:it.no,text:rvSrc})})
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.error){if(msg)msg.innerHTML="❌ "+esc(d.error)+"<br>没有保存，先别翻过去";return;}
+      rvSrc0=rvSrc;                                  /* 已落盘；再点一次就能翻走 */
+      if(!d.ok){
+        if(msg)msg.innerHTML="⚠️ 已写入，但校验没过（再点一次翻条就会走）<pre style=\"white-space:pre-wrap;font-size:11.5px;margin:8px 0 0\">"+esc(d.check||"")+"</pre>";
+        return;
+      }
+      after();
+    })
+    .catch(e=>{if(msg)msg.innerHTML="❌ 保存失败："+esc(e.message)+"<br>没有保存，先别翻过去";});
 }
 function rvExport(){
   const all=rvAll(), ok=[], fix=[], pend=[];
