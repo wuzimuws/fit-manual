@@ -173,19 +173,16 @@ border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:9px}
 padding-bottom:10px;border-bottom:1px solid var(--line)}
 .sec-head h2{font-size:24px;margin:0;letter-spacing:-.3px}
 .sec-head .shown{font-size:13px;color:var(--dim)}
-/* 章节简介区里的「内置主题分类 + 快速索引」（照参考站：简介段后按主题列条目） */
-.idx{margin:16px 0 30px;padding:16px 18px;background:#fbfaf8;border:1px solid var(--line);
-border-radius:10px}
-.idx>p{margin:0 0 3px}
-.idx-g{margin:0 0 13px;scroll-margin-top:76px}
+/* 章节简介区的「内置主题分类 + 快速索引」——照参考站写法：
+   「日常开销：关掉自动续费（第 1 条），重算手机和宽带套餐（第 4 条）……」 */
+.idx{margin:15px 0 26px}
+.idx-lead{font-size:13.5px;color:var(--dim);margin:0 0 9px}
+.idx-g{font-size:13.5px;line-height:1.95;margin:0 0 7px}
 .idx-g:last-child{margin-bottom:0}
-.idx-g>b{font-size:13.5px;font-weight:700}
-.idx-lead{font-size:12.5px;color:var(--dim);margin-left:5px}
-.idx-links{margin-top:5px;line-height:1.9}
-.idx-links a{font-size:13px;color:var(--dim);text-decoration:none;cursor:pointer}
-.idx-links a:hover{color:var(--acc)}
-.idx-links a::after{content:"·";margin:0 7px;color:#cfc9be}
-.idx-links a:last-child::after{content:"";margin:0}
+.idx-g b{font-weight:700}
+.idx-g a{color:var(--acc);text-decoration:none;cursor:pointer;
+border-bottom:1px dashed rgba(26,107,74,.45)}
+.idx-g a:hover{border-bottom-style:solid}
 .top-in{display:flex;align-items:center;gap:13px;height:56px;padding:0 24px}
 .side{position:fixed;top:57px;left:0;bottom:0;width:272px;z-index:15;
 display:flex;flex-direction:column;background:var(--card);border-right:1px solid var(--line);
@@ -424,12 +421,12 @@ function idxBlock(sec,items){
   items.forEach(it=>{const k=it.theme||"";if(!by.has(k))by.set(k,[]);by.get(k).push(it);});
   const parts=sec.themes.map(th=>{
     const arr=by.get(th.name)||[];if(!arr.length)return "";
-    return `<div class="idx-g" id="${th.id}"><b>${esc(th.name)}</b>`
-      +(th.lead?`<span class="idx-lead">${th.lead}</span>`:"")
-      +`<div class="idx-links">`
-      +arr.map(it=>`<a data-go="${it.anchor}">${esc(it.title)}</a>`).join("")+`</div></div>`;
+    return `<p class="idx-g" id="${th.id}"><b>${esc(th.name)}</b>：`
+      +arr.map(it=>`${esc(it.title)}（<a data-go="${it.anchor}" title="跳到这一条">第 ${
+        it.no} 条</a>）`).join("，")+`</p>`;
   }).join("");
-  return parts?`<div class="idx">${parts}</div>`:"";
+  return parts?`<div class="idx"><p class="idx-lead">本节条目按主题分成下面几块，括号里是条号。</p>${
+    parts}</div>`:"";
 }
 const hay=it=>[it.title,it["总结性建议"],it["具体地"],it["为什么这样建议"]].join(" ").replace(/<[^>]+>/g,"").toLowerCase();
 function card(it,showSec,compact){
