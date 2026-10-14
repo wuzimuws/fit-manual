@@ -4,6 +4,7 @@ set -e
 cd "$(dirname "$0")/.."
 python3 - <<'PY'
 import os, re, sys
+import subprocess
 
 B = "book"
 files = sorted(f for f in os.listdir(B) if f.endswith(".md"))
@@ -132,6 +133,16 @@ for s_ in secs_:
 
 for p_ in probs_:
     err.append(p_)
+
+# ---------- 手写引用的条号是否漂移 ----------
+# 插删移动条目会让后面的条号整体位移，正文里手写的「第 N 条」不会自己变。
+# citelock.py 按【标题】锁定目标，能查出漂移；跑 --fix 自动改数字。
+_r_ = subprocess.run([sys.executable, os.path.join("tools", "citelock.py")],
+                     capture_output=True, text=True)
+if _r_.returncode != 0:
+    for _l in _r_.stdout.strip().split("\n"):
+        if _l.strip().startswith(("❗", "❌", "⚠️")) or "→ 应为" in _l:
+            err.append("引用锁定：" + _l.strip())
 for s_ in secs_:
     for it_ in s_["items"]:
         if it_["mirror"]:
