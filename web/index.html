@@ -374,6 +374,8 @@ try{RV=JSON.parse(localStorage.getItem(RKEY)||"{}");}catch(e){RV={};}
 let rvOn=false, rvOnly=false;
 let rvIdx=parseInt(localStorage.getItem("fitman-review-idx")||"0",10)||0;
 let rvEditing=false, rvSrc="", rvMsg="";
+let rvEditDefault=true;      /* 进审核模式默认就是编辑态；点「查看」切回渲染版 */
+let rvBusy=false;            /* 正在取原文，别重复发请求 */
 const SAMEORIGIN=location.protocol==="http:"||location.protocol==="https:";
 function rvSave(){try{
   localStorage.setItem(RKEY,JSON.stringify(RV));
@@ -408,7 +410,8 @@ function rvRender(){
         <button id="rvOk" class="${rec.s==="ok"?"on":""}">通过</button>
         <button id="rvFix" class="${rec.s==="fix"?"on":""}">要改</button>
         <button id="rvNext"${rvIdx>=list.length-1?" disabled":""}>下一条 →</button>
-        <button id="rvEdit" title="直接改这一条的 markdown 原文">编辑原文</button>
+        <button id="rvEdit" title="${rvEditing?"切回排版好的样子":"直接改这一条的 markdown 原文"}"
+          >${rvEditing?"查看":"编辑原文"}</button>
       </div>`;
   if(rvEditing){
     $("#body").innerHTML=bar+`<div class="rv-edit">
@@ -420,6 +423,7 @@ function rvRender(){
         </div></div>`+acts;
     rvBind();rvBindEdit();return;
   }
+  if(rvEditDefault){rvAutoEdit();return;}
   $("#body").innerHTML=bar+card(it,false,false)+acts+`
       <textarea id="rvNote" placeholder="这一条要改什么？写一句（留空也行）">${esc(rec.n||"")}</textarea>
       <div class="rv-tip">快捷键：← → 翻条 · 1 通过 · 2 要改 · 拼音输入法打字时快捷键不触发</div>`;
@@ -434,31 +438,36 @@ function rvBind(){
   on("rvPrev",()=>{if(rvIdx>0)mv(-1);});
   on("rvNext",()=>{if(rvIdx<list.length-1)mv(1);});
   const ed=document.getElementById("rvEdit");
-  if(ed)ed.onclick=rvEdit;
+  if(ed)ed.onclick=()=>{
+    if(rvEditing){rvEditDefault=false;rvEditing=false;rvMsg="";rvRender();}
+    else{rvEditDefault=true;rvRender();}
+  };
   on("rvOk",()=>{if(it){rvSet(it.anchor,"s","ok");rvNextOr();}});
   on("rvFix",()=>{if(it){rvSet(it.anchor,"s","fix");rvCount();   /* 标完先把计数刷新，再让去写备注 */
     const n=document.getElementById("rvNote");if(n)n.focus();}});
   const note=document.getElementById("rvNote");
   if(note&&it)note.oninput=()=>rvSet(it.anchor,"n",note.value);
 }
-function rvEdit(){                                  /* 取这一条的 markdown 原文，进来直接改 */
+function rvAutoEdit(){                              /* 取这一条的 markdown 原文，进来直接改 */
   const list=rvList(), it=list[rvIdx]; if(!it)return;
   if(!SAMEORIGIN){
     rvEditing=true;rvSrc="";
-    rvMsg=`网页是用 file:// 打开的，浏览器不让它写本地文件。<br>
-      先在本机跑一次 <code>python3 tools/review_server.py</code>，
-      再打开 <code>http://127.0.0.1:8787/</code> 就有保存功能（现在就这一个功能需要）。`;
+    rvMsg=`网页是用 file:// 打开的，浏览器不让它写本地文件。先在本机跑一次
+      <code>python3 tools/review_server.py</code>，再打开
+      <code>http://127.0.0.1:8787/</code>。`;
     rvRender();return;
   }
+  if(rvBusy)return;
+  rvBusy=true;rvEditing=true;rvSrc="";rvMsg="载入原文…";rvRender();
   fetch(`/api/raw?sec=${it.sec_no}&no=${it.no}`)
     .then(r=>r.json())
-    .then(d=>{rvEditing=true;rvSrc=d.text||"";rvMsg="";rvRender();})
-    .catch(e=>{rvEditing=true;rvSrc="";rvMsg="取原文失败："+e.message;rvRender();});
+    .then(d=>{rvBusy=false;rvSrc=d.text||"";rvMsg="";rvRender();})
+    .catch(e=>{rvBusy=false;rvSrc="";rvMsg="取原文失败："+e.message;rvRender();});
 }
 function rvBindEdit(){
   const ta=document.getElementById("rvSrc");
   if(ta)ta.oninput=()=>{rvSrc=ta.value;};
-  on("rvCancel",()=>{rvEditing=false;rvMsg="";rvRender();});
+  on("rvCancel",()=>{rvEditDefault=false;rvEditing=false;rvMsg="";rvRender();});
   on("rvSave",()=>{
     const list=rvList(), it=list[rvIdx]; if(!it)return;
     const msg=document.getElementById("rvMsg");
@@ -518,6 +527,7 @@ addEventListener("keydown",e=>{
 });
 $("#rvBtn").onclick=()=>{
   rvOn=!rvOn;
+  if(rvOn)rvEditDefault=true;          /* 每次进审核模式都回到「直接改原文」 */
   $("#rvBtn").classList.toggle("on",rvOn);
   $("#rvBtn").textContent=rvOn?"退出审核":"审核模式";
   draw();
