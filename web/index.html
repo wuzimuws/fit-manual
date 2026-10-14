@@ -87,7 +87,8 @@ cursor:pointer;line-height:1.5}
 .toc-g:hover{color:var(--acc)}
 .toc-g.on{color:var(--acc)}
 .toc-sub a i{font-style:normal;flex:none;width:20px;text-align:right;opacity:.65}
-.toc-sub a span{flex:1;min-width:0;white-space:normal;min-height:40px}  /* 恒为两行 */
+.toc-sub a span{flex:1;min-width:0;display:-webkit-box;-webkit-box-orient:vertical;
+-webkit-line-clamp:2;overflow:hidden}       /* 最多两行，超出省略；短标题仍是一行 */
 input[type=search]{width:100%;padding:8px 12px;border:1px solid var(--line);
 border-radius:9px;font-size:14px;font-family:inherit;background:var(--card)}
 .levels{display:flex;gap:6px}
