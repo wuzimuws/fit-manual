@@ -168,10 +168,15 @@ h1{margin:0 0 10px;font-size:27px;letter-spacing:-.5px}
 border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:9px}
 .sec-h .sec-n{font-size:12px;color:var(--dim);font-weight:400}
 .sec-h:first-child{margin-top:0}
+/* 节标题（照参考站 .sec-h：h2 + 条数） */
+.sec-head{display:flex;align-items:baseline;gap:12px;margin:0 0 14px;
+padding-bottom:10px;border-bottom:1px solid var(--line)}
+.sec-head h2{font-size:24px;margin:0;letter-spacing:-.3px}
+.sec-head .shown{font-size:13px;color:var(--dim)}
 /* 主题分组头（参考站 .sec-h：二级标题 + 条数） */
 .theme{margin:32px 0 16px;padding-bottom:11px;border-bottom:1px solid var(--line)}
 .theme:first-of-type{margin-top:10px}
-.theme h2{font-size:19px;margin:0 0 6px;display:flex;align-items:baseline;gap:9px;
+.theme h3{font-size:19px;margin:0 0 6px;display:flex;align-items:baseline;gap:9px;
 letter-spacing:-.2px}
 .theme .tn{font-size:12px;color:var(--dim);font-weight:400}
 .tlead{font-size:14px;color:var(--dim);margin:0 0 10px;line-height:1.7}
@@ -254,7 +259,7 @@ margin-bottom:20px;color:var(--dim);font-size:15px}
 .intro h4{color:var(--ink);font-size:15px;margin:14px 0 6px}
 .intro h4:first-child{margin-top:0}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:14px}
-.card h3{margin:0 0 14px;font-size:18px;line-height:1.5;display:flex;gap:10px;align-items:flex-start}
+.card h4{margin:0 0 14px;font-size:18px;line-height:1.5;display:flex;gap:10px;align-items:flex-start}
 .num{color:#b9b3a8;font-size:14px;font-variant-numeric:tabular-nums;padding-top:3px;min-width:22px}
 .lv{flex:none;width:23px;height:23px;border-radius:6px;display:grid;place-items:center;
 font-size:12px;font-weight:700;color:#fff;margin-top:2px}
@@ -417,8 +422,8 @@ function renderItems(sec,items,compact){          /* 有主题分组时按主题
   html+=(by.get("")||[]).map(it=>card(it,false,compact)).join("");
   sec.themes.forEach(th=>{
     const arr=by.get(th.name)||[];if(!arr.length)return;
-    html+=`<div class="theme" id="${th.id}"><h2><span>${esc(th.name)}</span>`
-        +`<span class="tn">${arr.length} 条</span></h2>`
+    html+=`<div class="theme" id="${th.id}"><h3><span>${esc(th.name)}</span>`
+        +`<span class="tn">${arr.length} 条</span></h3>`
         +(th.lead?`<p class="tlead">${th.lead}</p>`:"")
         +`<div class="jumps">`
         +arr.map(it=>`<a class="jump" data-go="${it.anchor}"><i>${it.no}</i>${esc(it.title)}</a>`).join("")
@@ -431,12 +436,12 @@ const hay=it=>[it.title,it["总结性建议"],it["具体地"],it["为什么这�
 function card(it,showSec,compact){
   const mir=it.mirror?`<div class="mirror">本条正文与 <a href="#${it.mirror_anchor}" data-go="${it.mirror_anchor}">${it.mirror_label}</a>「${it.mirror_title}」相同，<b>正文以该条为准</b></div>`:"";
   if(compact&&it.mirror)                      /* 全书视图：镜像条不重复展开 */
-    return `<div class="card compact" id="${it.anchor}"><h3><span class="num">${it.no}</span>
+    return `<div class="card compact" id="${it.anchor}"><h4><span class="num">${it.no}</span>
       <span class="lv ${it.level}">${it.level}</span><span>${it.title}</span>
-      <span class="sec-tag">${it.sec}</span></h3>${mir}</div>`;
-  return `<div class="card" id="${it.anchor}"><h3><span class="num">${it.no}</span>
+      <span class="sec-tag">${it.sec}</span></h4>${mir}</div>`;
+  return `<div class="card" id="${it.anchor}"><h4><span class="num">${it.no}</span>
     <span class="lv ${it.level}">${it.level}</span><span>${it.title}</span>
-    ${showSec?`<span class="sec-tag">${it.sec}</span>`:""}</h3>
+    ${showSec?`<span class="sec-tag">${it.sec}</span>`:""}</h4>
     ${mir}${["总结性建议","具体地","为什么这样建议","来源"].map(f=>{
       let v=it[f];
       if(f==="来源"&&!it.src_done) v=`<span class="todo">〔待补〕</span>`;
@@ -470,8 +475,8 @@ function draw(){
       const arr=s.items.filter(it=>lv[it.level]&&(!q||hay(it).includes(q)));
       if(!arr.length)return;
       n+=arr.length;
-      html+=`<h4 class="sec-h"><span>${s.no}. ${s.name}</span>`
-          + `<span class="sec-n">${arr.length} 条</span></h4>`
+      html+=`<h2 class="sec-h"><span>${s.no}. ${s.name}</span>`
+          + `<span class="sec-n">${arr.length} 条</span></h2>`
           + renderItems(s,arr,true);
     });
     $("#cnt").textContent=q?`全书命中 ${n} 条`:`${n} / ${TOTAL} 条（全书）`;
@@ -491,7 +496,9 @@ function draw(){
   const s=DATA.find(x=>String(x.no)===cur);   /* 无搜索词 → 只看当前节 */
   const items=s.items.filter(it=>lv[it.level]);
   $("#cnt").textContent=`${items.length} / ${s.items.length} 条`;
-  $("#body").innerHTML=`<div class="intro">${s.intro}</div>`+renderItems(s,items,false);
+  $("#body").innerHTML=`<div class="sec-head"><h2>${s.no}. ${esc(s.name)}</h2>`
+    +`<span class="shown">${items.length} / ${s.items.length} 条</span></div>`
+    +`<div class="intro">${s.intro}</div>`+renderItems(s,items,false);
   syncToc(); spy();
 }
 draw();
