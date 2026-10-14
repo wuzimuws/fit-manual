@@ -20,6 +20,18 @@ for fn in files:
             err.append(f"{fn}: 栏位「{f}」数量不符")
     for w in ["我觉得","其实","我建议","我发现"]:
         if w in t: err.append(f"{fn}: 残留软化词「{w}」")
+    # 页脚重复
+    for m_ in re.finditer(r"^> \*\*下一节[^\n]*", t, re.M):
+        if m_.group(0).count("——") > 1:
+            err.append(f"{fn}: 页脚重复")
+    # 同节内重复句（≥14 字，跳过字段标签/表格线）
+    sents = [s.strip() for s in re.split(r"[。！？\n]", t)]
+    sents = [s for s in sents if len(s) >= 14
+             and not s.startswith("- **") and not re.match(r"^[\s|:-]+$", s)]
+    seen = {}
+    for s in sents:
+        if s in seen: err.append(f"{fn}: 重复句「{s[:30]}」")
+        seen[s] = 1
     # AI 腔调：对偶式「不是 X，是 Y」
     for p_ in [r"不是[^。！？\n]{1,40}?，是", r"不是[^。！？\n]{1,40}?，?而是",
                r"不是[^。！？\n]{1,30}?。\s*是", r"问题不在[^。！？\n]{1,30}?，?在",
