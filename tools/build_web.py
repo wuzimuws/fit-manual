@@ -147,8 +147,13 @@ h1{margin:0 0 10px;font-size:27px;letter-spacing:-.5px}
 .disc-h{font-weight:600;color:var(--ink);margin-bottom:8px}
 .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
 .layout{display:grid;grid-template-columns:208px minmax(0,1fr);gap:30px;align-items:start;padding-top:22px}
-.side{position:sticky;top:16px;display:flex;flex-direction:column}
-.side-h{font-size:12px;color:var(--dim);letter-spacing:.07em;margin:16px 0 6px}
+.side{position:sticky;top:16px;display:flex;flex-direction:column;
+max-height:calc(100vh - 32px);overflow-y:auto}
+.grp{margin-top:18px}
+.grp:first-of-type{margin-top:13px}
+.gt{font-size:14px;font-weight:700;margin:0 0 4px}
+.gd{font-size:11px;color:var(--dim);line-height:1.55;margin:0 0 8px}
+.hint{font-size:11px;color:var(--dim);line-height:1.6;margin:18px 0 0}
 nav{display:flex;flex-direction:column;gap:2px}
 nav button{text-align:left;border:1px solid transparent;background:none;color:var(--ink);
 padding:7px 10px;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit;line-height:1.35}
@@ -158,7 +163,8 @@ input[type=search]{width:100%;padding:8px 12px;border:1px solid var(--line);
 border-radius:9px;font-size:14px;font-family:inherit;background:var(--card)}
 .levels{display:flex;gap:6px}
 .chip{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);
-background:var(--card);padding:5px 14px;border-radius:8px;font-size:13px;cursor:pointer;user-select:none}
+background:var(--card);padding:3px 11px;border-radius:999px;font-size:12px;cursor:pointer;user-select:none}
+.chip:hover{border-color:#c9c3b8}
 .chip.on{background:#eef5f1;border-color:var(--acc);color:var(--acc)}
 .count{color:var(--dim);font-size:12px;margin-top:14px;line-height:1.55}
 @media(max-width:860px){
@@ -219,14 +225,20 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
 <div class="wrap layout">
   <aside class="side" id="side">
     <input type="search" id="q" placeholder="搜索（可跨章）">
-    <div class="side-h">章节</div>
-    <nav id="nav"></nav>
-    <div class="side-h">证据等级</div>
-    <div class="levels">
-      <span class="chip on" data-lv="A">A</span>
-      <span class="chip on" data-lv="B">B</span>
-      <span class="chip on" data-lv="C">C</span>
+    <div class="grp">
+      <div class="gt">证据等级</div>
+      <div class="gd">A 机制或共识 ＋ 我验证过 · B 道理站得住但靠经验 · C 只有我的体感</div>
+      <div class="levels">
+        <span class="chip on" data-lv="A">A 级</span>
+        <span class="chip on" data-lv="B">B 级</span>
+        <span class="chip on" data-lv="C">C 级</span>
+      </div>
     </div>
+    <div class="grp">
+      <div class="gt">章节</div>
+      <nav id="nav"></nav>
+    </div>
+    <div class="hint">章节一次看一个；等级可多选，多选之间是「或」。</div>
     <span class="count" id="cnt"></span>
   </aside>
   <main>
