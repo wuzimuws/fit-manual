@@ -137,6 +137,7 @@ TPL = r"""<!DOCTYPE html>
 *{box-sizing:border-box}
 :root{--bg:#fbfaf8;--card:#fff;--line:#e6e2db;--ink:#1c1a17;--dim:#6f6a61;--acc:#1a6b4a;
 --A:#1a6b4a;--B:#9a6b1a;--C:#7a5c8a}
+html{scrollbar-gutter:stable}          /* 正文高矮变化时不再挤动整页宽度 */
 body{margin:0;background:var(--bg);color:var(--ink);
 font:16px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
 header.topbar{position:sticky;top:0;z-index:20;background:var(--card);
@@ -164,7 +165,9 @@ border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:9px}
 .top-in{display:flex;align-items:center;gap:13px;height:56px;padding:0 24px}
 .side{position:fixed;top:57px;left:0;bottom:0;width:238px;z-index:15;
 display:flex;flex-direction:column;background:var(--card);border-right:1px solid var(--line);
-padding:20px 18px 44px;overflow-y:auto}
+padding:20px 18px 44px;overflow-y:auto;overflow-x:hidden;
+scrollbar-gutter:stable}                /* 常驻预留滚动条槽位：展开/收起不再改宽度 */
+.side::-webkit-scrollbar{width:16px}
 main{margin-left:238px}
 .main-in{max-width:900px;margin:0 auto;padding:26px 46px 96px}
 .grp{margin-top:18px}
