@@ -139,16 +139,31 @@ TPL = r"""<!DOCTYPE html>
 --A:#1a6b4a;--B:#9a6b1a;--C:#7a5c8a}
 body{margin:0;background:var(--bg);color:var(--ink);
 font:16px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
-header{padding:34px 22px 20px;border-bottom:1px solid var(--line);background:var(--card)}
+header.topbar{position:sticky;top:0;z-index:20;background:var(--card);
+border-bottom:1px solid var(--line)}
+.top-in{display:flex;align-items:center;gap:13px;height:56px}
+.logo{font-size:12px;font-weight:700;color:var(--acc);border:1px solid var(--acc);
+border-radius:6px;padding:2px 7px;white-space:nowrap}
+.top-title{font-size:16px;font-weight:600;white-space:nowrap}
+.top-in input[type=search]{width:auto;flex:1;max-width:330px;margin-left:auto}
+.doc{padding:4px 0 22px;border-bottom:1px solid var(--line);margin-bottom:24px}
 h1{margin:0 0 10px;font-size:27px;letter-spacing:-.5px}
-.sub{color:var(--dim);font-size:14px;max-width:800px}
-.sub b{color:var(--ink)}
-.sub p{margin:0 0 7px}.sub p:last-child{margin:0}
-.disc-h{font-weight:600;color:var(--ink);margin-bottom:8px}
+.lede{color:var(--dim);font-size:15px;margin:0 0 14px;line-height:1.7}
+.stats{font-size:13px;color:var(--dim);margin:0 0 20px}
+.stats b{font-weight:600}
+.stats .A{color:var(--A)}.stats .B{color:var(--B)}.stats .C{color:var(--C)}
+.disc{font-size:14px;color:var(--dim);background:#f6f4f0;border-radius:10px;padding:14px 16px}
+.disc .disc-h{color:var(--ink);margin-bottom:7px}
+.disc p{margin:0 0 7px}.disc p:last-child{margin:0}
+.disc b{color:var(--ink)}
+.sec-h{font-size:15px;margin:30px 0 12px;padding-bottom:7px;
+border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:9px}
+.sec-h .sec-n{font-size:12px;color:var(--dim);font-weight:400}
+.sec-h:first-child{margin-top:0}
 .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
-.layout{display:grid;grid-template-columns:208px minmax(0,1fr);gap:30px;align-items:start;padding-top:22px}
-.side{position:sticky;top:16px;display:flex;flex-direction:column;
-max-height:calc(100vh - 32px);overflow-y:auto}
+.layout{display:grid;grid-template-columns:208px minmax(0,1fr);gap:30px;align-items:start;padding-top:26px}
+.side{position:sticky;top:72px;display:flex;flex-direction:column;
+max-height:calc(100vh - 88px);overflow-y:auto}
 .grp{margin-top:18px}
 .grp:first-of-type{margin-top:13px}
 .gt{font-size:14px;font-weight:700;margin:0 0 4px}
@@ -218,13 +233,13 @@ margin:0 0 12px;font-size:13px;color:var(--dim);line-height:1.6}
 .page blockquote{margin:12px 0;padding:10px 16px;border-left:3px solid var(--acc);background:#f4f8f6;color:var(--dim)}
 footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
 </style></head><body>
-<header><div class="wrap">
-<h1>高性价比新手小白健身指南</h1>
-<div class="sub"><div class="disc-h">免责声明</div>__DISCLAIMER__</div>
+<header class="topbar"><div class="wrap top-in">
+  <span class="logo">指南</span>
+  <span class="top-title">高性价比新手小白健身指南</span>
+  <input type="search" id="q" placeholder="搜索条目（可跨章）">
 </div></header>
 <div class="wrap layout">
   <aside class="side" id="side">
-    <input type="search" id="q" placeholder="搜索（可跨章）">
     <div class="grp">
       <div class="gt">证据等级</div>
       <div class="gd">A 机制或共识 ＋ 我验证过 · B 道理站得住但靠经验 · C 只有我的体感</div>
@@ -242,15 +257,25 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
     <span class="count" id="cnt"></span>
   </aside>
   <main>
+    <div class="doc" id="doc">
+      <h1>高性价比新手小白健身指南</h1>
+      <p class="lede">新手小白的第一年：训练、饮食、恢复、避坑。<br>
+      每一条都告诉你「怎么做、为什么、我自己验证到什么程度」。</p>
+      <div class="stats">__SECTIONS__ 节 · __TOTAL__ 条 · <b class="A">A __NA__</b>
+      · <b class="B">B __NB__</b> · <b class="C">C __NC__</b></div>
+      <div class="disc"><div class="disc-h">免责声明</div>__DISCLAIMER__</div>
+    </div>
     <div id="body"></div>
     <footer>共 __TOTAL__ 条 · __SECTIONS__ 节 · 作者个人经验，仅供参考</footer>
   </main>
 </div>
 <script>
-const DATA=__DATA__, PAGES=__PAGES__;
+const DATA=__DATA__, PAGES=__PAGES__, TOTAL=__TOTAL__;
 let cur="1", q="", lv={A:1,B:1,C:1};
 const $=s=>document.querySelector(s), nav=$("#nav");
-const tabs=[{k:"pre",t:"前言"},...DATA.map(s=>({k:String(s.no),t:s.no+". "+s.name})),{k:"end",t:"结语"},{k:"app",t:"附录"}];
+const tabs=[{k:"all",t:"全部 · "+TOTAL+" 条"},{k:"pre",t:"前言"},
+  ...DATA.map(s=>({k:String(s.no),t:s.no+". "+s.name})),
+  {k:"end",t:"结语"},{k:"app",t:"附录"}];
 nav.innerHTML=tabs.map(t=>`<button data-k="${t.k}">${t.t}</button>`).join("");
 nav.onclick=e=>{const b=e.target.closest("button");if(!b)return;cur=b.dataset.k;draw();
   window.scrollTo({top:0,behavior:"smooth"});};
@@ -258,8 +283,12 @@ document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{
   lv[c.dataset.lv]=!lv[c.dataset.lv];c.classList.toggle("on");draw();});
 $("#q").oninput=e=>{q=e.target.value.trim().toLowerCase();draw();};
 const hay=it=>[it.title,it["总结性建议"],it["具体地"],it["为什么这样建议"]].join(" ").replace(/<[^>]+>/g,"").toLowerCase();
-function card(it,showSec){
+function card(it,showSec,compact){
   const mir=it.mirror?`<div class="mirror">本条正文与 <a href="#${it.mirror_anchor}" data-go="${it.mirror_anchor}">${it.mirror_label}</a>「${it.mirror_title}」相同，<b>正文以该条为准</b></div>`:"";
+  if(compact&&it.mirror)                      /* 全书视图：镜像条不重复展开 */
+    return `<div class="card compact" id="${it.anchor}"><h3><span class="num">${it.no}</span>
+      <span class="lv ${it.level}">${it.level}</span><span>${it.title}</span>
+      <span class="sec-tag">${it.sec}</span></h3>${mir}</div>`;
   return `<div class="card" id="${it.anchor}"><h3><span class="num">${it.no}</span>
     <span class="lv ${it.level}">${it.level}</span><span>${it.title}</span>
     ${showSec?`<span class="sec-tag">${it.sec}</span>`:""}</h3>
@@ -288,7 +317,22 @@ function draw(){
   nav.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.k===cur));
   const isList=!("pre end app".split(" ").includes(cur));
   $("#side").style.display=isList?"flex":"none";
+  $("#doc").style.display=isList?"block":"none";
   if(!isList){$("#body").innerHTML=`<div class="page">${PAGES[cur].html}</div>`;return;}
+  if(cur==="all"){                          /* 全部：按章分组，等级筛选跨全书 */
+    let n=0,html="";
+    DATA.forEach(s=>{
+      const arr=s.items.filter(it=>lv[it.level]&&(!q||hay(it).includes(q)));
+      if(!arr.length)return;
+      n+=arr.length;
+      html+=`<h4 class="sec-h"><span>${s.no}. ${s.name}</span>`
+          + `<span class="sec-n">${arr.length} 条</span></h4>`
+          + arr.map(it=>card(it,false,true)).join("");
+    });
+    $("#cnt").textContent=q?`全书命中 ${n} 条`:`${n} / ${TOTAL} 条（全书）`;
+    $("#body").innerHTML=html||'<div class="card">没有符合条件的条目。</div>';
+    return;
+  }
   if(q){                                   /* 有搜索词 → 全书跨节搜 */
     const hits=[];
     DATA.forEach(s=>s.items.forEach(it=>{if(lv[it.level]&&hay(it).includes(q))hits.push(it)}));
@@ -318,6 +362,9 @@ def main():
     html = (TPL.replace("__DATA__", json.dumps(secs, ensure_ascii=False))
                .replace("__PAGES__", json.dumps(pages, ensure_ascii=False))
                .replace("__DISCLAIMER__", disclaimer())
+               .replace("__NA__", str(sum(1 for s in secs for i in s["items"] if i["level"]=="A")))
+               .replace("__NB__", str(sum(1 for s in secs for i in s["items"] if i["level"]=="B")))
+               .replace("__NC__", str(sum(1 for s in secs for i in s["items"] if i["level"]=="C")))
                .replace("__TOTAL__", str(total))
                .replace("__SECTIONS__", str(len(secs))))
     os.makedirs(os.path.join(ROOT, "web"), exist_ok=True)
