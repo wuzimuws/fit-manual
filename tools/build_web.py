@@ -99,7 +99,10 @@ def parse_sections():
                  "anchor": f"c-{s['no']}-{it['no']}", "mirror": it["mirror"]}
             for f in FIELDS:
                 val = it[f]
-                d[f] = md_block(val) if f == "具体地" else inline(val.replace("\n", " ").strip())
+                # 多行字段必须走 md_block：inline() 会把换行压成空格，
+                # 子项「  - 」就会原样输出成一整段（"没有自动换行"）
+                multi = f in ("具体地", "为什么这样建议", "总结性建议") and "\n" in val
+                d[f] = md_block(val) if multi else inline(val.replace("\n", " ").strip())
             lv = re.sub(r"<[^>]+>", "", d["主观证据等级"]).strip()
             d["level"] = lv if lv in ("A", "B", "C") else "B"
             d["src_done"] = TODO not in d["来源"]

@@ -182,6 +182,31 @@ python3 tools/verify_refs.py
 
 顺带：行内的 `① ② ③` 可以用（它本来就是行内枚举，不占行首）。
 
+### 多行字段必须走 `md_block`，不能用 `inline()`
+
+`build_web.py` 里这一行踩过坑：
+
+```python
+d[f] = md_block(val) if f == "具体地" else inline(val.replace("\n", " ").strip())
+```
+
+`inline()` **会把换行压成空格**，于是「为什么这样建议」里的 `  - ` 子项被原样输出成一整段
+（网页上就是一大段带着字面 `- ` 的长文本，**不换行**）。
+
+修法：多行字段都交给 `md_block`：
+
+```python
+multi = f in ("具体地", "为什么这样建议", "总结性建议") and "\n" in val
+d[f] = md_block(val) if multi else inline(val.replace("\n", " ").strip())
+```
+
+**这个坑很阴**：源 markdown 完全正确，问题在渲染层选了错的函数。
+排查方法——**直接看渲染后的 DOM**：
+
+```js
+document.querySelector('#c-1-4 .v').innerHTML   // 是 <ul> 还是带字面 "- " 的 <p>？
+```
+
 ### 子项缩进必须整组一致
 
 ```markdown

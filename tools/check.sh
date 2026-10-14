@@ -48,6 +48,11 @@ for fn in files:
     for m_ in re.finditer(r"[\u4e00-\u9fff][,;:!?]|[,;:!?][\u4e00-\u9fff]", t):
         err.append(f"{fn}: 中文里混了半角标点「{m_.group(0)}」")
 
+    # 行内 ①②③ 枚举（同一行 ≥2 个）应拆成子项
+    for ln_ in t.split("\n"):
+        if len(re.findall(r"[①-⑨]", ln_)) >= 2:
+            err.append(f"{fn}: 行内枚举「{ln_.strip()[:34]}…」应拆成子项")
+
     # 不要用「（N）」行式枚举——统一用「  - 」子项，否则网页上没有项目符号
     for m_ in re.finditer(r"^\s*（\d+）", t, re.M):
         err.append(f"{fn}: 行首枚举「{m_.group(0).strip()}」应改成「  - 」子项")
@@ -91,6 +96,11 @@ for path in EXTRA:
     # 半角标点不得夹在中文里
     for m_ in re.finditer(r"[\u4e00-\u9fff][,;:!?]|[,;:!?][\u4e00-\u9fff]", t):
         err.append(f"{fn}: 中文里混了半角标点「{m_.group(0)}」")
+
+    # 行内 ①②③ 枚举（同一行 ≥2 个）应拆成子项
+    for ln_ in t.split("\n"):
+        if len(re.findall(r"[①-⑨]", ln_)) >= 2:
+            err.append(f"{fn}: 行内枚举「{ln_.strip()[:34]}…」应拆成子项")
 
     # 不要用「（N）」行式枚举——统一用「  - 」子项，否则网页上没有项目符号
     for m_ in re.finditer(r"^\s*（\d+）", t, re.M):
