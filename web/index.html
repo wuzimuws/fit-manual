@@ -36,19 +36,19 @@ border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:9px}
 padding-bottom:10px;border-bottom:1px solid var(--line)}
 .sec-head h2{font-size:24px;margin:0;letter-spacing:-.3px}
 .sec-head .shown{font-size:13px;color:var(--dim)}
-/* 主题分组头（参考站 .sec-h：二级标题 + 条数） */
-.theme{margin:32px 0 16px;padding-bottom:11px;border-bottom:1px solid var(--line)}
-.theme:first-of-type{margin-top:10px}
-.theme h3{font-size:19px;margin:0 0 6px;display:flex;align-items:baseline;gap:9px;
-letter-spacing:-.2px}
-.theme .tn{font-size:12px;color:var(--dim);font-weight:400}
-.tlead{font-size:14px;color:var(--dim);margin:0 0 10px;line-height:1.7}
-.jumps{display:flex;flex-wrap:wrap;gap:6px}
-.jump{display:inline-flex;gap:5px;align-items:center;font-size:12.5px;color:var(--dim);
-background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 11px;
-text-decoration:none;cursor:pointer;line-height:1.5}
-.jump:hover{color:var(--acc);border-color:var(--acc)}
-.jump i{font-style:normal;opacity:.6}
+/* 章节简介区里的「内置主题分类 + 快速索引」（照参考站：简介段后按主题列条目） */
+.idx{margin:16px 0 30px;padding:16px 18px;background:#fbfaf8;border:1px solid var(--line);
+border-radius:10px}
+.idx>p{margin:0 0 3px}
+.idx-g{margin:0 0 13px;scroll-margin-top:76px}
+.idx-g:last-child{margin-bottom:0}
+.idx-g>b{font-size:13.5px;font-weight:700}
+.idx-lead{font-size:12.5px;color:var(--dim);margin-left:5px}
+.idx-links{margin-top:5px;line-height:1.9}
+.idx-links a{font-size:13px;color:var(--dim);text-decoration:none;cursor:pointer}
+.idx-links a:hover{color:var(--acc)}
+.idx-links a::after{content:"·";margin:0 7px;color:#cfc9be}
+.idx-links a:last-child::after{content:"";margin:0}
 .top-in{display:flex;align-items:center;gap:13px;height:56px;padding:0 24px}
 .side{position:fixed;top:57px;left:0;bottom:0;width:272px;z-index:15;
 display:flex;flex-direction:column;background:var(--card);border-right:1px solid var(--line);
@@ -277,23 +277,22 @@ document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{
 $("#q").oninput=e=>{q=e.target.value.trim().toLowerCase();draw();};
 document.querySelector(".top-title").onclick=e=>{e.preventDefault();
   cur="all";draw();window.scrollTo({top:0,behavior:"smooth"});};
-function renderItems(sec,items,compact){          /* 有主题分组时按主题切块渲染 */
-  let html="";
-  if(!sec.themes||!sec.themes.length) return items.map(it=>card(it,false,compact)).join("");
+function renderItems(sec,items,compact){ return items.map(it=>card(it,false,compact)).join(""); }
+
+/* 简介区的「内置主题分类 + 快速索引」：主题名 + 一句说明 + 该主题全部条目的跳转。
+   主题不再是正文里的一层，只是简介区的一部分。 */
+function idxBlock(sec,items){
+  if(!sec.themes||!sec.themes.length) return "";
   const by=new Map();
   items.forEach(it=>{const k=it.theme||"";if(!by.has(k))by.set(k,[]);by.get(k).push(it);});
-  html+=(by.get("")||[]).map(it=>card(it,false,compact)).join("");
-  sec.themes.forEach(th=>{
-    const arr=by.get(th.name)||[];if(!arr.length)return;
-    html+=`<div class="theme" id="${th.id}"><h3><span>${esc(th.name)}</span>`
-        +`<span class="tn">${arr.length} 条</span></h3>`
-        +(th.lead?`<p class="tlead">${th.lead}</p>`:"")
-        +`<div class="jumps">`
-        +arr.map(it=>`<a class="jump" data-go="${it.anchor}"><i>${it.no}</i>${esc(it.title)}</a>`).join("")
-        +`</div></div>`
-        +arr.map(it=>card(it,false,compact)).join("");
-  });
-  return html;
+  const parts=sec.themes.map(th=>{
+    const arr=by.get(th.name)||[];if(!arr.length)return "";
+    return `<div class="idx-g" id="${th.id}"><b>${esc(th.name)}</b>`
+      +(th.lead?`<span class="idx-lead">${th.lead}</span>`:"")
+      +`<div class="idx-links">`
+      +arr.map(it=>`<a data-go="${it.anchor}">${esc(it.title)}</a>`).join("")+`</div></div>`;
+  }).join("");
+  return parts?`<div class="idx">${parts}</div>`:"";
 }
 const hay=it=>[it.title,it["总结性建议"],it["具体地"],it["为什么这样建议"]].join(" ").replace(/<[^>]+>/g,"").toLowerCase();
 function card(it,showSec,compact){
@@ -361,7 +360,8 @@ function draw(){
   $("#cnt").textContent=`${items.length} / ${s.items.length} 条`;
   $("#body").innerHTML=`<div class="sec-head"><h2>${s.no}. ${esc(s.name)}</h2>`
     +`<span class="shown">${items.length} / ${s.items.length} 条</span></div>`
-    +`<div class="intro">${s.intro}</div>`+renderItems(s,items,false);
+    +`<div class="intro">${s.intro}</div>`+idxBlock(s,items)
+    +renderItems(s,items,false);
   syncToc(); spy();
 }
 draw();
