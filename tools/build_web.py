@@ -192,8 +192,8 @@ main{margin-left:272px}
 .grp{margin-top:18px}
 .grp:first-of-type{margin-top:13px}
 .gt{font-size:14px;font-weight:700;margin:0 0 4px}
-.gd{font-size:11px;color:var(--dim);line-height:1.55;margin:0 0 8px}
-.hint{font-size:11px;color:var(--dim);line-height:1.6;margin:18px 0 0}
+.gd{font-size:12px;color:var(--dim);line-height:1.6;margin:0 0 8px}
+.hint{font-size:12px;color:var(--dim);line-height:1.65;margin:18px 0 0}
 nav{display:flex;flex-direction:column;gap:2px}
 nav button{text-align:left;border:1px solid transparent;background:none;color:var(--ink);
 padding:7px 10px;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit;line-height:1.35}
@@ -212,19 +212,19 @@ transition:transform .18s;cursor:pointer;border-radius:4px}
 .ch.open .ch-b .fold{transform:rotate(180deg)}
 .toc-sub{display:flex;flex-direction:column;padding:1px 0 7px}
 .toc-sub[hidden]{display:none}
-.toc-sub a{display:flex;gap:6px;font-size:13px;color:var(--dim);text-decoration:none;
-padding:3px 6px 3px 11px;line-height:1.45;border-left:2px solid transparent;
-border-radius:0 6px 6px 0}
+.toc-sub a{display:flex;gap:6px;align-items:flex-start;font-size:13px;color:var(--dim);
+text-decoration:none;padding:3px 6px 3px 12px;line-height:20px;
+border-left:2px solid transparent;border-radius:0 6px 6px 0}
 .toc-sub a:hover{color:var(--acc);background:#f2f6f3}
 .toc-sub a.on{color:var(--acc);border-left-color:var(--acc);font-weight:600}
 .toc-sub a.on i{opacity:1}
-.toc-g{font-size:11px;font-weight:600;color:var(--dim);padding:8px 0 2px 11px;
+.toc-g{font-size:12px;font-weight:600;color:var(--dim);padding:9px 0 2px 12px;
 cursor:pointer;line-height:1.5}
 .toc-g:first-child{padding-top:2px}
 .toc-g:hover{color:var(--acc)}
 .toc-g.on{color:var(--acc)}
-.toc-sub a i{font-style:normal;flex:none;min-width:13px;text-align:right;opacity:.7}
-.toc-sub a span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toc-sub a i{font-style:normal;flex:none;width:20px;text-align:right;opacity:.65}
+.toc-sub a span{flex:1;min-width:0;white-space:normal;min-height:40px}  /* 恒为两行 */
 input[type=search]{width:100%;padding:8px 12px;border:1px solid var(--line);
 border-radius:9px;font-size:14px;font-family:inherit;background:var(--card)}
 .levels{display:flex;gap:6px}
