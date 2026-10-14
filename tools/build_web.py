@@ -95,8 +95,10 @@ def parse_sections():
     for s in secs_raw:
         items = []
         for it in s["items"]:
-            d = {"no": it["no"], "title": it["title"], "sec": s["name"], "sec_no": s["no"],
-                 "anchor": f"c-{s['no']}-{it['no']}", "mirror": it["mirror"]}
+            # 整体拷贝 refs 解析出的字段，再加渲染用的——这样 refs.py 新增字段会自动流到前端，
+            # 不会再出现「解析器有、前端拿不到」的哑 bug（theme 就这样丢过一次）
+            d = {k: v for k, v in it.items() if k != "raw"}
+            d["anchor"] = f"c-{s['no']}-{it['no']}"
             for f in FIELDS:
                 val = it[f]
                 # 多行字段必须走 md_block：inline() 会把换行压成空格，
@@ -112,7 +114,10 @@ def parse_sections():
                 d["mirror_anchor"] = f"c-{sn}-{ino}"
                 d["mirror_title"] = it.get("mirror_title", "")
             items.append(d)
-        secs.append({"no": s["no"], "name": s["name"], "intro": md_block(s["intro"]), "items": items})
+        themes = [{"name": th["name"], "lead": inline(th["lead"]),
+                   "n": len(th["nos"])} for th in s.get("themes", [])]
+        secs.append({"no": s["no"], "name": s["name"], "intro": md_block(s["intro"]),
+                     "themes": themes, "items": items})
     return secs
 
 
@@ -162,6 +167,19 @@ h1{margin:0 0 10px;font-size:27px;letter-spacing:-.5px}
 border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:9px}
 .sec-h .sec-n{font-size:12px;color:var(--dim);font-weight:400}
 .sec-h:first-child{margin-top:0}
+/* 主题分组头（参考站 .sec-h：二级标题 + 条数） */
+.theme{margin:32px 0 16px;padding-bottom:11px;border-bottom:1px solid var(--line)}
+.theme:first-of-type{margin-top:10px}
+.theme h2{font-size:19px;margin:0 0 6px;display:flex;align-items:baseline;gap:9px;
+letter-spacing:-.2px}
+.theme .tn{font-size:12px;color:var(--dim);font-weight:400}
+.tlead{font-size:14px;color:var(--dim);margin:0 0 10px;line-height:1.7}
+.jumps{display:flex;flex-wrap:wrap;gap:6px}
+.jump{display:inline-flex;gap:5px;align-items:center;font-size:12.5px;color:var(--dim);
+background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 11px;
+text-decoration:none;cursor:pointer;line-height:1.5}
+.jump:hover{color:var(--acc);border-color:var(--acc)}
+.jump i{font-style:normal;opacity:.6}
 .top-in{display:flex;align-items:center;gap:13px;height:56px;padding:0 24px}
 .side{position:fixed;top:57px;left:0;bottom:0;width:272px;z-index:15;
 display:flex;flex-direction:column;background:var(--card);border-right:1px solid var(--line);
@@ -363,6 +381,24 @@ document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{
 $("#q").oninput=e=>{q=e.target.value.trim().toLowerCase();draw();};
 document.querySelector(".top-title").onclick=e=>{e.preventDefault();
   cur="all";draw();window.scrollTo({top:0,behavior:"smooth"});};
+function renderItems(sec,items,compact){          /* 有主题分组时按主题切块渲染 */
+  let html="";
+  if(!sec.themes||!sec.themes.length) return items.map(it=>card(it,false,compact)).join("");
+  const by=new Map();
+  items.forEach(it=>{const k=it.theme||"";if(!by.has(k))by.set(k,[]);by.get(k).push(it);});
+  html+=(by.get("")||[]).map(it=>card(it,false,compact)).join("");
+  sec.themes.forEach(th=>{
+    const arr=by.get(th.name)||[];if(!arr.length)return;
+    html+=`<div class="theme"><h2><span>${esc(th.name)}</span>`
+        +`<span class="tn">${arr.length} 条</span></h2>`
+        +(th.lead?`<p class="tlead">${th.lead}</p>`:"")
+        +`<div class="jumps">`
+        +arr.map(it=>`<a class="jump" data-go="${it.anchor}"><i>${it.no}</i>${esc(it.title)}</a>`).join("")
+        +`</div></div>`
+        +arr.map(it=>card(it,false,compact)).join("");
+  });
+  return html;
+}
 const hay=it=>[it.title,it["总结性建议"],it["具体地"],it["为什么这样建议"]].join(" ").replace(/<[^>]+>/g,"").toLowerCase();
 function card(it,showSec,compact){
   const mir=it.mirror?`<div class="mirror">本条正文与 <a href="#${it.mirror_anchor}" data-go="${it.mirror_anchor}">${it.mirror_label}</a>「${it.mirror_title}」相同，<b>正文以该条为准</b></div>`:"";
@@ -408,7 +444,7 @@ function draw(){
       n+=arr.length;
       html+=`<h4 class="sec-h"><span>${s.no}. ${s.name}</span>`
           + `<span class="sec-n">${arr.length} 条</span></h4>`
-          + arr.map(it=>card(it,false,true)).join("");
+          + renderItems(s,arr,true);
     });
     $("#cnt").textContent=q?`全书命中 ${n} 条`:`${n} / ${TOTAL} 条（全书）`;
     $("#body").innerHTML=html||'<div class="card">没有符合条件的条目。</div>';
@@ -427,7 +463,7 @@ function draw(){
   const s=DATA.find(x=>String(x.no)===cur);   /* 无搜索词 → 只看当前节 */
   const items=s.items.filter(it=>lv[it.level]);
   $("#cnt").textContent=`${items.length} / ${s.items.length} 条`;
-  $("#body").innerHTML=`<div class="intro">${s.intro}</div>`+items.map(it=>card(it,false)).join("");
+  $("#body").innerHTML=`<div class="intro">${s.intro}</div>`+renderItems(s,items,false);
   syncToc(); spy();
 }
 draw();

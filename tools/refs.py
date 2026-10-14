@@ -30,31 +30,57 @@ def _parse_file(fn):
     if not m:
         return None
     sec_no, sec_name = int(m.group(1)), m.group(2).strip()
-    head_end = t.index("### ") if "### " in t else len(t)
-    intro = t[m.end():head_end].strip().strip("-").strip()
+    rest = t[m.end():]
 
-    items = []
-    for im in re.finditer(r"^### (\d+)\. ([^\n]+)\n(.*?)(?=^### \d+\. |\Z)", t, re.M | re.S):
-        body = _split_body(im.group(3))
-        it = {
-            "no": int(im.group(1)),
-            "title": im.group(2).strip(),
-            "sec_no": sec_no,
-            "sec": sec_name,
-            "file": fn,
-            "raw": body,
-            "mirror": None,
-        }
-        ref = RE_REF.search(body)
-        if ref:
-            it["mirror"] = (int(ref.group(1)), int(ref.group(2)))
-        for f in FIELDS:
-            mm = re.search(r"^- \*\*" + f + r"\*\*：?(.*?)(?=\n- \*\*|\Z)", body, re.M | re.S)
-            # 只去尾部空白 + 行首换行；不能 .strip()，否则第一个子项的缩进会被吃掉
-            it[f] = mm.group(1).rstrip().lstrip("\n") if mm else ""
-        items.append(it)
+    # 按二级标题（## 主题X）切块；没有二级标题的节就是整节一块。
+    # 切块还顺带修了一个 bug：块边界让「## 主题二」不再落进上一条的「来源」里。
+    parts = re.split(r"^## +(.+?)\s*$", rest, flags=re.M)
+    if len(parts) == 1:
+        blocks = [{"theme": None, "body": rest}]
+        # 没有 ## 时，节头只到第一个条目为止——否则整节正文会被当成节头
+        lead = rest[:rest.index("### ")] if "### " in rest else rest
+    else:
+        lead = parts[0]
+        blocks = [{"theme": parts[k].strip(), "body": parts[k + 1]}
+                  for k in range(1, len(parts), 2)]
+    intro = re.sub(r"\n---\s*\n", "\n", lead).strip()
+    if "### " in intro:                       # 兜底：节头里绝不允许出现条目
+        intro = intro[:intro.index("### ")].strip()
 
-    return {"no": sec_no, "name": sec_name, "intro": intro, "items": items, "file": fn}
+    items, themes = [], []
+    for b in blocks:
+        body_all = b["body"]
+        first = body_all.find("### ")
+        tlead = (body_all[:first] if first >= 0 else body_all).strip()
+        tlead = re.sub(r"\n---\s*\n", "\n", tlead).strip()
+        got = []
+        for im in re.finditer(r"^### (\d+)\. ([^\n]+)\n(.*?)(?=^### \d+\. |\Z)",
+                              body_all, re.M | re.S):
+            body = _split_body(im.group(3))
+            it = {
+                "no": int(im.group(1)),
+                "title": im.group(2).strip(),
+                "sec_no": sec_no,
+                "sec": sec_name,
+                "theme": b["theme"],
+                "file": fn,
+                "raw": body,
+                "mirror": None,
+            }
+            ref = RE_REF.search(body)
+            if ref:
+                it["mirror"] = (int(ref.group(1)), int(ref.group(2)))
+            for f in FIELDS:
+                mm = re.search(r"^- \*\*" + f + r"\*\*：?(.*?)(?=\n- \*\*|\Z)", body, re.M | re.S)
+                # 只去尾部空白 + 行首换行；不能 .strip()，否则第一个子项的缩进会被吃掉
+                it[f] = mm.group(1).rstrip().lstrip("\n") if mm else ""
+            items.append(it)
+            got.append(it["no"])
+        if b["theme"]:
+            themes.append({"name": b["theme"], "lead": tlead, "nos": got})
+
+    return {"no": sec_no, "name": sec_name, "intro": intro,
+            "items": items, "themes": themes, "file": fn}
 
 
 def load():

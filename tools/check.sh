@@ -123,6 +123,13 @@ for path in EXTRA:
 sys.path.insert(0, os.path.join("tools"))
 import refs  # noqa: E402
 secs_, _, probs_ = refs.load()
+# ---------- 解析后检查：节头不得吞进条目 ----------
+for s_ in secs_:
+    if "- **" in s_["intro"] or "### " in s_["intro"]:
+        err.append(f"{s_['no']:02d} 节（{s_['name']}）：节头里混进了条目正文")
+    if len(s_["intro"]) > 900:
+        err.append(f"{s_['no']:02d} 节：节头异常长（{len(s_['intro'])} 字），疑似吞进了正文")
+
 for p_ in probs_:
     err.append(p_)
 for s_ in secs_:
