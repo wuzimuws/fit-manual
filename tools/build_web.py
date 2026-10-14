@@ -144,7 +144,9 @@ border-bottom:1px solid var(--line)}
 .top-in{display:flex;align-items:center;gap:13px;height:56px}
 .logo{font-size:12px;font-weight:700;color:var(--acc);border:1px solid var(--acc);
 border-radius:6px;padding:2px 7px;white-space:nowrap}
-.top-title{font-size:16px;font-weight:600;white-space:nowrap}
+.top-title{font-size:15px;font-weight:600;white-space:nowrap;color:var(--dim);
+text-decoration:none}
+.top-title:hover{color:var(--ink)}
 .top-in input[type=search]{width:auto;flex:1;max-width:330px;margin-left:auto}
 .doc{padding:4px 0 22px;border-bottom:1px solid var(--line);margin-bottom:24px}
 h1{margin:0 0 10px;font-size:27px;letter-spacing:-.5px}
@@ -174,6 +176,24 @@ nav button{text-align:left;border:1px solid transparent;background:none;color:va
 padding:7px 10px;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit;line-height:1.35}
 nav button:hover{background:#f1efe9}
 nav button.on{background:var(--ink);color:#fff}
+nav button.on .sn,nav button.on i,nav button.on .fold{color:rgba(255,255,255,.75)}
+.ch-b{display:flex;align-items:center;gap:7px;width:100%}
+.ch-b .sn{color:var(--dim);flex:none}
+.ch-b .st{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ch-b i{font-style:normal;font-size:11px;color:var(--dim);flex:none}
+.ch-b .fold{flex:none;width:18px;height:18px;display:inline-flex;align-items:center;
+justify-content:center;font-size:9px;color:var(--dim);font-style:normal;
+transition:transform .18s;cursor:pointer;border-radius:4px}
+.ch-b .fold::before{content:"\25BE"}
+.ch-b .fold:hover{background:rgba(0,0,0,.06)}
+.ch.open .ch-b .fold{transform:rotate(180deg)}
+.toc-sub{display:flex;flex-direction:column;padding:1px 0 7px}
+.toc-sub[hidden]{display:none}
+.toc-sub a{display:flex;gap:6px;font-size:12.5px;color:var(--dim);text-decoration:none;
+padding:3px 6px 3px 14px;line-height:1.45;border-radius:0 6px 6px 0}
+.toc-sub a:hover{color:var(--acc);background:#f2f6f3}
+.toc-sub a i{font-style:normal;flex:none;min-width:13px;text-align:right;opacity:.7}
+.toc-sub a span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 input[type=search]{width:100%;padding:8px 12px;border:1px solid var(--line);
 border-radius:9px;font-size:14px;font-family:inherit;background:var(--card)}
 .levels{display:flex;gap:6px}
@@ -224,7 +244,8 @@ margin:0 0 12px;font-size:13px;color:var(--dim);line-height:1.6}
 .mirror a{color:var(--acc);font-weight:600;text-decoration:none}
 .mirror a:hover{text-decoration:underline}
 .card,.page{scroll-margin-top:24px}
-.page{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:26px 30px}
+.page{background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:30px 34px;margin-top:34px}
 .page h1{font-size:24px;margin:0 0 18px}
 .page h2,.page h4{font-size:18px;margin:26px 0 10px}
 .page table{border-collapse:collapse;margin:12px 0;font-size:15px;width:100%}
@@ -235,7 +256,7 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
 </style></head><body>
 <header class="topbar"><div class="wrap top-in">
   <span class="logo">指南</span>
-  <span class="top-title">高性价比新手小白健身指南</span>
+  <a class="top-title" href="#" title="回到全书">新手小白健身指南</a>
   <input type="search" id="q" placeholder="搜索条目（可跨章）">
 </div></header>
 <div class="wrap layout">
@@ -273,15 +294,31 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
 const DATA=__DATA__, PAGES=__PAGES__, TOTAL=__TOTAL__;
 let cur="1", q="", lv={A:1,B:1,C:1};
 const $=s=>document.querySelector(s), nav=$("#nav");
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 const tabs=[{k:"all",t:"全部 · "+TOTAL+" 条"},{k:"pre",t:"前言"},
-  ...DATA.map(s=>({k:String(s.no),t:s.no+". "+s.name})),
+  ...DATA.map(s=>({k:String(s.no),t:s.no+". "+s.name,sub:s.items})),
   {k:"end",t:"结语"},{k:"app",t:"附录"}];
-nav.innerHTML=tabs.map(t=>`<button data-k="${t.k}">${t.t}</button>`).join("");
-nav.onclick=e=>{const b=e.target.closest("button");if(!b)return;cur=b.dataset.k;draw();
+nav.innerHTML=tabs.map(t=>{
+  if(!t.sub) return `<button data-k="${t.k}">${t.t}</button>`;
+  const inner=t.sub.map(it=>`<a href="#${it.anchor}" data-go="${it.anchor}" `
+    +`title="${esc(it.title)}"><i>${it.no}</i><span>${esc(it.title)}</span></a>`).join("");
+  return `<div class="ch"><button class="ch-b" data-k="${t.k}">`
+    +`<span class="sn">${t.k}.</span><span class="st">${esc(t.t.replace(/^\d+\. /,""))}</span>`
+    +`<i>${t.sub.length}</i>`
+    +`<b class="fold" title="展开/收起本章目录"></b></button>`
+    +`<div class="toc-sub" hidden>${inner}</div></div>`;
+}).join("");
+nav.onclick=e=>{
+  const fold=e.target.closest(".fold");                 /* 箭头 → 展开/收起本章目录 */
+  if(fold){const ch=fold.closest(".ch");const sub=ch.querySelector(".toc-sub");
+    const open=ch.classList.toggle("open");sub.hidden=!open;return;}
+  const b=e.target.closest("button");if(!b)return;cur=b.dataset.k;draw();
   window.scrollTo({top:0,behavior:"smooth"});};
 document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{
   lv[c.dataset.lv]=!lv[c.dataset.lv];c.classList.toggle("on");draw();});
 $("#q").oninput=e=>{q=e.target.value.trim().toLowerCase();draw();};
+document.querySelector(".top-title").onclick=e=>{e.preventDefault();
+  cur="all";draw();window.scrollTo({top:0,behavior:"smooth"});};
 const hay=it=>[it.title,it["总结性建议"],it["具体地"],it["为什么这样建议"]].join(" ").replace(/<[^>]+>/g,"").toLowerCase();
 function card(it,showSec,compact){
   const mir=it.mirror?`<div class="mirror">本条正文与 <a href="#${it.mirror_anchor}" data-go="${it.mirror_anchor}">${it.mirror_label}</a>「${it.mirror_title}」相同，<b>正文以该条为准</b></div>`:"";
@@ -316,7 +353,7 @@ document.addEventListener("click",e=>{
 function draw(){
   nav.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.k===cur));
   const isList=!("pre end app".split(" ").includes(cur));
-  $("#side").style.display=isList?"flex":"none";
+  $("#side").style.display="flex";        /* 侧栏就是导航，任何视图都留着 */
   $("#doc").style.display=isList?"block":"none";
   if(!isList){$("#body").innerHTML=`<div class="page">${PAGES[cur].html}</div>`;return;}
   if(cur==="all"){                          /* 全部：按章分组，等级筛选跨全书 */
