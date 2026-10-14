@@ -12,6 +12,9 @@ for fn in files:
     t = open(os.path.join(B,fn), encoding="utf-8").read()
     sec = fn.split("-")[0]
     idx[sec] = len(re.findall(r"^### \d+\. ", t, re.M))
+    nums = [int(x) for x in re.findall(r"^### (\d+)\. ", t, re.M)]
+    if nums != list(range(1, len(nums)+1)):
+        err.append(f"{fn}: 条号不连续 {nums}")
     for f in fields:
         if t.count("- **"+f+"**") != idx[sec]:
             err.append(f"{fn}: 栏位「{f}」数量不符")
