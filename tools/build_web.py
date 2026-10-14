@@ -301,7 +301,7 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
 </div></main>
 <script>
 const DATA=__DATA__, PAGES=__PAGES__, TOTAL=__TOTAL__;
-let cur="1", q="", lv={A:1,B:1,C:1}, selAnchor=null;
+let cur="1", q="", lv={A:1,B:1,C:1}, selAnchor=null, tocClosed=false;
 const $=s=>document.querySelector(s), nav=$("#nav");
 const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 const tabs=[{k:"all",t:"全部 · "+TOTAL+" 条"},{k:"pre",t:"前言"},
@@ -320,16 +320,21 @@ nav.innerHTML=tabs.map(t=>{
 nav.onclick=e=>{
   const fold=e.target.closest(".fold");                 /* 小箭头 → 单独收起 */
   if(fold){const ch=fold.closest(".ch");const sub=ch.querySelector(".toc-sub");
-    const open=ch.classList.toggle("open");sub.hidden=!open;return;}
+    const open=ch.classList.toggle("open");sub.hidden=!open;
+    if(ch.querySelector("button").dataset.k===cur)tocClosed=!open;
+    return;}
   const b=e.target.closest("button");if(!b)return;
-  cur=b.dataset.k;                                     /* 点整行 = 选中 + 展开（draw 里 syncToc） */
+  const k=b.dataset.k;
+  if(k===cur && b.closest(".ch")){                     /* 再点当前章 → 收起目录 */
+    tocClosed=!tocClosed;syncToc();return;}
+  cur=k;tocClosed=false;                               /* 换章 = 选中 + 展开 */
   window.scrollTo({top:0,behavior:"smooth"});draw();};
 
 /* 侧栏目录与正文联动：当前章展开（手风琴），当前条目加选中竖线 */
 function syncToc(){
   const secNo=/^\d+$/.test(cur)?cur:null;
   document.querySelectorAll(".ch").forEach(ch=>{
-    const open=(ch.querySelector("button").dataset.k===secNo);
+    const open=(ch.querySelector("button").dataset.k===secNo)&&!tocClosed;
     ch.classList.toggle("open",open);
     const sub=ch.querySelector(".toc-sub");if(sub)sub.hidden=!open;
   });
@@ -378,7 +383,7 @@ function goTo(anchor){                       /* 跳到镜像条的源条 */
   lv={A:1,B:1,C:1};
   document.querySelectorAll(".chip").forEach(c=>c.classList.add("on"));
   q=""; $("#q").value="";
-  cur=m[1]; draw();
+  cur=m[1]; tocClosed=false; draw();
   const el=document.getElementById(anchor);
   if(el) el.scrollIntoView({block:"center",behavior:"smooth"});
 }
