@@ -39,6 +39,20 @@ for fn in files:
         m_ = re.search(p_, t)
         if m_: err.append(f"{fn}: AI 腔调「{m_.group(0)}」")
 
+# 非正文文档：只查软化词 / AI 腔 / 陈旧节名
+EXTRA = ["../前言.md", "../结语.md", "../附录-参考书目.md", "../README.md"]
+for p in EXTRA:
+    path = p[3:]
+    if not os.path.exists(path): continue
+    t = open(path, encoding="utf-8").read()
+    for w in ["我觉得", "其实", "我建议", "我发现"]:
+        if w in t: err.append(f"{os.path.basename(path)}: 残留软化词「{w}」")
+    for p_ in [r"不是[^。！？\n]{1,40}?，?[是而]", r"问题不在[^。！？\n]{1,30}?，?在"]:
+        m_ = re.search(p_, t)
+        if m_: err.append(f"{os.path.basename(path)}: AI 腔调「{m_.group(0)}」")
+    for stale in ["「地基」", "02 节地基", "「先说清楚」"]:
+        if stale in t: err.append(f"{os.path.basename(path)}: 陈旧表述「{stale}」")
+
 # 条号引用越界
 pat = re.compile(r"(?:(\d{2}) 节)?第 ([\d、,，]+) 条")
 for p in files + ["../前言.md","../结语.md","../README.md"]:
