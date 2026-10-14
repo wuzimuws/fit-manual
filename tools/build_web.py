@@ -115,7 +115,8 @@ def parse_sections():
                 d["mirror_title"] = it.get("mirror_title", "")
             items.append(d)
         themes = [{"name": th["name"], "lead": inline(th["lead"]),
-                   "n": len(th["nos"])} for th in s.get("themes", [])]
+                   "n": len(th["nos"]), "id": f"t-{s['no']}-{k + 1}"}
+                  for k, th in enumerate(s.get("themes", []))]
         secs.append({"no": s["no"], "name": s["name"], "intro": md_block(s["intro"]),
                      "themes": themes, "items": items})
     return secs
@@ -217,6 +218,11 @@ border-radius:0 6px 6px 0}
 .toc-sub a:hover{color:var(--acc);background:#f2f6f3}
 .toc-sub a.on{color:var(--acc);border-left-color:var(--acc);font-weight:600}
 .toc-sub a.on i{opacity:1}
+.toc-g{font-size:11px;font-weight:600;color:var(--dim);padding:8px 0 2px 11px;
+cursor:pointer;line-height:1.5}
+.toc-g:first-child{padding-top:2px}
+.toc-g:hover{color:var(--acc)}
+.toc-g.on{color:var(--acc)}
 .toc-sub a i{font-style:normal;flex:none;min-width:13px;text-align:right;opacity:.7}
 .toc-sub a span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 input[type=search]{width:100%;padding:8px 12px;border:1px solid var(--line);
@@ -326,12 +332,25 @@ let cur="1", q="", lv={A:1,B:1,C:1}, selAnchor=null, tocClosed=false;
 const $=s=>document.querySelector(s), nav=$("#nav");
 const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 const tabs=[{k:"all",t:"全部 · "+TOTAL+" 条"},{k:"pre",t:"前言"},
-  ...DATA.map(s=>({k:String(s.no),t:s.no+". "+s.name,sub:s.items})),
+  ...DATA.map(s=>({k:String(s.no),t:s.no+". "+s.name,sub:s.items,themes:s.themes})),
   {k:"end",t:"结语"},{k:"app",t:"附录"}];
+const tocLink=it=>`<a href="#${it.anchor}" data-go="${it.anchor}" `
+  +`title="${esc(it.title)}"><i>${it.no}</i><span>${esc(it.title)}</span></a>`;
+function tocInner(items,themes){            /* 有主题分组时，目录也按主题分段 */
+  if(!themes||!themes.length) return items.map(tocLink).join("");
+  const by=new Map();
+  items.forEach(it=>{const k=it.theme||"";if(!by.has(k))by.set(k,[]);by.get(k).push(it);});
+  let h=(by.get("")||[]).map(tocLink).join("");
+  themes.forEach(th=>{
+    const arr=by.get(th.name)||[];if(!arr.length)return;
+    h+=`<div class="toc-g" data-theme="${th.id}" title="跳到「${esc(th.name)}」">${esc(th.name)}</div>`
+      +arr.map(tocLink).join("");
+  });
+  return h;
+}
 nav.innerHTML=tabs.map(t=>{
   if(!t.sub) return `<button data-k="${t.k}">${t.t}</button>`;
-  const inner=t.sub.map(it=>`<a href="#${it.anchor}" data-go="${it.anchor}" `
-    +`title="${esc(it.title)}"><i>${it.no}</i><span>${esc(it.title)}</span></a>`).join("");
+  const inner=tocInner(t.sub,t.themes);
   return `<div class="ch"><button class="ch-b" data-k="${t.k}">`
     +`<span class="sn">${t.k}.</span><span class="st">${esc(t.t.replace(/^\d+\. /,""))}</span>`
     +`<i>${t.sub.length}</i>`
@@ -339,6 +358,10 @@ nav.innerHTML=tabs.map(t=>{
     +`<div class="toc-sub" hidden>${inner}</div></div>`;
 }).join("");
 nav.onclick=e=>{
+  const g=e.target.closest(".toc-g");                   /* 主题名 → 滚到正文的主题块 */
+  if(g){const el=document.getElementById(g.dataset.theme);
+    document.querySelectorAll(".toc-g").forEach(x=>x.classList.toggle("on",x===g));
+    if(el)el.scrollIntoView({block:"start",behavior:"smooth"});return;}
   const fold=e.target.closest(".fold");                 /* 小箭头 → 单独收起 */
   if(fold){const ch=fold.closest(".ch");const sub=ch.querySelector(".toc-sub");
     const open=ch.classList.toggle("open");sub.hidden=!open;
@@ -389,7 +412,7 @@ function renderItems(sec,items,compact){          /* 有主题分组时按主题
   html+=(by.get("")||[]).map(it=>card(it,false,compact)).join("");
   sec.themes.forEach(th=>{
     const arr=by.get(th.name)||[];if(!arr.length)return;
-    html+=`<div class="theme"><h2><span>${esc(th.name)}</span>`
+    html+=`<div class="theme" id="${th.id}"><h2><span>${esc(th.name)}</span>`
         +`<span class="tn">${arr.length} 条</span></h2>`
         +(th.lead?`<p class="tlead">${th.lead}</p>`:"")
         +`<div class="jumps">`
