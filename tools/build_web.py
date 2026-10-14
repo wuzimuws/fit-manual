@@ -163,12 +163,12 @@ border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:9px}
 .sec-h .sec-n{font-size:12px;color:var(--dim);font-weight:400}
 .sec-h:first-child{margin-top:0}
 .top-in{display:flex;align-items:center;gap:13px;height:56px;padding:0 24px}
-.side{position:fixed;top:57px;left:0;bottom:0;width:238px;z-index:15;
+.side{position:fixed;top:57px;left:0;bottom:0;width:272px;z-index:15;
 display:flex;flex-direction:column;background:var(--card);border-right:1px solid var(--line);
-padding:20px 18px 44px;overflow-y:auto;overflow-x:hidden;
+padding:22px 30px 46px;overflow-y:auto;overflow-x:hidden;
 scrollbar-gutter:stable}                /* 常驻预留滚动条槽位：展开/收起不再改宽度 */
 .side::-webkit-scrollbar{width:16px}
-main{margin-left:238px}
+main{margin-left:272px}
 .main-in{max-width:900px;margin:0 auto;padding:26px 46px 96px}
 .grp{margin-top:18px}
 .grp:first-of-type{margin-top:13px}
@@ -193,7 +193,7 @@ transition:transform .18s;cursor:pointer;border-radius:4px}
 .ch.open .ch-b .fold{transform:rotate(180deg)}
 .toc-sub{display:flex;flex-direction:column;padding:1px 0 7px}
 .toc-sub[hidden]{display:none}
-.toc-sub a{display:flex;gap:6px;font-size:12.5px;color:var(--dim);text-decoration:none;
+.toc-sub a{display:flex;gap:6px;font-size:13px;color:var(--dim);text-decoration:none;
 padding:3px 6px 3px 11px;line-height:1.45;border-left:2px solid transparent;
 border-radius:0 6px 6px 0}
 .toc-sub a:hover{color:var(--acc);background:#f2f6f3}
