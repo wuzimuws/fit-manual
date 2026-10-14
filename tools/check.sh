@@ -91,6 +91,25 @@ for path in EXTRA:
         if stale in t:
             err.append(f"{path}: 陈旧表述「{stale}」")
 
+# ---------- 解析后检查：「具体地」子项缩进必须一致 ----------
+# 这类 bug 只发生在解析层（天真的 .strip() 会吃掉第一个子项的缩进），
+# 源 markdown 里缩进是对的，所以必须查解析结果。
+sys.path.insert(0, os.path.join("tools"))
+import refs  # noqa: E402
+secs_, _, probs_ = refs.load()
+for p_ in probs_:
+    err.append(p_)
+for s_ in secs_:
+    for it_ in s_["items"]:
+        if it_["mirror"]:
+            continue
+        val_ = it_["具体地"]
+        ind = [len(x) - len(x.lstrip()) for x in val_.split("\n")
+               if re.match(r"^\s*[-*] ", x)]
+        if ind and min(ind) == 0 and max(ind) > 0:
+            err.append(f"{s_['no']:02d} 节第 {it_['no']} 条："
+                       f"「具体地」子项缩进不一致（{ind}）——网页上会第一个顶格、后面缩进")
+
 # ---------- 引用不得指向镜像条（应指向源条） ----------
 mirror_targets = set()          # 镜像条自身的位置，例如 (08, 1)
 for fn in files:

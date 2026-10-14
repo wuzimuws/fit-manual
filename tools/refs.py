@@ -50,7 +50,8 @@ def _parse_file(fn):
             it["mirror"] = (int(ref.group(1)), int(ref.group(2)))
         for f in FIELDS:
             mm = re.search(r"^- \*\*" + f + r"\*\*：?(.*?)(?=\n- \*\*|\Z)", body, re.M | re.S)
-            it[f] = mm.group(1).strip() if mm else ""
+            # 只去尾部空白 + 行首换行；不能 .strip()，否则第一个子项的缩进会被吃掉
+            it[f] = mm.group(1).rstrip().lstrip("\n") if mm else ""
         items.append(it)
 
     return {"no": sec_no, "name": sec_name, "intro": intro, "items": items, "file": fn}

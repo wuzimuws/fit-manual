@@ -24,10 +24,10 @@ def render_item(it, expanded=True):
         out.append("")
     for f in refs.FIELDS:
         val = it[f]
-        if f == "具体地" and "\n" in val:
-            lines = val.split("\n")
-            out.append(f"- **{f}**：{lines[0]}")
-            out.extend(lines[1:])
+        # 值是「一行标签 + 若干子项」时，标签单独一行，子项整块接在后面
+        if f == "具体地" and re.match(r"^\s*[-*] ", val.split("\n")[0]):
+            out.append(f"- **{f}**：")
+            out.append(val)
         else:
             out.append(f"- **{f}**：{val}")
     out.append("")
