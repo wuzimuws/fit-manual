@@ -236,7 +236,11 @@ nav.onclick=e=>{
   if(k===cur && b.closest(".ch")){                     /* 再点当前章 → 收起目录 */
     tocClosed=!tocClosed;syncToc();return;}
   cur=k;tocClosed=false;                               /* 换章 = 选中 + 展开 */
-  window.scrollTo({top:0,behavior:"smooth"});draw();};
+  /* 先把选中态画上，再重建正文：否则高亮要等 94 张卡片重建完才上色，看着就是「点慢了」 */
+  document.querySelectorAll("nav button")
+    .forEach(x=>x.classList.toggle("on",x.dataset.k===cur));
+  window.scrollTo({top:0});                            /* 切换视图直接回顶，不用平滑滚动 */
+  requestAnimationFrame(()=>draw());};
 
 /* 侧栏目录与正文联动：当前章展开（手风琴），当前条目加选中竖线 */
 function syncToc(){
