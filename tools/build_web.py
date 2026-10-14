@@ -168,6 +168,16 @@ h1{margin:0 0 10px;font-size:27px;letter-spacing:-.5px}
 border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:9px}
 .sec-h .sec-n{font-size:12px;color:var(--dim);font-weight:400}
 .sec-h:first-child{margin-top:0}
+/* 回到顶部：滚过一屏才出现，右下角固定 */
+#toTop{position:fixed;right:24px;bottom:24px;width:42px;height:42px;border-radius:50%;
+background:var(--card);border:1px solid var(--line);color:var(--dim);font-size:17px;
+line-height:1;cursor:pointer;box-shadow:0 3px 12px rgba(28,26,23,.13);
+opacity:0;pointer-events:none;transform:translateY(6px);
+transition:opacity .18s,transform .18s,color .18s,border-color .18s;z-index:25}
+#toTop.show{opacity:1;pointer-events:auto;transform:none}
+#toTop:hover{color:var(--acc);border-color:var(--acc)}
+@media(max-width:860px){#toTop{right:14px;bottom:14px;width:38px;height:38px}}
+
 /* 节标题（照参考站 .sec-h：h2 + 条数） */
 .sec-head{display:flex;align-items:baseline;gap:12px;margin:0 0 14px;
 padding-bottom:10px;border-bottom:1px solid var(--line)}
@@ -220,11 +230,6 @@ border-left:2px solid transparent;border-radius:0 6px 6px 0}
 .toc-sub a:hover{color:var(--acc);background:#f2f6f3}
 .toc-sub a.on{color:var(--acc);border-left-color:var(--acc);font-weight:600}
 .toc-sub a.on i{opacity:1}
-.toc-g{font-size:12px;font-weight:600;color:var(--dim);padding:9px 0 2px 12px;
-cursor:pointer;line-height:1.5}
-.toc-g:first-child{padding-top:2px}
-.toc-g:hover{color:var(--acc)}
-.toc-g.on{color:var(--acc)}
 .toc-sub a i{font-style:normal;flex:none;width:20px;text-align:right;opacity:.65}
 .toc-sub a span{flex:1;min-width:0;display:-webkit-box;-webkit-box-orient:vertical;
 -webkit-line-clamp:2;overflow:hidden}       /* 最多两行，超出省略；短标题仍是一行 */
@@ -328,6 +333,7 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
     </div>
     <div id="body"></div>
     <footer>共 __TOTAL__ 条 · __SECTIONS__ 节 · 作者个人经验，仅供参考</footer>
+    <button id="toTop" type="button" aria-label="回到顶部" title="回到顶部">↑</button>
 </div></main>
 <script>
 const DATA=__DATA__, PAGES=__PAGES__, TOTAL=__TOTAL__;
@@ -339,21 +345,9 @@ const tabs=[{k:"all",t:"全部 · "+TOTAL+" 条"},{k:"pre",t:"前言"},
   {k:"end",t:"结语"},{k:"app",t:"附录"}];
 const tocLink=it=>`<a href="#${it.anchor}" data-go="${it.anchor}" `
   +`title="${esc(it.title)}"><i>${it.no}</i><span>${esc(it.title)}</span></a>`;
-function tocInner(items,themes){            /* 有主题分组时，目录也按主题分段 */
-  if(!themes||!themes.length) return items.map(tocLink).join("");
-  const by=new Map();
-  items.forEach(it=>{const k=it.theme||"";if(!by.has(k))by.set(k,[]);by.get(k).push(it);});
-  let h=(by.get("")||[]).map(tocLink).join("");
-  themes.forEach(th=>{
-    const arr=by.get(th.name)||[];if(!arr.length)return;
-    h+=`<div class="toc-g" data-theme="${th.id}" title="跳到「${esc(th.name)}」">${esc(th.name)}</div>`
-      +arr.map(tocLink).join("");
-  });
-  return h;
-}
 nav.innerHTML=tabs.map(t=>{
   if(!t.sub) return `<button data-k="${t.k}">${t.t}</button>`;
-  const inner=tocInner(t.sub,t.themes);
+  const inner=t.sub.map(tocLink).join("");
   return `<div class="ch"><button class="ch-b" data-k="${t.k}">`
     +`<span class="sn">${t.k}.</span><span class="st">${esc(t.t.replace(/^\d+\. /,""))}</span>`
     +`<i>${t.sub.length}</i>`
@@ -361,10 +355,6 @@ nav.innerHTML=tabs.map(t=>{
     +`<div class="toc-sub" hidden>${inner}</div></div>`;
 }).join("");
 nav.onclick=e=>{
-  const g=e.target.closest(".toc-g");                   /* 主题名 → 滚到正文的主题块 */
-  if(g){const el=document.getElementById(g.dataset.theme);
-    document.querySelectorAll(".toc-g").forEach(x=>x.classList.toggle("on",x===g));
-    if(el)el.scrollIntoView({block:"start",behavior:"smooth"});return;}
   const fold=e.target.closest(".fold");                 /* 小箭头 → 单独收起 */
   if(fold){const ch=fold.closest(".ch");const sub=ch.querySelector(".toc-sub");
     const open=ch.classList.toggle("open");sub.hidden=!open;
@@ -394,7 +384,10 @@ function syncToc(){
 }
 let raf=0;
 addEventListener("scroll",()=>{if(raf)return;
-  raf=requestAnimationFrame(()=>{raf=0;spy();});}, {passive:true});
+  raf=requestAnimationFrame(()=>{raf=0;spy();toTopSync();});}, {passive:true});
+const toTop=$("#toTop");
+function toTopSync(){toTop.classList.toggle("show",scrollY>500);}
+toTop.onclick=()=>window.scrollTo({top:0,behavior:"smooth"});
 function spy(){                                        /* 滚动时把选中标志挪到当前读到的条目 */
   const cards=[...document.querySelectorAll(".card")];
   if(!cards.length)return;
@@ -496,7 +489,7 @@ function draw(){
     +`<span class="shown">${items.length} / ${s.items.length} 条</span></div>`
     +`<div class="intro">${s.intro}</div>`+idxBlock(s,items)
     +renderItems(s,items,false);
-  syncToc(); spy();
+  syncToc(); spy(); toTopSync();
 }
 draw();
 </script></body></html>"""
