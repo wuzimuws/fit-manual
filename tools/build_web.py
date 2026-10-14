@@ -141,7 +141,6 @@ body{margin:0;background:var(--bg);color:var(--ink);
 font:16px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
 header.topbar{position:sticky;top:0;z-index:20;background:var(--card);
 border-bottom:1px solid var(--line)}
-.top-in{display:flex;align-items:center;gap:13px;height:56px}
 .logo{font-size:12px;font-weight:700;color:var(--acc);border:1px solid var(--acc);
 border-radius:6px;padding:2px 7px;white-space:nowrap}
 .top-title{font-size:15px;font-weight:600;white-space:nowrap;color:var(--dim);
@@ -162,10 +161,12 @@ h1{margin:0 0 10px;font-size:27px;letter-spacing:-.5px}
 border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:9px}
 .sec-h .sec-n{font-size:12px;color:var(--dim);font-weight:400}
 .sec-h:first-child{margin-top:0}
-.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
-.layout{display:grid;grid-template-columns:208px minmax(0,1fr);gap:30px;align-items:start;padding-top:26px}
-.side{position:sticky;top:72px;display:flex;flex-direction:column;
-max-height:calc(100vh - 88px);overflow-y:auto}
+.top-in{display:flex;align-items:center;gap:13px;height:56px;padding:0 24px}
+.side{position:fixed;top:57px;left:0;bottom:0;width:238px;z-index:15;
+display:flex;flex-direction:column;background:var(--card);border-right:1px solid var(--line);
+padding:20px 18px 44px;overflow-y:auto}
+main{margin-left:238px}
+.main-in{max-width:900px;margin:0;padding:26px 46px 96px}
 .grp{margin-top:18px}
 .grp:first-of-type{margin-top:13px}
 .gt{font-size:14px;font-weight:700;margin:0 0 4px}
@@ -206,10 +207,17 @@ background:var(--card);padding:3px 11px;border-radius:999px;font-size:12px;curso
 .chip.on{background:#eef5f1;border-color:var(--acc);color:var(--acc)}
 .count{color:var(--dim);font-size:12px;margin-top:14px;line-height:1.55}
 @media(max-width:860px){
-.layout{grid-template-columns:1fr;gap:0}
-.side{position:static;margin-bottom:18px}
+.side{position:static;width:auto;border-right:0;border-bottom:1px solid var(--line);
+max-height:none;padding:14px 18px 18px}
+main{margin-left:0}
+.main-in{padding:18px 18px 64px}
 nav{flex-direction:row;flex-wrap:wrap}
 nav button{border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+.ch{display:contents}                    /* 章节直接作为胶囊横排 */
+.ch-b{width:auto}
+.ch-b .st{flex:none}
+.ch-b .fold{display:none}                /* 窄屏收起逐条目录，交给搜索/全部 */
+.toc-sub{display:none !important}
 .levels{flex-wrap:wrap}
 }
 .intro{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;
@@ -257,13 +265,12 @@ padding:30px 34px;margin-top:34px}
 .page blockquote{margin:12px 0;padding:10px 16px;border-left:3px solid var(--acc);background:#f4f8f6;color:var(--dim)}
 footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
 </style></head><body>
-<header class="topbar"><div class="wrap top-in">
+<header class="topbar"><div class="top-in">
   <span class="logo">指南</span>
   <a class="top-title" href="#" title="回到全书">新手小白健身指南</a>
   <input type="search" id="q" placeholder="搜索条目（可跨章）">
 </div></header>
-<div class="wrap layout">
-  <aside class="side" id="side">
+<aside class="side" id="side">
     <div class="grp">
       <div class="gt">证据等级</div>
       <div class="gd">A 机制或共识 ＋ 我验证过 · B 道理站得住但靠经验 · C 只有我的体感</div>
@@ -280,7 +287,7 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
     <div class="hint">章节一次看一个；等级可多选，多选之间是「或」。</div>
     <span class="count" id="cnt"></span>
   </aside>
-  <main>
+<main><div class="main-in">
     <div class="doc" id="doc">
       <h1>高性价比新手小白健身指南</h1>
       <p class="lede">新手小白的第一年：训练、饮食、恢复、避坑。<br>
@@ -291,8 +298,7 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
     </div>
     <div id="body"></div>
     <footer>共 __TOTAL__ 条 · __SECTIONS__ 节 · 作者个人经验，仅供参考</footer>
-  </main>
-</div>
+</div></main>
 <script>
 const DATA=__DATA__, PAGES=__PAGES__, TOTAL=__TOTAL__;
 let cur="1", q="", lv={A:1,B:1,C:1}, selAnchor=null;
