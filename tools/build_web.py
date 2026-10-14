@@ -426,6 +426,7 @@ function idxBlock(sec,items){
     parts}</div>`:"";
 }
 const hay=it=>[it.title,it["总结性建议"],it["具体地"],it["为什么这样建议"]].join(" ").replace(/<[^>]+>/g,"").toLowerCase();
+const LABEL={"为什么这样建议":"为什么<br>这样建议"};   /* 长标签手动断行，断点落在语义处 */
 function card(it,showSec,compact){
   const mir=it.mirror?`<div class="mirror">本条正文与 <a href="#${it.mirror_anchor}" data-go="${it.mirror_anchor}">${it.mirror_label}</a>「${it.mirror_title}」相同，<b>正文以该条为准</b></div>`:"";
   if(compact&&it.mirror)                      /* 全书视图：镜像条不重复展开 */
@@ -440,7 +441,7 @@ function card(it,showSec,compact){
       if(f==="来源"&&!it.src_done) v=`<span class="todo">〔待补〕</span>`;
       if (f === "总结性建议")                 /* 高亮框本身就是"答案"，不再重复标签 */
         return `<div class="f hl"><div class="v">${v}</div></div>`;
-      return `<div class="f"><div class="k">${f}</div><div class="v">${v}</div></div>`;
+      return `<div class="f"><div class="k">${LABEL[f]||f}</div><div class="v">${v}</div></div>`;
     }).join("")}</div>`;
 }
 function goTo(anchor){                       /* 跳到镜像条的源条 */
