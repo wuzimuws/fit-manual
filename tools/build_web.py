@@ -255,8 +255,10 @@ nav button{border:1px solid var(--line);border-radius:999px;padding:6px 12px}
 .toc-sub{display:none !important}
 .levels{flex-wrap:wrap}
 }
-.intro{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;
-margin-bottom:20px;color:var(--dim);font-size:15px}
+/* 节简介：普通段落，不套卡片——它就是「本节条目按主题分成下面几块」前面那一段 */
+.intro{margin:0 0 22px;font-size:14px;line-height:1.85;color:var(--ink)}
+.intro p{margin:0 0 12px}
+.intro p:last-child{margin:0}
 .intro p{margin:0 0 8px}.intro p:last-child{margin:0}
 .intro h4{color:var(--ink);font-size:15px;margin:14px 0 6px}
 .intro h4:first-child{margin-top:0}
