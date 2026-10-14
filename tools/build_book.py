@@ -18,7 +18,7 @@ def render_item(it, expanded=True):
     if it["mirror"]:
         sn, ino = it["mirror"]
         out.append(
-            f"> 本条与 {sn} 节第 {ino} 条「{it.get('mirror_title','')}」是同一件事，"
+            f"> 本条与 {sn:02d} 节第 {ino} 条「{it.get('mirror_title','')}」是同一件事，"
             f"**正文以该条为准**（下面内容为自动展开，请勿在此处单独修改）。"
         )
         out.append("")

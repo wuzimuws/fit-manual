@@ -105,7 +105,7 @@ def parse_sections():
             d["src_done"] = TODO not in d["来源"]
             if it["mirror"]:
                 sn, ino = it["mirror"]
-                d["mirror_label"] = f"{sn} 节 · 第 {ino} 条"
+                d["mirror_label"] = f"{sn:02d} 节 · 第 {ino} 条"
                 d["mirror_anchor"] = f"c-{sn}-{ino}"
                 d["mirror_title"] = it.get("mirror_title", "")
             items.append(d)
