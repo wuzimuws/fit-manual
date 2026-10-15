@@ -127,6 +127,20 @@ def standalone(fname, heading=None):
     return md_block(t)
 
 
+def front_matter():
+    """书名和简介取自 README.md——网页和 markdown 只有一个源，改一处两边都变。
+
+    README 的第 1 行是书名，书名到第一条分隔线之间是简介段。
+    """
+    t = open(os.path.join(ROOT, "README.md"), encoding="utf-8").read()
+    m = re.search(r"^# (.+)$", t, re.M)
+    if not m:
+        return "高性价比新手小白健身指南", ""
+    body = t[m.end():].split("\n---")[0]
+    paras = [p.strip() for p in body.split("\n") if p.strip()]
+    return m.group(1).strip(), "".join(f"<p>{inline(p)}</p>" for p in paras)
+
+
 def disclaimer():
     t = open(os.path.join(ROOT, "README.md"), encoding="utf-8").read()
     b = t[t.index("## 免责声明"):t.index("## 怎么读")]
@@ -138,7 +152,7 @@ def disclaimer():
 TPL = r"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>高性价比新手小白健身指南</title>
+<title>__TITLE__</title>
 <style>
 *{box-sizing:border-box}
 :root{--bg:#fbfaf8;--card:#fff;--line:#e6e2db;--ink:#1c1a17;--dim:#6f6a61;--acc:#1a6b4a;
@@ -156,7 +170,8 @@ text-decoration:none}
 .top-in input[type=search]{width:auto;flex:1;max-width:330px;margin-left:auto}
 .doc{padding:4px 0 22px;border-bottom:1px solid var(--line);margin-bottom:24px}
 h1{margin:0 0 10px;font-size:27px;letter-spacing:-.5px}
-.lede{color:var(--dim);font-size:15px;margin:0 0 14px;line-height:1.7}
+.lede{color:var(--dim);font-size:15px;margin:0 0 14px;line-height:1.75}
+.lede p{margin:0 0 7px}.lede p:last-child{margin:0}
 .stats{font-size:13px;color:var(--dim);margin:0 0 20px}
 .stats b{font-weight:600}
 .stats .A{color:var(--A)}.stats .B{color:var(--B)}.stats .C{color:var(--C)}
@@ -375,9 +390,8 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
   </aside>
 <main><div class="main-in">
     <div class="doc" id="doc">
-      <h1>高性价比新手小白健身指南</h1>
-      <p class="lede">新手小白的第一年：训练、饮食、恢复、避坑。<br>
-      每一条都告诉你「怎么做、为什么、我自己验证到什么程度」。</p>
+      <h1>__TITLE__</h1>
+      <div class="lede">__LEDE__</div>
       <div class="stats">__SECTIONS__ 节 · __TOTAL__ 条 · <b class="A">A __NA__</b>
       · <b class="B">B __NB__</b> · <b class="C">C __NC__</b></div>
       <div class="disc"><div class="disc-h">免责声明</div>__DISCLAIMER__</div>
@@ -763,8 +777,11 @@ def main():
         "end": {"html": standalone("结语.md")},
         "app": {"html": standalone("附录-参考书目.md")},
     }
+    title, lede = front_matter()
     html = (TPL.replace("__DATA__", json.dumps(secs, ensure_ascii=False))
                .replace("__PAGES__", json.dumps(pages, ensure_ascii=False))
+               .replace("__TITLE__", title)
+               .replace("__LEDE__", lede)
                .replace("__DISCLAIMER__", disclaimer())
                .replace("__NA__", str(sum(1 for s in secs for i in s["items"] if i["level"]=="A")))
                .replace("__NB__", str(sum(1 for s in secs for i in s["items"] if i["level"]=="B")))

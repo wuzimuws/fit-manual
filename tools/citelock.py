@@ -33,6 +33,10 @@ RE_ITEM = re.compile(r"^### (\d+)\. (.+?)\s*$")
 RE_FIELD = re.compile(r"^- \*\*(.+?)\*\*")
 # 「第 15 条」/「02 节第 15 条」；节号缺省 = 本条所在节
 RE_CITE = re.compile(r"(?:(\d{1,2})\s*节\s*)?第\s*(\d+)\s*条")
+# 非正文文件（结语/README/附录）里写的是「01 第 16 条」，没有「节」字，得放宽
+RE_CITE2 = re.compile(r"(?:(\d{1,2})\s*节?\s*)?第\s*(\d+)\s*条")
+# 正文之外也要查——结语里的「01 节第 16 条」就是这么漏掉的
+EXTRA = ["README.md", "前言.md", "结语.md", "附录-参考书目.md"]
 
 
 def scan_file(fn):
@@ -77,6 +81,35 @@ def scan_file(fn):
     return text, out
 
 
+def scan_plain(fn):
+    """扫非正文文件。没有栏位结构，键就用「文件名#第几处」"""
+    path = os.path.join(ROOT, fn)
+    if not os.path.exists(path):
+        return "", []
+    text = open(path, encoding="utf-8").read()
+    out = []
+    for k, c in enumerate(RE_CITE2.finditer(text)):
+        out.append({
+            "key": f"{fn}#{k}", "file": fn, "src_sec": None, "src_no": None,
+            "src_title": fn, "field": "-", "text": c.group(0),
+            "sec": int(c.group(1)) if c.group(1) else None,
+            "no": int(c.group(2)), "start": c.start(2), "end": c.end(2),
+        })
+    return text, out
+
+
+def all_cites():
+    """正文 + 非正文，一处都不漏"""
+    cites = []
+    for fn in sorted(f for f in os.listdir(refs.B) if f.endswith(".md")):
+        _, cs = scan_file(fn)
+        cites += cs
+    for fn in EXTRA:
+        _, cs = scan_plain(fn)
+        cites += cs
+    return cites
+
+
 def load_lock():
     if not os.path.exists(LOCK):
         return {}
@@ -108,9 +141,7 @@ def main():
     lock = load_lock()
     drift, missing, fresh, seen = [], [], [], set()
 
-    for fn in sorted(f for f in os.listdir(refs.B) if f.endswith(".md")):
-        text, cites = scan_file(fn)
-        for c in cites:
+    for c in all_cites():
             seen.add(c["key"])
             ent = lock.get(c["key"])
             if not ent:
@@ -128,9 +159,7 @@ def main():
     orphan = [k for k in lock if k not in seen]
 
     if listing:
-        for fn in sorted(f for f in os.listdir(refs.B) if f.endswith(".md")):
-            _, cites = scan_file(fn)
-            for c in cites:
+            for c in all_cites():
                 locked = lock.get(c["key"])
                 cur = index.get((c["sec"], c["no"]))
                 cur_title = cur["title"] if cur else "❗不存在"
@@ -138,8 +167,9 @@ def main():
                 if locked:
                     note = (f"   〔锁定：{locked['title']}〕"
                             if locked["title"] != cur_title else "   〔锁定 ✓〕")
-                print(f"  [{'锁' if locked else '新'}] {c['key']:<22} 「{c['text']}」 → "
-                      f"{c['sec']:02d} 节「{cur_title}」{note}")
+                where = f"{c['sec']:02d} 节" if c["sec"] else "?? 节"
+                print(f"  [{'锁' if locked else '新'}] {c['key']:<26} 「{c['text']}」 → "
+                      f"{where}「{cur_title}」{note}")
 
     if drift:
         print(f"\n{'已自动修正' if fix else '❗条号漂移'} {len(drift)} 处：")
@@ -180,9 +210,7 @@ def main():
         # 自检：改完重新扫一遍。这类「改是改了、改错了」的 bug 必须当场撞出来
         _, _, _ = refs.load()
         bad2 = []
-        for fn in sorted(f for f in os.listdir(refs.B) if f.endswith(".md")):
-            _, cites = scan_file(fn)
-            for c in cites:
+        for c in all_cites():
                 ent = lock.get(c["key"])
                 if not ent:
                     continue
@@ -222,6 +250,12 @@ def main():
             print(f"  {k:<22} 锁定「{lock[k]['title']}」")
         if len(orphan) > 12:
             print(f"  …… 还有 {len(orphan) - 12} 条")
+
+    if update and orphan:                # 报告完了再清，别让打印引用到已删的键
+        for k in orphan:
+            lock.pop(k, None)
+        save_lock(lock)
+        print(f"  🧹 已清掉 {len(orphan)} 条源里已不存在的锁记录")
 
     if err == 0 and not drift:
         print(f"\n✅ 手写引用 {len(seen)} 处全部对齐（锁文件 {len(lock)} 条）")

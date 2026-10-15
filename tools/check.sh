@@ -45,8 +45,10 @@ for fn in files:
         if got != want:
             err.append(f"{fn}: 栏位「{f}」数量不符（{got}，应为 {want}）")
 
-    # 半角标点不得夹在中文里
-    for m_ in re.finditer(r"[\u4e00-\u9fff][,;:!?]|[,;:!?][\u4e00-\u9fff]", t):
+    # 半角标点不得夹在中文里。但「来源」整栏先摘掉——文献引用按 GB/T 7714 就是
+    # 用半角「:」和「,」（北京: 科学出版社 / 张静, 译），那是规范，不是笔误。
+    t_ = re.sub(r"^- \*\*来源\*\*：.*?(?=\n- \*\*|\Z)", "", t, flags=re.M | re.S)
+    for m_ in re.finditer(r"[\u4e00-\u9fff][,;:!?]|[,;:!?][\u4e00-\u9fff]", t_):
         err.append(f"{fn}: 中文里混了半角标点「{m_.group(0)}」")
 
     # 行内 ①②③ 枚举（同一行 ≥2 个）应拆成子项
