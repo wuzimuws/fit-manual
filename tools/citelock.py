@@ -33,6 +33,8 @@ RE_ITEM = re.compile(r"^### (\d+)\. (.+?)\s*$")
 RE_FIELD = re.compile(r"^- \*\*(.+?)\*\*")
 # 「第 15 条」/「02 节第 15 条」；节号缺省 = 本条所在节
 RE_CITE = re.compile(r"(?:(\d{1,2})\s*节\s*)?第\s*(\d+)\s*条")
+# 多编号引用：「第 8、9 条」——一次点了好几条，每条都要单独跟变
+RE_CITE_MULTI = re.compile(r"(?:(\d{1,2})\s*节\s*)?第\s*(\d+(?:\s*[、,，]\s*\d+)*)\s*条")
 # 非正文文件（结语/README/附录）里写的是「01 第 16 条」，没有「节」字，得放宽
 RE_CITE2 = re.compile(r"(?:(\d{1,2})\s*节?\s*)?第\s*(\d+)\s*条")
 # 正文之外也要查——结语里的「01 节第 16 条」就是这么漏掉的
@@ -58,26 +60,30 @@ def scan_file(fn):
                 if m and m.group(1) in refs.FIELDS:
                     field = m.group(1)
         if sec and item and field:
-            for c in RE_CITE.finditer(line):
+            for c in RE_CITE_MULTI.finditer(line):
                 # 键用「节号·源条目标题[栏位]#序号」——不用源条目的条号，
                 # 因为源条目自己也会被重新编号，用条号当键一插删就全部失配
                 grp = f"{sec}\N{MIDDLE DOT}{title}[{field}]"
-                k[grp] = k.get(grp, -1) + 1
-                out.append({
-                    "key": f"{grp}#{k[grp]}",
-                    "file": fn,
-                    "path": path,
-                    "src_sec": sec,
-                    "src_no": item,
-                    "src_title": title,
-                    "field": field,
-                    "text": c.group(0),
-                    "sec": int(c.group(1)) if c.group(1) else sec,
-                    "no": int(c.group(2)),
-                    # 数字在文件里的绝对偏移，改的时候只替换这一段
-                    "start": pos + c.start(2),
-                    "end": pos + c.end(2),
-                })
+                # 「第 8、9 条」一次点了好几条：拆成各自独立的记录，
+                # 每条只替换自己那几个数字字符，节号沿用开头写的那个
+                for nm in re.finditer(r"\d+", c.group(2)):
+                    k[grp] = k.get(grp, -1) + 1
+                    out.append({
+                        "key": f"{grp}#{k[grp]}",
+                        "file": fn,
+                        "path": path,
+                        "src_sec": sec,
+                        "src_no": item,
+                        "src_title": title,
+                        "field": field,
+                        "text": (c.group(0) if c.group(2).strip().isdigit()
+                                 else "第 %s 条" % nm.group(0)),
+                        "sec": int(c.group(1)) if c.group(1) else sec,
+                        "no": int(nm.group(0)),
+                        # 数字在文件里的绝对偏移，改的时候只替换这一段
+                        "start": pos + c.start(2) + nm.start(),
+                        "end": pos + c.start(2) + nm.end(),
+                    })
         pos += len(line)
     return text, out
 

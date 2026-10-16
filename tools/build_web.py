@@ -85,6 +85,40 @@ def md_block(txt, heads=True):
     return "".join(out)
 
 
+# 正文里的手写引用 → 可点跳转。写了「NN 节」就用那个节号，没写就用当前节。
+# 「第 8、9 条」这种多编号的，每一个数字各自成链接。
+RE_CITE_HTML = re.compile(r"(?:(\d{1,2})\s*节\s*)?第\s*(\d+(?:\s*[、,，]\s*\d+)*)\s*条")
+
+
+def link_cites(html, cur, index):
+    """把一段 HTML 里的「第 N 条」包成 <a data-go>；目标不存在就原样留着。
+
+    只替换数字那几个字符，其余一个字符都不动——和 citelock 改条号是同一套思路。
+    """
+    if cur is None and not re.search(r"\d{1,2}\s*节", html):
+        return html
+
+    def f(m):
+        whole = m.group(0)
+        sec = int(m.group(1)) if m.group(1) else cur
+        if sec is None:
+            return whole
+        body = m.group(2)
+        head = m.start(2) - m.start(0)          # 「第 」/「08 节第 」的宽度
+        out, last = "", 0
+        for nm in re.finditer(r"\d+", body):
+            out += body[last:nm.start()]
+            no = int(nm.group(0))
+            tgt = index.get((sec, no))
+            out += (f'<a data-go="c-{sec}-{no}" title="跳到 {sec}. {tgt["title"]}">'
+                    f'{nm.group(0)}</a>') if tgt else nm.group(0)
+            last = nm.end()
+        out += body[last:]
+        return whole[:head] + out + whole[head + len(body):]
+
+    return RE_CITE_HTML.sub(f, html)
+
+
 def parse_sections():
     secs_raw, index, problems = refs.load()
     if problems:
@@ -105,6 +139,7 @@ def parse_sections():
                 # 子项「  - 」就会原样输出成一整段（"没有自动换行"）
                 multi = f in ("具体地", "为什么", "总结性建议") and "\n" in val
                 d[f] = md_block(val) if multi else inline(val.replace("\n", " ").strip())
+                d[f] = link_cites(d[f], s["no"], index)
             lv = re.sub(r"<[^>]+>", "", d["主观证据等级"]).strip()
             d["level"] = lv if lv in ("A", "B", "C") else "B"
             d["src_done"] = TODO not in d["来源"]
@@ -771,11 +806,12 @@ def _js_check(html):
 
 def main():
     secs = parse_sections()
+    _, index, _ = refs.load()          # 非正文页面里的「NN 节第 N 条」要按节号找目标
     total = sum(len(s["items"]) for s in secs)
     pages = {
-        "pre": {"html": standalone("前言.md")},
-        "end": {"html": standalone("结语.md")},
-        "app": {"html": standalone("附录-参考书目.md")},
+        "pre": {"html": link_cites(standalone("前言.md"), None, index)},
+        "end": {"html": link_cites(standalone("结语.md"), None, index)},
+        "app": {"html": link_cites(standalone("附录-参考书目.md"), None, index)},
     }
     title, lede = front_matter()
     html = (TPL.replace("__DATA__", json.dumps(secs, ensure_ascii=False))
