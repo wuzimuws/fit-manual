@@ -83,8 +83,34 @@ def _parse_file(fn):
             "items": items, "themes": themes, "file": fn}
 
 
+def _guard_orphan_items():
+    """⚠️ 闸：一旦某节用了 `## 主题` 分块，第一个 `## ` 之前就不该再有条目——
+    解析器把那段当节头，里面的 `### N.` 会被静默丢掉（实测：丢了整整一条，条数从 88 变 87，
+    而 check.sh 的「条号连续」检查也看不出来）。宁可报错停下。
+    """
+    bad = []
+    for fn in sorted(os.listdir(B)):
+        if not fn.endswith(".md"):
+            continue
+        t = open(os.path.join(B, fn), encoding="utf-8").read()
+        m = re.search(r"(?m)^# (\d+)\. ", t)
+        if not m:
+            continue
+        rest = t[m.end():]
+        first_h2 = rest.find("\n## ")
+        if first_h2 < 0:
+            continue                      # 没分块，整节一块，正常
+        if "### " in rest[:first_h2]:
+            sec = re.match(r"(\d+)", t[m.end():].strip()).group(1)
+            title = re.search(r"(?m)^### (\d+)\. ([^\n]+)", rest[:first_h2])
+            bad.append("节 %s 用了 ## 主题分块，但第一个 ## 之前还有条目「%s」——它会被静默丢掉。"
+                       "把这一条挪进某个主题块里。" % (sec, title.group(2)[:40] if title else "?"))
+    return bad
+
+
 def load():
-    """返回 (sections, index)。index 的键是 (节号, 条号)。镜像条已展开。"""
+    """返回 (sections, index, problems)。index 的键是 (节号, 条号)。镜像条已展开。"""
+    orphan = _guard_orphan_items()
     secs = []
     for fn in sorted(f for f in os.listdir(B) if f.endswith(".md")):
         s = _parse_file(fn)
@@ -92,7 +118,7 @@ def load():
             secs.append(s)
     index = {(s["no"], it["no"]): it for s in secs for it in s["items"]}
 
-    problems = []
+    problems = list(orphan)
     for s in secs:
         for it in s["items"]:
             if not it["mirror"]:
