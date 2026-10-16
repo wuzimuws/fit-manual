@@ -6,9 +6,22 @@
         web/data.json   中间数据，便于排查
 """
 import os, re, json, sys
+from html import escape as _esc
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import refs  # noqa: E402  与 build_book.py 共用解析 / 镜像展开逻辑
+
+# 顶栏「记食本」按钮指向的地址 —— 作者自己开发的饮食记录 App。
+# 给了 App Store / 官网链接就改这一行（目前是 # 占位）。
+JISHIBEN_URL = "#"
+
+# 内嵌 SVG 图标：绿底圆角 + 白色「健」字。data-URI 内嵌，页面仍然只有一个文件。
+FAVICON = ("data:image/svg+xml,"
+           "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E"
+           "%3Crect width='64' height='64' rx='14' fill='%231a6b4a'/%3E"
+           "%3Ctext x='32' y='45' font-size='40' font-weight='700' fill='%23ffffff'"
+           " font-family='PingFang SC,Microsoft YaHei,sans-serif'"
+           " text-anchor='middle'%3E%E5%81%A5%3C/text%3E%3C/svg%3E")
 
 ROOT = refs.ROOT
 B = refs.B
@@ -196,6 +209,16 @@ TPL = r"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>__TITLE__</title>
+<meta name="description" content="__DESC__">
+<meta name="author" content="__AUTHOR__">
+<meta property="og:type" content="article">
+<meta property="og:title" content="__TITLE__">
+<meta property="og:description" content="__DESC__">
+<meta property="og:site_name" content="__TITLE__">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="__TITLE__">
+<meta name="twitter:description" content="__DESC__">
+<link rel="icon" href="__FAVICON__">
 <style>
 *{box-sizing:border-box}
 :root{--bg:#fbfaf8;--card:#fff;--line:#e6e2db;--ink:#1c1a17;--dim:#6f6a61;--acc:#1a6b4a;
@@ -607,7 +630,11 @@ def main():
                .replace("__NB__", str(sum(1 for s in secs for i in s["items"] if i["level"]=="B")))
                .replace("__NC__", str(sum(1 for s in secs for i in s["items"] if i["level"]=="C")))
                .replace("__TOTAL__", str(total))
-               .replace("__SECTIONS__", str(len(secs))))
+               .replace("__SECTIONS__", str(len(secs)))
+               .replace("__JISHIBEN__", JISHIBEN_URL)
+               .replace("__DESC__", _esc(re.sub(r"<[^>]+>", "", lede).replace("&nbsp;", " ").strip()[:120]))
+               .replace("__AUTHOR__", "指南作者")
+               .replace("__FAVICON__", FAVICON))
     os.makedirs(os.path.join(ROOT, "web"), exist_ok=True)
     json.dump(secs, open(os.path.join(ROOT, "web", "data.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
