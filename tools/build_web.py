@@ -5,7 +5,7 @@
 产物：  web/index.html   单文件、零依赖、可直接丢到 GitHub Pages
         web/data.json   中间数据，便于排查
 """
-import os, re, json, sys
+import os, re, json, sys, base64
 from html import escape as _esc
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -13,7 +13,19 @@ import refs  # noqa: E402  与 build_book.py 共用解析 / 镜像展开逻辑
 
 # 顶栏「记食本」按钮指向的地址 —— 作者自己开发的饮食记录 App。
 # 给了 App Store / 官网链接就改这一行（目前是 # 占位）。
-JISHIBEN_URL = "#"
+JISHIBEN_URL = "https://nutridaily.cn/"
+
+# 顶栏「记食本」按钮的图标：与官网 nutridaily.cn 同源的品牌图标（三色饼图）。
+# 和 FAVICON 一样内嵌成 data-URI，页面仍然只有一个文件。换图标就换 tools/assets/ 里那张图。
+_ICON_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                          "assets", "jishiben-icon.png")
+try:
+    with open(_ICON_PATH, "rb") as _f:
+        JISHIBEN_ICON = "data:image/png;base64," + base64.b64encode(_f.read()).decode("ascii")
+except OSError:
+    # 兜底：1×1 透明像素，按钮退化成纯文字，不让 build 挂掉
+    JISHIBEN_ICON = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+    print("⚠️ 未找到 tools/assets/jishiben-icon.png，图标留空", file=sys.stderr)
 
 # 内嵌 SVG 图标：绿底圆角 + 白色「健」字。data-URI 内嵌，页面仍然只有一个文件。
 FAVICON = ("data:image/svg+xml,"
@@ -233,7 +245,7 @@ border-radius:6px;padding:2px 7px;white-space:nowrap}
 .top-title{font-size:15px;font-weight:600;white-space:nowrap;color:var(--dim);
 text-decoration:none}
 .top-title:hover{color:var(--ink)}
-.top-in input[type=search]{width:auto;flex:1;max-width:330px;margin-left:auto}
+.top-in input[type=search]{width:auto;flex:1;min-width:0;max-width:330px;margin-left:auto}
 .doc{padding:4px 0 22px;border-bottom:1px solid var(--line);margin-bottom:24px}
 h1{margin:0 0 10px;font-size:27px;letter-spacing:-.5px}
 .lede{color:var(--dim);font-size:15px;margin:0 0 14px;line-height:1.75}
@@ -253,11 +265,17 @@ border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:9px}
 .f.src .v{font-size:12.5px;color:#9b968b;line-height:1.95}
 .f.src .v a{color:inherit;text-decoration:none;border-bottom:1px solid #e2dcd2}
 .f.src .v a:hover{color:var(--acc);border-color:var(--acc)}
-/* 顶栏「记食本」入口（原「审核模式」按钮的位置） */
-.top-link{flex:none;border:1px solid var(--line);background:var(--card);color:var(--dim);
-font-size:12.5px;padding:5px 12px;border-radius:999px;text-decoration:none;
-font-family:inherit;white-space:nowrap}
-.top-link:hover{color:var(--acc);border-color:var(--acc);background:#f4faf7}
+/* 顶栏「记食本」入口（原「审核模式」按钮的位置）。
+   样式照官网 nutridaily.cn 的次要按钮：品牌绿 #3E8C57，软底 + 同色描边 + 绿字，
+   悬停翻成实心绿白字。底色比官网深一档（20% vs 12%）——本站卡片是纯白，
+   12% 铺上去像没上色。 */
+.top-link{flex:none;display:inline-flex;align-items:center;gap:6px;
+border:1px solid rgba(62,140,87,.34);background:rgba(62,140,87,.2);color:#3E8C57;
+font-size:12.5px;font-weight:500;padding:5px 12px;border-radius:999px;text-decoration:none;
+font-family:inherit;white-space:nowrap;
+transition:background .2s,color .2s,border-color .2s}
+.top-link:hover{background:#3E8C57;border-color:#3E8C57;color:#fff}
+.top-link img{width:17px;height:17px;display:block;flex:none}
 /* 回到顶部：滚过一屏才出现，右下角固定 */
 #toTop{position:fixed;right:24px;bottom:24px;width:44px;height:44px;border-radius:50%;
 background:var(--acc);border:1px solid var(--acc);color:#fff;font-size:19px;font-weight:700;
@@ -400,15 +418,15 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
 </style></head><body>
 <header class="topbar"><div class="top-in">
   <span class="logo">健身</span>
-  <a class="top-title" href="#" title="回到全书">新手小白健身指南</a>
+  <a class="top-title" href="#" title="回到全书">高性价比新手小白健身指南</a>
   <input type="search" id="q" placeholder="搜索条目（可跨章）">
   <a class="top-link" href="__JISHIBEN__" target="_blank" rel="noopener noreferrer"
-     title="作者自己开发的饮食记录 App">📱 记食本</a>
+     title="作者自己开发的饮食记录 App"><img src="__JISHIBEN_ICON__" alt="" width="17" height="17">记食本</a>
 </div></header>
 <aside class="side" id="side">
     <div class="grp">
       <div class="gt">证据等级</div>
-      <div class="gd">A 机制或共识 ＋ 我验证过 · B 道理站得住但靠经验 · C 只有我的体感</div>
+      <div class="gd">A 机制或共识 · B 有一定的相关性 · C 个人体感</div>
       <div class="levels">
         <span class="chip on" data-lv="A">A 级</span>
         <span class="chip on" data-lv="B">B 级</span>
@@ -632,6 +650,7 @@ def main():
                .replace("__TOTAL__", str(total))
                .replace("__SECTIONS__", str(len(secs)))
                .replace("__JISHIBEN__", JISHIBEN_URL)
+               .replace("__JISHIBEN_ICON__", JISHIBEN_ICON)
                .replace("__DESC__", _esc(re.sub(r"<[^>]+>", "", lede).replace("&nbsp;", " ").strip()[:120]))
                .replace("__AUTHOR__", "指南作者")
                .replace("__FAVICON__", FAVICON))
