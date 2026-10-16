@@ -23,8 +23,10 @@ def esc(s):
 def inline(s):
     s = esc(s)
     # markdown 链接 → <a>：来源里的书（豆瓣）和论文（PubMed/DOI）都靠这个变成可点
-    s = re.sub(r"\[([^\]]+)\]\((https?://[^)\s]+)\)",
-               r'<a href="\2" target="_blank" rel="noopener noreferrer">\1</a>', s)
+    def _a(m):
+        txt = m.group(1).replace("\\[", "[").replace("\\]", "]")
+        return f'<a href="{m.group(2)}" target="_blank" rel="noopener noreferrer">{txt}</a>'
+    s = re.sub(r"\[((?:[^\[\]]|\\[\[\]])+)\]\((https?://[^)\s]+)\)", _a, s)
     return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
 
 
@@ -141,7 +143,10 @@ def parse_sections():
                 # 多行字段必须走 md_block：inline() 会把换行压成空格，
                 # 子项「  - 」就会原样输出成一整段（"没有自动换行"）
                 multi = f in ("具体地", "为什么", "总结性建议") and "\n" in val
-                d[f] = md_block(val) if multi else inline(val.replace("\n", " ").strip())
+                if f == "来源":
+                    d[f] = "<br>".join(inline(l.strip()) for l in val.split("\n") if l.strip())
+                else:
+                    d[f] = md_block(val) if multi else inline(val.replace("\n", " ").strip())
                 d[f] = link_cites(d[f], s["no"], index)
             lv = re.sub(r"<[^>]+>", "", d["主观证据等级"]).strip()
             d["level"] = lv if lv in ("A", "B", "C") else "B"
@@ -221,50 +226,15 @@ h1{margin:0 0 10px;font-size:27px;letter-spacing:-.5px}
 border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:9px}
 .sec-h .sec-n{font-size:12px;color:var(--dim);font-weight:400}
 .sec-h:first-child{margin-top:0}
-/* 审核模式：一次只看一条 */
-#rvBtn{flex:none;border:1px solid var(--line);background:var(--card);color:var(--dim);
-font-size:12.5px;padding:5px 12px;border-radius:999px;cursor:pointer;font-family:inherit}
-#rvBtn:hover{color:var(--acc);border-color:var(--acc)}
-#rvBtn.on{background:#eaf3ee;border-color:var(--acc);color:var(--acc);font-weight:600}
-.rv-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 16px;
-padding:10px 14px;background:#fbfaf8;border:1px solid var(--line);border-radius:9px}
-.rv-bar button{border:1px solid var(--line);background:var(--card);color:var(--dim);
-font-size:12.5px;padding:4px 11px;border-radius:999px;cursor:pointer;font-family:inherit}
-.rv-bar button:hover{color:var(--acc);border-color:var(--acc)}
-.rv-bar button.on{background:#eaf3ee;border-color:var(--acc);color:var(--acc);font-weight:600}
-.rv-pos{font-size:13.5px;font-weight:600}
-.rv-sec{font-size:13px;color:var(--dim)}
-.rv-done{font-size:12.5px;color:var(--dim);margin-left:auto}
-.rv-acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:18px 0 12px}
-.rv-acts button{border:1px solid var(--line);background:var(--card);color:var(--dim);
-font-size:13px;padding:7px 16px;border-radius:999px;cursor:pointer;font-family:inherit}
-.rv-acts button:hover:not(:disabled){color:var(--acc);border-color:var(--acc)}
-.rv-acts button:disabled{opacity:.4;cursor:default}
-.rv-acts button.on{color:#fff;font-weight:600}
-#rvOk.on{background:var(--A);border-color:var(--A)}
-#rvFix.on{background:var(--C);border-color:var(--C)}
-#rvSrc{width:100%;min-height:340px;box-sizing:border-box;border:1px solid var(--line);
-border-radius:9px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;
-line-height:1.7;color:var(--ink);background:#fbfaf8;resize:vertical}
-#rvSrc:focus{outline:none;border-color:var(--acc)}
-.rv-edit-acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0 0}
-.rv-edit-acts button{border:1px solid var(--line);background:var(--card);color:var(--dim);
-font-size:13px;padding:7px 16px;border-radius:999px;cursor:pointer;font-family:inherit}
-.rv-edit-acts button:hover{color:var(--acc);border-color:var(--acc)}
-#rvSave{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
-#rvSave:hover{background:#155c3f;color:#fff}
-#rvMsg{font-size:12.5px;color:var(--dim)}
-.rv-hint{margin:10px 0 0;padding:10px 13px;background:#fdf6e9;border:1px solid #eadfc6;
-border-radius:9px;font-size:12.5px;line-height:1.8;color:#7a6a4a}
-.rv-hint code{background:#f4ecdc;padding:1px 5px;border-radius:4px;
-font-family:ui-monospace,Menlo,monospace}
-#rvNote{width:100%;min-height:74px;box-sizing:border-box;border:1px solid var(--line);
-border-radius:9px;padding:10px 12px;font-family:inherit;font-size:14px;line-height:1.7;
-color:var(--ink);background:var(--card);resize:vertical}
-#rvNote:focus{outline:none;border-color:var(--acc)}
-.rv-tip{font-size:12px;color:var(--dim);margin:8px 0 0}
-.rv-done-all{text-align:center;padding:60px 0;color:var(--dim);font-size:15px}
-
+/* 来源栏：字号更小、整栏灰色；每条引用各自成行，整条都是一个链接 */
+.f.src .v{font-size:12.5px;color:#9b968b;line-height:1.95}
+.f.src .v a{color:inherit;text-decoration:none;border-bottom:1px solid #e2dcd2}
+.f.src .v a:hover{color:var(--acc);border-color:var(--acc)}
+/* 顶栏「记食本」入口（原「审核模式」按钮的位置） */
+.top-link{flex:none;border:1px solid var(--line);background:var(--card);color:var(--dim);
+font-size:12.5px;padding:5px 12px;border-radius:999px;text-decoration:none;
+font-family:inherit;white-space:nowrap}
+.top-link:hover{color:var(--acc);border-color:var(--acc);background:#f4faf7}
 /* 回到顶部：滚过一屏才出现，右下角固定 */
 #toTop{position:fixed;right:24px;bottom:24px;width:44px;height:44px;border-radius:50%;
 background:var(--acc);border:1px solid var(--acc);color:#fff;font-size:19px;font-weight:700;
@@ -409,7 +379,8 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
   <span class="logo">健身</span>
   <a class="top-title" href="#" title="回到全书">新手小白健身指南</a>
   <input type="search" id="q" placeholder="搜索条目（可跨章）">
-  <button id="rvBtn" type="button" title="一条一条过">审核模式</button>
+  <a class="top-link" href="__JISHIBEN__" target="_blank" rel="noopener noreferrer"
+     title="作者自己开发的饮食记录 App">📱 记食本</a>
 </div></header>
 <aside class="side" id="side">
     <div class="grp">
@@ -469,7 +440,6 @@ nav.onclick=e=>{
   const k=b.dataset.k;
   if(k===cur && b.closest(".ch")){                     /* 再点当前章 → 收起目录 */
     tocClosed=!tocClosed;syncToc();return;}
-  if(rvOn){rvOn=false;$("#rvBtn").classList.remove("on");$("#rvBtn").textContent="审核模式";}
   cur=k;tocClosed=false;                               /* 换章 = 选中 + 展开 */
   /* 先把选中态画上，再重建正文：否则高亮要等 94 张卡片重建完才上色，看着就是「点慢了」 */
   document.querySelectorAll("nav button")
@@ -542,7 +512,7 @@ function card(it,showSec,compact){
       if(f==="来源"&&!it.src_done) v=`<span class="todo">〔待补〕</span>`;
       if (f === "总结性建议")                 /* 高亮框本身就是"答案"，不再重复标签 */
         return `<div class="f hl"><div class="v">${v}</div></div>`;
-      return `<div class="f"><div class="k">${f}</div><div class="v">${v}</div></div>`;
+      return `<div class="f${f === "来源" ? " src" : ""}"><div class="k">${f}</div><div class="v">${v}</div></div>`;
     }).join("")}</div>`;
 }
 function goTo(anchor){                       /* 跳到镜像条的源条 */
@@ -558,198 +528,7 @@ document.addEventListener("click",e=>{
   const a=e.target.closest("a[data-go]"); if(!a) return;
   e.preventDefault(); goTo(a.dataset.go);
 });
-/* ================= 审核模式：一次只看一条，逐条标记 ================= */
-const RKEY="fitman-review-v1";
-let RV={};                                    /* anchor -> {s:"ok"|"fix", n:"备注"} */
-try{RV=JSON.parse(localStorage.getItem(RKEY)||"{}");}catch(e){RV={};}
-let rvOn=false, rvOnly=false;
-let rvIdx=parseInt(localStorage.getItem("fitman-review-idx")||"0",10)||0;
-let rvEditing=false, rvSrc="", rvMsg="";
-let rvEditDefault=true;      /* 进审核模式默认就是编辑态；点「查看」切回渲染版 */
-let rvBusy=false;            /* 正在取原文，别重复发请求 */
-let rvSrc0="";               /* 载入时的原文，用来判断有没有改过 */
-const SAMEORIGIN=location.protocol==="http:"||location.protocol==="https:";
-function rvSave(){try{
-  localStorage.setItem(RKEY,JSON.stringify(RV));
-  localStorage.setItem("fitman-review-idx",String(rvIdx));   /* 刷新后回到原来那条 */
-}catch(e){}}
-function rvAll(){const a=[];DATA.forEach(s=>s.items.forEach(it=>a.push(it)));return a;}
-function rvList(){const a=rvAll();return rvOnly?a.filter(it=>!RV[it.anchor]):a;}
-function rvSet(anchor,field,val){
-  RV[anchor]=RV[anchor]||{s:"",n:""};RV[anchor][field]=val;rvSave();
-}
-function rvRender(){
-  const list=rvList();
-  if(rvIdx>=list.length)rvIdx=Math.max(0,list.length-1);
-  const it=list[rvIdx];
-  const done=Object.keys(RV).filter(a=>RV[a]&&RV[a].s).length;
-  const bar=`<div class="rv-bar">
-      <span class="rv-pos">第 ${list.length?rvIdx+1:0} / ${list.length} 条</span>
-      <span class="rv-sec">${it?it.sec_no+". "+esc(it.sec):""}</span>
-      <span class="rv-done">已审 ${done} / ${TOTAL}</span>
-      <button id="rvOnly" class="${rvOnly?"on":""}">只看未审</button>
-      <button id="rvExport">导出结果</button>
-      <button id="rvClear">清空标记</button>
-    </div>`;
-  if(!it){
-    $("#body").innerHTML=bar+`<div class="rv-done-all">这一批都审完了 ✓<br>
-      <span style="font-size:13px">点上面的「只看未审」切回全部，或「导出结果」把结论发我</span></div>`;
-    rvBind();return;
-  }
-  const rec=RV[it.anchor]||{s:"",n:""};
-  const acts=`<div class="rv-acts">
-        <button id="rvPrev"${rvIdx===0?" disabled":""}>← 上一条</button>
-        <button id="rvOk" class="${rec.s==="ok"?"on":""}">通过</button>
-        <button id="rvFix" class="${rec.s==="fix"?"on":""}">要改</button>
-        <button id="rvNext"${rvIdx>=list.length-1?" disabled":""}>下一条 →</button>
-        <button id="rvEdit" title="${rvEditing?"切回排版好的样子":"直接改这一条的 markdown 原文"}"
-          >${rvEditing?"查看":"编辑原文"}</button>
-      </div>`;
-  if(rvEditing){
-    $("#body").innerHTML=bar+`<div class="rv-edit">
-        <textarea id="rvSrc" spellcheck="false">${esc(rvSrc)}</textarea>
-        <div class="rv-edit-acts">
-          <button id="rvSave">保存并重建</button>
-          <button id="rvCancel">取消</button>
-          <span id="rvMsg">${rvMsg||"改完直接点「下一条」就会存；也可以点「保存并重建」"}</span>
-        </div></div>`+acts;
-    rvBind();rvBindEdit();return;
-  }
-  if(rvEditDefault){rvAutoEdit();return;}
-  $("#body").innerHTML=bar+card(it,false,false)+acts+`
-      <textarea id="rvNote" placeholder="这一条要改什么？写一句（留空也行）">${esc(rec.n||"")}</textarea>
-      <div class="rv-tip">快捷键：← → 翻条 · 1 通过 · 2 要改 · 拼音输入法打字时快捷键不触发</div>`;
-  rvBind();
-}
-function rvBind(){
-  const list=rvList(), it=list[rvIdx];
-  on("rvOnly",()=>{rvOnly=!rvOnly;rvIdx=0;rvRender();});
-  on("rvClear",()=>{if(confirm("清空所有审核标记？")){RV={};rvIdx=0;rvSave();rvRender();}});
-  on("rvExport",rvExport);
-  on("rvPrev",()=>{if(rvIdx>0)rvCommit(()=>rvStep(-1));});
-  on("rvNext",()=>{if(rvIdx<list.length-1)rvCommit(()=>rvStep(1));});
-  const ed=document.getElementById("rvEdit");
-  if(ed)ed.onclick=()=>{
-    if(rvEditing){rvEditDefault=false;rvEditing=false;rvMsg="";rvRender();}
-    else{rvEditDefault=true;rvRender();}
-  };
-  on("rvOk",()=>{if(it)rvCommit(()=>{rvSet(it.anchor,"s","ok");rvStep(1);});});
-  on("rvFix",()=>{if(it){rvSet(it.anchor,"s","fix");rvCount();   /* 标完先把计数刷新，再让去写备注 */
-    const n=document.getElementById("rvNote");if(n)n.focus();}});
-  const note=document.getElementById("rvNote");
-  if(note&&it)note.oninput=()=>rvSet(it.anchor,"n",note.value);
-}
-function rvAutoEdit(){                              /* 取这一条的 markdown 原文，进来直接改 */
-  const list=rvList(), it=list[rvIdx]; if(!it)return;
-  if(!SAMEORIGIN){
-    rvEditing=true;rvSrc="";
-    rvMsg=`网页是用 file:// 打开的，浏览器不让它写本地文件。先在本机跑一次
-      <code>python3 tools/review_server.py</code>，再打开
-      <code>http://127.0.0.1:8787/</code>。`;
-    rvRender();return;
-  }
-  if(rvBusy)return;
-  rvBusy=true;rvEditing=true;rvSrc="";rvMsg="载入原文…";rvRender();
-  fetch(`/api/raw?sec=${it.sec_no}&no=${it.no}`)
-    .then(r=>r.json())
-    .then(d=>{rvBusy=false;rvSrc=d.text||"";rvSrc0=rvSrc;rvMsg="";rvRender();})
-    .catch(e=>{rvBusy=false;rvSrc="";rvMsg="取原文失败："+e.message;rvRender();});
-}
-function rvBindEdit(){
-  const ta=document.getElementById("rvSrc");
-  if(ta)ta.oninput=()=>{rvSrc=ta.value;};
-  on("rvCancel",()=>{rvEditDefault=false;rvEditing=false;rvMsg="";rvRender();});
-  on("rvSave",()=>{
-    const list=rvList(), it=list[rvIdx]; if(!it)return;
-    const msg=document.getElementById("rvMsg");
-    if(msg)msg.innerHTML="保存中…";
-    fetch("/api/save",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({sec:it.sec_no,no:it.no,text:rvSrc})})
-      .then(r=>r.json())
-      .then(d=>{
-        if(d.error){if(msg)msg.innerHTML="❌ "+esc(d.error);return;}
-        const okTxt=d.ok?"✅ 校验全部通过":"⚠️ 已写入，但校验有报错";
-        if(msg)msg.innerHTML=`${okTxt} · 已写回 ${esc(d.file)}<br>
-          <button id="rvReload" style="margin-top:6px">刷新页面看结果</button>
-          <pre style="white-space:pre-wrap;font-size:11.5px;margin:8px 0 0">${esc(d.check||"")}</pre>`;
-        const rb=document.getElementById("rvReload");
-        if(rb)rb.onclick=()=>location.reload();
-      })
-      .catch(e=>{if(msg)msg.innerHTML="❌ 保存失败："+esc(e.message);});
-  });
-}
-const on=(id,fn)=>{const e=document.getElementById(id);if(e)e.onclick=fn;};
-function rvCount(){                            /* 只刷新计数，不重绘（重绘会丢掉备注框焦点） */
-  const el=document.querySelector(".rv-done");
-  if(el)el.textContent=`已审 ${Object.keys(RV).filter(a=>RV[a]&&RV[a].s).length} / ${TOTAL}`;
-}
-function rvStep(d){                                  /* 翻条：退出编辑态、记位置 */
-  const list=rvList();
-  rvEditing=false;rvMsg="";
-  if(rvIdx+d>=0&&rvIdx+d<list.length){rvIdx+=d;rvSave();rvRender();window.scrollTo({top:0});}
-  else rvRender();
-}
-function rvDirty(){return rvEditing&&rvSrc!==rvSrc0;}
-/* 翻条前先把改动落盘。保存不了（或写进去了但校验没过）就不翻，留在原地让人看见 */
-function rvCommit(after){
-  const it=rvList()[rvIdx];
-  if(!it||!rvDirty()){after();return;}
-  const msg=document.getElementById("rvMsg");
-  if(msg)msg.innerHTML="保存中…";
-  fetch("/api/save",{method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({sec:it.sec_no,no:it.no,text:rvSrc})})
-    .then(r=>r.json())
-    .then(d=>{
-      if(d.error){if(msg)msg.innerHTML="❌ "+esc(d.error)+"<br>没有保存，先别翻过去";return;}
-      rvSrc0=rvSrc;                                  /* 已落盘；再点一次就能翻走 */
-      if(!d.ok){
-        if(msg)msg.innerHTML="⚠️ 已写入，但校验没过（再点一次翻条就会走）<pre style=\"white-space:pre-wrap;font-size:11.5px;margin:8px 0 0\">"+esc(d.check||"")+"</pre>";
-        return;
-      }
-      after();
-    })
-    .catch(e=>{if(msg)msg.innerHTML="❌ 保存失败："+esc(e.message)+"<br>没有保存，先别翻过去";});
-}
-function rvExport(){
-  const all=rvAll(), ok=[], fix=[], pend=[];
-  all.forEach(it=>{const r=RV[it.anchor];
-    if(!r||!r.s)pend.push(it);
-    else if(r.s==="ok")ok.push(it); else fix.push(it);});
-  const line=it=>`- [${it.sec_no}·${it.no}] ${it.title}${(RV[it.anchor]&&RV[it.anchor].n)?"\n  - 备注："+RV[it.anchor].n:""}`;
-  const md=[`# 审核结果`,"",`共 ${all.length} 条 · 通过 ${ok.length} · 要改 ${fix.length} · 未审 ${pend.length}`,""];
-  if(fix.length)md.push("## 要改","",...fix.map(line),"");
-  if(ok.length)md.push("## 通过","",...ok.map(line),"");
-  if(pend.length)md.push("## 未审","",...pend.map(it=>`- [${it.sec_no}·${it.no}] ${it.title}`),"");
-  const txt=md.join("\n");
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(new Blob([txt],{type:"text/markdown"}));
-  a.download="审核结果.md";a.click();URL.revokeObjectURL(a.href);
-  try{navigator.clipboard.writeText(txt);}catch(e){}
-  alert(`已导出 审核结果.md（同时复制到剪贴板）\n通过 ${ok.length} · 要改 ${fix.length} · 未审 ${pend.length}`);
-}
-addEventListener("keydown",e=>{
-  if(!rvOn)return;
-  const tag=(e.target.tagName||"").toLowerCase();
-  if(tag==="input"||tag==="textarea")return;
-  if(e.metaKey||e.ctrlKey||e.altKey)return;
-  if(e.key==="ArrowLeft"){const b=document.getElementById("rvPrev");if(b&&!b.disabled)b.click();}
-  else if(e.key==="ArrowRight"){const b=document.getElementById("rvNext");if(b&&!b.disabled)b.click();}
-  else if(e.key==="1"){const b=document.getElementById("rvOk");if(b)b.click();}
-  else if(e.key==="2"){const b=document.getElementById("rvFix");if(b)b.click();}
-});
-$("#rvBtn").onclick=()=>{
-  rvOn=!rvOn;
-  if(rvOn)rvEditDefault=true;          /* 每次进审核模式都回到「直接改原文」 */
-  $("#rvBtn").classList.toggle("on",rvOn);
-  $("#rvBtn").textContent=rvOn?"退出审核":"审核模式";
-  draw();
-  window.scrollTo({top:0});
-};
-
 function draw(){
-  if(rvOn){$("#side").style.display="flex";$("#doc").style.display="none";
-    document.querySelectorAll("nav button").forEach(b=>b.classList.remove("on"));
-    rvRender();return;}
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.k===cur));
   const isList=!("pre end app".split(" ").includes(cur));
   $("#side").style.display="flex";        /* 侧栏就是导航，任何视图都留着 */

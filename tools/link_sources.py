@@ -5,11 +5,9 @@
     [{"match": "肌肉与力量全书", "url": "https://book.douban.com/subject/35140168/", "kind": "book"}]
 `match` 是引用行里的一个足够独特的片段，用来认人。
 
-为什么只给「标题」套链接、不套整行：引用里有 `[M]` `[J]` 文献类型标识，
-而 markdown 链接是 `[文字](地址)`——方括号会打架，整行套进去链接就断了。
-所以：
-    - 行里有 `[M]`/`[J]` → 只把「[M] 之前那段」（作者+标题）套成链接，其余原样
-    - 行里没有 → 整行套成链接（APA 格式那种没有方括号的）
+整条引用套成一个链接（作者+标题+[M]+出版社…全在里面）。引用里带 `[M]` `[J]`
+文献类型标识，而 markdown 链接是 `[文字](地址)`，方括号会打架——所以把引用正文里的
+方括号**转义**成 `\[` `\]`。markdown 渲染出来仍然是 `[M]`，链接却不会断。
 
 幂等：已经套过链接的行会跳过。用法：
     python3 tools/link_sources.py            # 应用映射表
@@ -23,18 +21,29 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BOOK = os.path.join(ROOT, "book")
 MAP = os.path.join(ROOT, "tools", "source-links.json")
-RE_MJ = re.compile(r"^(.*?)\s*(\[[MJ]\b.*)$")
 
 
 RE_PREFIX = re.compile(r"^(\s*- \*\*来源\*\*：)(.*)$")
+RE_LINK = re.compile(r"\[((?:[^\[\]]|\\[\[\]])+)\]\((https?://[^)\s]+)\)")
+
+
+def unwrap(line):
+    """把已经套好的链接拆回纯文本，返回 (文本, 原URL)。"""
+    m = RE_LINK.search(line)
+    if not m:
+        return line, None
+    txt = m.group(1).replace("\\[", "[").replace("\\]", "]")
+    return line[:m.start()] + txt + line[m.end():], m.group(2)
 
 
 def wrap(line):
-    """把一条引用行变成 markdown 链接；已有链接的返回 None。
+    """把一条引用行整条做成 markdown 链接；已有链接的返回 None。
 
-    ⚠️「  - **来源**：」这个栏位前缀必须留在链接外面。第一版把整行（含前缀）套进链接，
-    结果变成 `[- **来源**：作者…](url) [M]…`——栏位标签被吞进链接文字里，
-    解析器认不出这一栏，check.sh 的「来源豁免半角标点」也跟着失效。
+    ⚠️ 两处坑：
+    ①「  - **来源**：」这个栏位前缀必须留在链接外面，否则栏位标签被吞进链接文字，
+       解析器认不出这一栏，check.sh 的「来源豁免半角标点」也跟着失效。
+    ② 引用里的 `[M]`/`[J]` 要转义成 `\[M\]`/`\[J\]`，否则 markdown 链接的
+       方括号语法会撞上，链接在 `[M]` 处就断了（只剩标题是可点的）。
     """
     if "](http" in line:
         return None
@@ -43,15 +52,13 @@ def wrap(line):
     s = body.strip()
     if not s or s in ("无",) or "待你补" in s:
         return None
-    m = RE_MJ.match(s)
-    if m:                                   # 有 [M]/[J]：只链作者+标题那一段，[M] 留在链接外
-        head, tail = m.group(1).strip(), m.group(2).strip()
-        return f"{prefix}[{head}]({{URL}}) {tail}"
-    return f"{prefix}[{s}]({{URL}})"        # 没方括号（APA 格式）：整段引用链起来
+    esc = s.replace("[", "\\[").replace("]", "\\]")
+    return f"{prefix}[{esc}]({{URL}})"
 
 
 def main():
     dry = "--check" in sys.argv
+    rewrap = "--rewrap" in sys.argv        # 先把旧链接拆掉再重包（改了包法之后用）
     table = json.load(open(MAP, encoding="utf-8"))
     hits = {t["match"]: t for t in table}
     changed_files, changed_lines, misses = [], 0, []
@@ -65,6 +72,11 @@ def main():
             if not hit:
                 out_lines.append(line)
                 continue
+            if rewrap:                      # 拆旧链接，顺便校验原 URL 没变
+                stripped, old = unwrap(line)
+                if old and old != hit["url"]:
+                    print("   ⚠️ URL 将变：%s\n       旧 %s\n       新 %s" % (hit["match"][:40], old, hit["url"]))
+                line = stripped
             new = wrap(line)
             if not new:
                 out_lines.append(line)      # 已经是链接 / 无值
