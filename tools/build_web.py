@@ -361,9 +361,10 @@ padding:22px 24px 18px;margin-bottom:16px;
 font-size:14px;line-height:1.75}      /* 卡内基准 14px：正文比标题低一级，层级才分得开 */
 .card h4{margin:0 0 14px;font-size:18px;font-weight:600;line-height:28px;
 display:flex;gap:10px;align-items:flex-start}
-.num{color:#b9b3a8;font-size:14px;font-variant-numeric:tabular-nums;padding-top:3px;min-width:22px}
+.num{color:#b9b3a8;font-size:14px;font-variant-numeric:tabular-nums;padding-top:3px;
+min-width:22px;line-height:1.1;text-align:center}
 .lv{flex:none;width:23px;height:23px;border-radius:6px;display:grid;place-items:center;
-font-size:12px;font-weight:700;color:#fff;margin-top:2px}
+font-size:12px;font-weight:700;color:#fff;margin-top:2px;line-height:1;text-align:center}
 .lv.A{background:var(--A)}.lv.B{background:var(--B)}.lv.C{background:var(--C)}
 .sec-tag{display:inline-block;background:#f1efe9;color:var(--dim);border-radius:5px;
 padding:1px 7px;font-size:12px;margin-left:auto;flex:none}
