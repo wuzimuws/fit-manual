@@ -70,8 +70,10 @@ for fn in files:
             err.append(f"{fn}: 页脚重复")
 
     # 同节内重复句（≥14 字；跳过字段标签、表格线、引用行）
+    # 表格行必须跳过：同一张表头会在不同条目的表格里各出现一次，那是正常的
     body_only = "\n".join(l for l in t.split("\n")
                           if not l.lstrip().startswith(">")
+                          and not l.lstrip().startswith("|")
                           and not l.lstrip().startswith("<!--"))
     sents = [s.strip() for s in re.split(r"[。！？\n]", body_only)]
     sents = [s for s in sents if len(s) >= 14

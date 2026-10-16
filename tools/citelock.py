@@ -66,6 +66,7 @@ def scan_file(fn):
                 out.append({
                     "key": f"{grp}#{k[grp]}",
                     "file": fn,
+                    "path": path,
                     "src_sec": sec,
                     "src_no": item,
                     "src_title": title,
@@ -90,7 +91,8 @@ def scan_plain(fn):
     out = []
     for k, c in enumerate(RE_CITE2.finditer(text)):
         out.append({
-            "key": f"{fn}#{k}", "file": fn, "src_sec": None, "src_no": None,
+            "key": f"{fn}#{k}", "file": fn, "path": path,
+            "src_sec": None, "src_no": None,
             "src_title": fn, "field": "-", "text": c.group(0),
             "sec": int(c.group(1)) if c.group(1) else None,
             "no": int(c.group(2)), "start": c.start(2), "end": c.end(2),
@@ -179,9 +181,8 @@ def main():
         if fix:
             by_file = {}
             for c, ent, rs, rn in drift:
-                by_file.setdefault(c["file"], []).append((c, ent, rs, rn))
-            for fn, lst in by_file.items():
-                path = os.path.join(refs.B, fn)
+                by_file.setdefault(c["path"], []).append((c, ent, rs, rn))
+            for path, lst in by_file.items():
                 src = open(path, encoding="utf-8").read()
                 out = src
                 # 从后往前替换，偏移才不会互相影响；只动数字那几个字符
@@ -192,10 +193,10 @@ def main():
                 a = re.sub(r"\d+", "#", src)
                 b = re.sub(r"\d+", "#", out)
                 if a != b:
-                    print(f"❌ {fn}: 替换影响了非数字内容，已放弃写入")
+                    print(f"❌ {os.path.basename(path)}: 替换影响了非数字内容，已放弃写入")
                     return 1
                 open(path, "w", encoding="utf-8").write(out)
-                print(f"  ✅ 已改 {fn}（{len(lst)} 处，仅替换数字）")
+                print(f"  ✅ 已改 {os.path.basename(path)}（{len(lst)} 处，仅替换数字）")
 
     if update and fresh:
         for c in fresh:
