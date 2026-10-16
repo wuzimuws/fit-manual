@@ -74,6 +74,7 @@ for fn in files:
     body_only = "\n".join(l for l in t.split("\n")
                           if not l.lstrip().startswith(">")
                           and not l.lstrip().startswith("|")
+                          and "**来源**：" not in l      # 同一条文献被多个条目引用是正常的
                           and not l.lstrip().startswith("<!--"))
     sents = [s.strip() for s in re.split(r"[。！？\n]", body_only)]
     sents = [s for s in sents if len(s) >= 14

@@ -263,7 +263,7 @@
     "具体地": "有氧可以改善皮肤线粒体代谢；力量训练的特色优势是增厚真皮，二者搭配（有氧 + 力量）对皮肤抗衰效果最优，但过度训练反而抑制胶原合成、加重炎症，爆痘、暗沉、屏障变差。",
     "为什么": "耐力运动通过骨骼肌 AMPK 通路分泌 IL‑15，作为肌因子调控皮肤线粒体代谢，改善衰老相关的皮肤结构退化，解释了运动利于皮肤年轻化的内分泌机制。力量训练可通过调控肌因子、降低慢性炎症，促进真皮胶原与双糖链蛋白聚糖（BGN）合成，增厚真皮层、提升皮肤弹性，和有氧侧重线粒体保护的通路不同；但过度训练、持续高皮质醇、日晒、汗渍摩擦，也会反向损伤皮肤屏障，诱发炎症和痤疮。",
     "主观证据等级": "A",
-    "来源": "Crane, J. D., MacNeil, L. G., Lally, J. S., Ford, R. J., Bujak, A. L., Brar, I. K., &amp; Tarnopolsky, M. A. (2015). Exercise-stimulated interleukin-15 is controlled by AMPK and regulates skin metabolism and aging. Aging Cell, 14(4), 625–634.  Nishikori, S., Yasuda, Y., Murata, M., et al. (2023). Resistance training rejuvenates aging skin by reducing circulating inflammatory factors and enhancing dermal extracellular matrices. Scientific Reports, 13(1), 10572.",
+    "来源": "<a href=\"https://pubmed.ncbi.nlm.nih.gov/25902870/\" target=\"_blank\" rel=\"noopener noreferrer\">Crane, J. D., MacNeil, L. G., Lally, J. S., Ford, R. J., Bujak, A. L., Brar, I. K., &amp; Tarnopolsky, M. A. (2015). Exercise-stimulated interleukin-15 is controlled by AMPK and regulates skin metabolism and aging. Aging Cell, 14(4), 625–634.</a> <a href=\"https://pubmed.ncbi.nlm.nih.gov/37353523/\" target=\"_blank\" rel=\"noopener noreferrer\">Nishikori, S., Yasuda, Y., Murata, M., et al. (2023). Resistance training rejuvenates aging skin by reducing circulating inflammatory factors and enhancing dermal extracellular matrices. Scientific Reports, 13(1), 10572.</a>",
     "anchor": "c-1-14",
     "level": "A",
     "src_done": true
@@ -632,8 +632,8 @@
     "总结性建议": "重点练：肩胛后缩、下回旋稳定、上回旋能力、前侧胸小肌放松，改善前引、肩峰撞击、卧推代偿。",
     "具体地": "<table><thead><tr><th>优先级</th><th>肌群</th><th>核心作用</th><th>解决的核心问题</th><th>首选动作</th><th>关键提醒</th></tr></thead><tbody><tr><td>1</td><td>前锯肌</td><td>肩胛上回旋、把肩胛贴紧胸廓</td><td>肩胛前引、翼状肩胛、肩峰撞击根源</td><td>俯身Y、墙推、肩胛控制俯卧撑</td><td>不耸肩；感受肩胛骨向外展开贴胸</td></tr><tr><td>2</td><td>中下斜方肌</td><td>肩胛后缩、下抑稳定</td><td>发力耸肩、肩胛上抬、卧推肩胛前跑</td><td>弹力带面拉、YTWL-T、低位绳索划船</td><td>向后下方收肩胛，不是单纯夹紧</td></tr><tr><td>3</td><td>冈下肌、小圆肌</td><td>盂肱关节外旋、稳定肱骨头</td><td>肱骨头前移、内旋紧张、卧推肩前挤压</td><td>弹力带外旋、俯卧L外旋</td><td>轻重量，先稳住肩胛再做外旋</td></tr><tr><td>4</td><td>菱形肌</td><td>辅助肩胛后缩、内侧稳定</td><td>肩胛内侧飘、划船只用手臂发力</td><td>俯身W、窄握绳索后缩</td><td>属于辅助，不要作为主力</td></tr><tr><td>5</td><td>冈上肌</td><td>0–15°肩外展、下压肱骨头</td><td>肩外展起始无力、肱骨头向上滑移</td><td>肩胛平面空罐（Scaption）</td><td>必须在前三块改善后再练；小角度、极轻重量，优先耐受，不猛练</td></tr><tr><td>6</td><td>肩胛下肌</td><td>盂肱内旋、稳定肱骨头</td><td>后关节囊紧张、肱骨头前移</td><td>弹力带内旋</td><td>多数人是紧张，优先放松，不盲目强化</td></tr><tr><td>-</td><td>上斜方肌、肩胛提肌</td><td>肩胛上提</td><td>耸肩、颈肩紧张酸痛</td><td>筋膜刀、拉伸放松</td><td>绝大多数情况只放松、不强化</td></tr><tr><td>-</td><td>胸小肌（拮抗肌）</td><td>牵拉肩胛向前下方</td><td>持续把肩胛往前拽，抵消训练效果</td><td>门框胸小肌拉伸</td><td>必配套放松，否则强化效果大打折扣</td></tr></tbody></table>",
     "为什么": "肩胛的稳定本质是一组拮抗平衡：前锯肌 ↔ 菱形肌 + 中下斜方肌；上斜方、肩胛提肌、胸小肌经常是紧张占优，很多人不需要练，反而要抑制放松。",
-    "主观证据等级": "B",
-    "来源": "Ludewig P M, Cook T M. Alterations in shoulder kinematics and associated muscle activity in people with symptoms of shoulder impingement [J]. Physical Therapy, 2000, 80 (3):276–291.",
+    "主观证据等级": "B <a href=\"https://pubmed.ncbi.nlm.nih.gov/10696154/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：Ludewig P M, Cook T M. Alterations in shoulder kinematics and associated muscle activity in people with symptoms of shoulder impingement</a> [J]. Physical Therapy, 2000, 80 (3):276–291.",
+    "来源": "",
     "anchor": "c-3-2",
     "level": "B",
     "src_done": true
@@ -759,10 +759,10 @@
     "总结性建议": "不是，推荐缺口：300～500 kcal / 天，热量缺口过大可能引发睡眠问题。",
     "具体地": "<ul><li data-i=\"0\">推荐缺口：300～500 kcal / 天（适合有力量训练、想保住肌肉）</li><li data-i=\"0\">大缺口：500～750 kcal / 天（体脂偏高、短期快速降脂；掉肌风险上升、力量容易下滑、饥饿和代谢下降更明显）</li><li data-i=\"0\">不建议长期＞750 大卡缺口。</li></ul>",
     "为什么": "减脂期设置每日 300–500 大卡温和热量缺口，兼顾减脂与肌肉保留；想要更快减脂可放大至 500–750 大卡，但可能会引发暴食，睾酮降低，皮质醇上升，恢复变差、情绪与睡眠受损，减脂效率反而变低。",
-    "主观证据等级": "A",
-    "来源": "Helms, E. R., Aragon, A. A., &amp; Fitschen, P. J. (2014). Evidence-based recommendations for natural bodybuilding contest preparation: nutrition and supplementation. Journal of the International Society of Sports Nutrition, 11(1), 20.",
+    "主观证据等级": "A <a href=\"https://pubmed.ncbi.nlm.nih.gov/24864135/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：Helms, E. R., Aragon, A. A., &amp; Fitschen, P. J. (2014). Evidence-based recommendations for natural bodybuilding contest preparation: nutrition and supplementation. Journal of the International Society of Sports Nutrition, 11(1), 20.</a>",
+    "来源": "",
     "anchor": "c-4-2",
-    "level": "A",
+    "level": "B",
     "src_done": true
    },
    {
@@ -776,10 +776,10 @@
     "总结性建议": "增肌建议设定小幅的热量盈余，略高于自身的维持热量即可。",
     "具体地": "<ul><li data-i=\"1\">新手 / 自然训练者（新手红利）：+250～+500 kcal / 天</li><li data-i=\"0\">进阶自然训练者（新手红利消失）：+100～+250 kcal / 天（慢增肌，精益增肌）。</li></ul>",
     "为什么": "过快增重，新增体重大部分是脂肪，不是肌肉，可以控制每周体重上涨 0.25% 以内。",
-    "主观证据等级": "A",
-    "来源": "Helms, E. R., Aragon, A. A., &amp; Fitschen, P. J. (2014). Evidence-based recommendations for natural bodybuilding contest preparation: nutrition and supplementation. Journal of the International Society of Sports Nutrition, 11(1), 20.",
+    "主观证据等级": "A <a href=\"https://pubmed.ncbi.nlm.nih.gov/24864135/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：Helms, E. R., Aragon, A. A., &amp; Fitschen, P. J. (2014). Evidence-based recommendations for natural bodybuilding contest preparation: nutrition and supplementation. Journal of the International Society of Sports Nutrition, 11(1), 20.</a>",
+    "来源": "",
     "anchor": "c-4-3",
-    "level": "A",
+    "level": "B",
     "src_done": true
    },
    {
@@ -793,10 +793,10 @@
     "总结性建议": "大部分所谓的暴饮暴食，出问题的地方在白天吃得太少，晚上一次性还回来——这跟管不管得住嘴关系不大。骂自己没用，把吃饭时间改了才有用。",
     "具体地": "先把三餐固定下来，最要紧的是早餐和午饭别省。每餐先吃蛋白（鸡蛋、肉、豆制品），再吃主食。三餐都规律了还是压不住，就回头看是不是整体吃得太少。",
     "为什么": "缺口太大的时候，身体会反过来逼你吃东西，这个不是靠意志力能压住的。饿到极点的那一顿一定会吃过量，这是生理反应——它跟自律没关系，跟你怎么安排一天有关！",
-    "主观证据等级": "A",
-    "来源": "Helms, E. R., Aragon, A. A., &amp; Fitschen, P. J. (2014). Evidence-based recommendations for natural bodybuilding contest preparation: nutrition and supplementation. Journal of the International Society of Sports Nutrition, 11(1), 20.",
+    "主观证据等级": "A <a href=\"https://pubmed.ncbi.nlm.nih.gov/24864135/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：Helms, E. R., Aragon, A. A., &amp; Fitschen, P. J. (2014). Evidence-based recommendations for natural bodybuilding contest preparation: nutrition and supplementation. Journal of the International Society of Sports Nutrition, 11(1), 20.</a>",
+    "来源": "",
     "anchor": "c-4-4",
-    "level": "A",
+    "level": "B",
     "src_done": true
    },
    {
@@ -844,10 +844,10 @@
     "总结性建议": "很多人觉得按照上面计算的量吃得太多了，在严格记录饮食、计算摄入热量、保持运动强度的情况下，完全可以按照上边计算的量来吃。",
     "具体地": "<p>状态好不好，可以连续两周看这四个指标：</p><ul><li data-i=\"1\">训练重量能维持或缓慢上升</li><li data-i=\"1\">睡眠正常</li><li data-i=\"1\">白天不困</li><li data-i=\"1\">饥饿与暴食冲动稳定可控</li><li data-i=\"1\">每周掉重/增重不超过 0.5 kg。</li></ul>",
     "为什么": "饮食方案是否合适，不靠主观感觉 “吃得太多” 判断，而是看：每周体重、训练容量不持续下滑、瘦体重得以保留、睡眠和饥饿状态可控；这些指标达标，就说明在制造脂肪缺口的同时，足够的碳水保护了训练能力与肌肉。",
-    "主观证据等级": "A",
-    "来源": "Helms, E. R., Aragon, A. A., &amp; Fitschen, P. J. (2014). Evidence-based recommendations for natural bodybuilding contest preparation: Nutrition and supplementation. Journal of the International Society of Sports Nutrition, 11(1), 20.",
+    "主观证据等级": "A <a href=\"https://pubmed.ncbi.nlm.nih.gov/24864135/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：Helms, E. R., Aragon, A. A., &amp; Fitschen, P. J. (2014). Evidence-based recommendations for natural bodybuilding contest preparation: Nutrition and supplementation. Journal of the International Society of Sports Nutrition, 11(1), 20.</a>",
+    "来源": "",
     "anchor": "c-4-7",
-    "level": "A",
+    "level": "B",
     "src_done": true
    },
    {
@@ -879,7 +879,7 @@
     "具体地": "<p>常见的加工程度分类：</p><ul><li data-i=\"0\">未加工 / 最低加工食物（对应大家口中 “干净食物”）：肉、蛋、果蔬、原生谷物</li><li data-i=\"0\">烹饪用加工原料：油、盐、糖</li><li data-i=\"0\">加工食品：罐头、奶酪、腌肉</li><li data-i=\"0\">超加工食品（ultra-processed foods，UPF）：配方复杂、工业合成添加剂多的零食、含糖饮料、预包装甜点</li></ul>",
     "为什么": "「干净」饮食的优势：食材配料短、容易识别，方便稳定控制宏量、提升膳食营养密度。超加工食品并非不能吃，其问题在于：高适口性，削弱饱腹感信号、升高无意识超额进食的风险；营养密度偏低，挤占微量营养素、膳食纤维的空间；高糖高脂的超加工食品容易诱发渴求、暴食冲动。",
     "主观证据等级": "A",
-    "来源": "Monteiro, C. A., Cannon, G., Moubarac, J. C., et al. (2018). The NOVA food classification system. Public Health Nutrition. Pilař, J., &amp; Šeblová, K. (2024). Food and mood: How clean eating content on social media influences affect and body satisfaction in women. Appetite, 196, 107456.",
+    "来源": "Monteiro, C. A., Cannon, G., Moubarac, J. C., et al. (2018). The NOVA food classification system. Public Health Nutrition. <a href=\"https://pubmed.ncbi.nlm.nih.gov/41058900/\" target=\"_blank\" rel=\"noopener noreferrer\">Pilař, J., &amp; Šeblová, K. (2024). Food and mood: How clean eating content on social media influences affect and body satisfaction in women. Appetite, 196, 107456.</a>",
     "anchor": "c-4-9",
     "level": "A",
     "src_done": true
@@ -981,7 +981,7 @@
     "具体地": "<ul><li data-i=\"1\">平时主食可以搭配以下低中GI食物：</li><li data-i=\"2\">全谷物：钢切燕麦、糙米、黑米、藜麦、荞麦</li><li data-i=\"2\">薯类（可替代米饭）：土豆、红薯、紫薯、山药、芋头、南瓜</li><li data-i=\"2\">杂豆（混进米饭，不要单独大量当主食）：鹰嘴豆、芸豆、红豆、绿豆</li><li data-i=\"1\">训练前后，可以摄入精制碳水、快碳，提高训练表现、促进恢复</li><li data-i=\"2\">训练前 30–60min：少量白面包、白米饭、香蕉</li><li data-i=\"2\">训练结束后 0–2h：少量白面包、白米饭、香蕉</li></ul>",
     "为什么": "<p>低中GI食物可以降低胰岛素波动，谷物、薯类、豆类主食饱腹感持久、微量元素和膳食纤维多。</p><p>精加工把纤维、维生素和「需要嚼」这几样都拿掉了，剩下的主要是热量和吸收快的碳水。饱腹感差，你自然就会吃得更多，光靠少吃是很难补回来的。</p><p>训练前吃快碳：消化快、纤维少，胃排空快，不容易胀气顶肚子，能快速给肌肉供能，保证训练发力状态； 训练后吃快碳：训练让肌肉的葡萄糖转运通道（GLUT4）打开，快碳能快速升高血糖，加快肌糖原回填；同时适度胰岛素帮助蛋白质吸收，利于肌肉修复。</p>",
     "主观证据等级": "A",
-    "来源": "BURKE L M, CASA D J, CARTER J M, et al. ISSN position stand: exercise and sport nutrition [J]. Journal of the International Society of Sports Nutrition, 2021, 18 (1): 59. HAWLEY J A, LEIGHTON B, BURKE L M, et al. Postexercise muscle glycogen resynthesis in humans[J]. Journal of Applied Physiology, 2016, 120(10): 1137-1146.",
+    "来源": "BURKE L M, CASA D J, CARTER J M, et al. ISSN position stand: exercise and sport nutrition [J]. Journal of the International Society of Sports Nutrition, 2021, 18 (1): 59. <a href=\"https://pubmed.ncbi.nlm.nih.gov/27789774/\" target=\"_blank\" rel=\"noopener noreferrer\">HAWLEY J A, LEIGHTON B, BURKE L M, et al. Postexercise muscle glycogen resynthesis in humans</a> [J]. Journal of Applied Physiology, 2016, 120(10): 1137-1146.",
     "anchor": "c-4-15",
     "level": "A",
     "src_done": true
@@ -1073,10 +1073,10 @@
     "总结性建议": "睡不好，训练白练。",
     "具体地": "训练表现下降，肌蛋白合成（MPS）被抑制，激素向分解方向偏移，糖原恢复、胰岛素敏感性变差，容易长胖。",
     "为什么": "睡眠不好会降低最大力量、爆发力、重复次数容量，反应、动作控制变差，卧推、深蹲这类复合动作更容易出现代偿，受伤风险上升；睡眠不足直接下调肌原纤维蛋白合成速率，同样训练刺激，增肌收益显著缩水； 深度睡眠是睾酮、生长激素分泌高峰；连续短睡眠会降低睾酮、升高皮质醇，降低合成 / 分解激素比值，不利于长期肌肉适应；睡眠差时胰岛素敏感性下降，训练后碳水用于肌糖原回填效率降低，更容易疲劳、储脂。",
-    "主观证据等级": "A",
-    "来源": "KNOWLES O E, DRINKWATER E J, URWIN C S, et al. Inadequate sleep and muscle strength: implications for resistance training[J]. Journal of Science and Medicine in Sport, 2018, 21(9): 959-968. SANER N J, HEDLEY A A, KNOWLES O E, et al. The effect of acute sleep deprivation on skeletal muscle protein synthesis and the hormonal environment[J]. Physiological Reports, 2021, 9(1): e14660. KNOWLES O E, SORIA M, SANER N J, et al. The interactive effect of sustained sleep restriction and resistance exercise on skeletal muscle transcriptomics in young females[J]. Physiological Genomics, 2024, 56(7): 506-518.",
+    "主观证据等级": "A <a href=\"https://pubmed.ncbi.nlm.nih.gov/29422383/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：KNOWLES O E, DRINKWATER E J, URWIN C S, et al. Inadequate sleep and muscle strength: implications for resistance training</a> [J]. Journal of Science and Medicine in Sport, 2018, 21(9): 959-968. <a href=\"https://pubmed.ncbi.nlm.nih.gov/33400856/\" target=\"_blank\" rel=\"noopener noreferrer\">SANER N J, HEDLEY A A, KNOWLES O E, et al. The effect of acute sleep deprivation on skeletal muscle protein synthesis and the hormonal environment</a> [J]. Physiological Reports, 2021, 9(1): e14660. KNOWLES O E, SORIA M, SANER N J, et al. The interactive effect of sustained sleep restriction and resistance exercise on skeletal muscle transcriptomics in young females[J]. Physiological Genomics, 2024, 56(7): 506-518.",
+    "来源": "",
     "anchor": "c-5-1",
-    "level": "A",
+    "level": "B",
     "src_done": true
    },
    {
@@ -1124,8 +1124,8 @@
     "总结性建议": "轻度缺觉可以降负荷练；长期 / 严重缺觉直接休息，不要硬冲容量、大重量。",
     "具体地": "如果只是轻度缺觉，睡 6h 左右、只是有点困，头脑清楚，没有心慌、头晕、情绪崩溃，静息心率和平时差别不大，重量降到平时 60%～75%，减少总组数，保留动作模式、神经激活；一旦组间明显手抖、发力失控、注意力涣散，立刻停。如果中重度缺觉，睡眠时长 ＜5.5h ，持续犯困、脑子发沉、整夜频繁醒、心慌胸闷、头痛、情绪烦躁、站着都累；或者连续多天睡眠不足（睡眠债累积），直接放弃训练，优先补睡眠。",
     "为什么": "睡不够的时候力量、动作控制明显下滑，代偿概率大幅升高，训练安全风险变大！训练安全第一，安全才能练得长久。",
-    "主观证据等级": "B",
-    "来源": "KNOWLES O E, DRINKWATER E J, URWIN C S, et al. Inadequate sleep and muscle strength: implications for resistance training[J]. Journal of Science and Medicine in Sport, 2018, 21(9): 959-968.",
+    "主观证据等级": "B <a href=\"https://pubmed.ncbi.nlm.nih.gov/29422383/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：KNOWLES O E, DRINKWATER E J, URWIN C S, et al. Inadequate sleep and muscle strength: implications for resistance training</a> [J]. Journal of Science and Medicine in Sport, 2018, 21(9): 959-968.",
+    "来源": "",
     "anchor": "c-5-4",
     "level": "B",
     "src_done": true
@@ -1165,8 +1165,8 @@
     "总结性建议": "练后第二天的酸痛是正常的，可以照练；疼痛不是酸痛。判据是钝还是尖，不是「有多疼」。",
     "具体地": "<table><thead><tr><th></th><th><strong>酸痛</strong>（正常）</th><th><strong>疼痛</strong>（损伤信号）</th></tr></thead><tbody><tr><td>感觉</td><td>钝、弥散，按上去整块都疼</td><td>尖锐、定点，某个角度才疼</td></tr><tr><td>出现</td><td>练后 12–48 小时</td><td>当场，或第二天醒来就有</td></tr><tr><td>位置</td><td>整块肌肉</td><td>一个点、一条线、或关节缝里</td></tr><tr><td>怎么办</td><td>照练，练开了会舒服</td><td>停下引起它的动作</td></tr></tbody></table><p>练前按一下昨天练过的地方——整块酸就练，某个点一按就疼就换动作、停练或就医。</p>",
     "为什么": "痛觉的性质比程度更能区分损伤和适应。用「练开了就不疼了」去应对一个尖锐疼痛，是最常见的小伤拖成大伤的方式。",
-    "主观证据等级": "B",
-    "来源": "CHEUNG K, HUME P A, MAXWELL L. Delayed onset muscle soreness: treatment strategies and performance factors[J]. Sports Medicine, 2003, 33(2): 145-164.",
+    "主观证据等级": "B <a href=\"https://pubmed.ncbi.nlm.nih.gov/12617692/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：CHEUNG K, HUME P A, MAXWELL L. Delayed onset muscle soreness: treatment strategies and performance factors</a> [J]. Sports Medicine, 2003, 33(2): 145-164.",
+    "来源": "",
     "anchor": "c-5-6",
     "level": "B",
     "src_done": true
@@ -1214,10 +1214,10 @@
     "总结性建议": "新手值得买的基础补剂有：一水肌酸、咖啡因、蛋白补充剂（蛋白粉，作为蛋白质补充来源）、Omega‑3 鱼油、维生素D；可以考虑的功能补剂：β‑丙氨酸、甜菜根粉、甘氨酸镁",
     "具体地": "<p>我们来看 ISSN 补剂分级（仅 ISSN，A档=Apparently Effective；B档=Possibly Effective）</p><blockquote>说明： - A档：Strong Evidence to Support Efficacy and Apparently Safe，证据充分、安全 - B档：Limited or Mixed Evidence to Support Efficacy，证据有限/混杂 - 不含C、D类（证据不足、无效项）</blockquote><table><thead><tr><th>分级</th><th>成分</th><th>简要说明</th></tr></thead><tbody><tr><td>A档</td><td>一水肌酸 Creatine Monohydrate</td><td>力量、爆发力、肌肥大，证据最强</td></tr><tr><td>A档</td><td>咖啡因 Caffeine</td><td>提升训练容量、耐受、专注力，注意睡眠</td></tr><tr><td>A档</td><td>β‑丙氨酸 Beta‑Alanine</td><td>提升肌肽，适合60–240s高强度力竭组</td></tr><tr><td>A档</td><td>膳食硝酸盐（甜菜根）Dietary Nitrate</td><td>降低有氧耗氧，偏向耐力项目</td></tr><tr><td>A档</td><td>碳酸氢钠 Sodium Bicarbonate</td><td>缓冲乳酸，适合30s–8min高强度，容易胃胀反胃</td></tr><tr><td>A档</td><td>蛋白补充剂 Protein supplements</td><td>补足蛋白缺口即可；饮食蛋白达标后无额外增肌收益</td></tr><tr><td>B档</td><td>HMB</td><td>理论抗分解，人体证据一致性差</td></tr><tr><td>B档</td><td>Omega‑3 鱼油</td><td>辅助抗炎、恢复，没有稳定力量/肥大增益</td></tr><tr><td>B档</td><td>维生素D Vitamin D</td><td>仅缺乏人群可能获益，不缺时无明确表现收益</td></tr><tr><td>B档</td><td>甘氨酸镁 Magnesium bisglycinate</td><td>偏向神经放松、睡眠改善，不提升力量表现</td></tr><tr><td>B档</td><td>瓜氨酸 Citrulline</td><td>改善主观疲劳感，客观运动表现证据不稳定</td></tr><tr><td>B档</td><td>胶原蛋白 Collagen</td><td>肌腱、韧带养护，不增肌、不提力量</td></tr><tr><td>B档</td><td>益生菌（特定菌株）</td><td>肠道健康，间接恢复，运动表现证据偏弱</td></tr></tbody></table>",
     "为什么": "以上评级是根据证据等级划分的，有科研证据证明。对于新手而言，可以补充对训练必要的补剂，如果后期训练强度上来之后，希望提高运动表现，可以考虑β‑丙氨酸、甜菜根粉；如果睡眠不佳，可以考虑甘氨酸镁。关于蛋白粉是否算作补剂，不同的机构有不同的分类，例如 ISSN 算作 A 档补剂，但 AIS 将蛋白粉算入运动食品；蛋白粉是否有必要买参见 （第 <a data-go=\"c-6-2\" title=\"跳到 6. 蛋白粉有必要买吗？\">2</a> 条）。",
-    "主观证据等级": "A",
-    "来源": "ERKSICK C M, WILBORN C D, STOUT J R, et al. ISSN exercise &amp; sports nutrition review update: research &amp; recommendations[J]. Journal of the International Society of Sports Nutrition, 2017, 14(1): 33.",
+    "主观证据等级": "A <a href=\"https://pubmed.ncbi.nlm.nih.gov/30068354/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：ERKSICK C M, WILBORN C D, STOUT J R, et al. ISSN exercise &amp; sports nutrition review update: research &amp; recommendations</a> [J]. Journal of the International Society of Sports Nutrition, 2017, 14(1): 33.",
+    "来源": "",
     "anchor": "c-6-1",
-    "level": "A",
+    "level": "B",
     "src_done": true
    },
    {
@@ -1248,10 +1248,10 @@
     "总结性建议": "直接买纯、无添加的微粉化一水肌酸。",
     "具体地": "每天 3–5g，什么时候吃都行，不用掐时机，也不用做「冲击期」，不要香精、甜味剂、麦芽糊精填充料。吃两三周后体重涨 1–2 kg 是正常的，那是肌酸把水带进了肌肉，不是胖，别慌着停。",
     "为什么": "所有花哨的形态（盐酸肌酸、乙酯肌酸、液体肌酸、胶囊）贵好几倍，但没证明比一水更好。粉最便宜，一样用。",
-    "主观证据等级": "A",
-    "来源": "KERKSICK C M, WILBORN C D, STOUT J R, et al. ISSN exercise &amp; sports nutrition review update: research &amp; recommendations [J]. Journal of the International Society of Sports Nutrition, 2017, 14 (1): 33.",
+    "主观证据等级": "A <a href=\"https://pubmed.ncbi.nlm.nih.gov/30068354/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：KERKSICK C M, WILBORN C D, STOUT J R, et al. ISSN exercise &amp; sports nutrition review update: research &amp; recommendations</a> [J]. Journal of the International Society of Sports Nutrition, 2017, 14 (1): 33.",
+    "来源": "",
     "anchor": "c-6-3",
-    "level": "A",
+    "level": "B",
     "src_done": true
    },
    {
@@ -1282,8 +1282,8 @@
     "总结性建议": "甘氨酸镁相比于其他镁剂，肠道刺激弱，不会导致腹泻，吸收率中等偏上，有镇静作用。睡前 30–60 分钟吃。这是五个里唯一主要为了睡、而不是为了练的。",
     "具体地": "睡前元素镁 200–400mg，适应后最多不长期超过 300mg 元素镁。吃了之后白天犯困，就往睡前挪一点，或者减量。",
     "为什么": "别买「氧化镁」或者笼统的「镁片」图便宜，那类吸收差，主要作用是通便，不是补镁。甘甘氨酸是抑制性神经递质 GABA 的前体，可以单独降低交感兴奋、帮助下调核心体温，辅助入睡、减少夜间惊醒，利于入睡。",
-    "主观证据等级": "B",
-    "来源": "SCHUSTER C, CYCELSKIJ A, LOPRESTI A L, et al. Magnesium bisglycinate supplementation in healthy adults reporting poor sleep: A randomized, placebo-controlled trial [J]. Nature and Science of Sleep, 2025, 17: 111–121.",
+    "主观证据等级": "B <a href=\"https://pubmed.ncbi.nlm.nih.gov/40918053/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：SCHUSTER C, CYCELSKIJ A, LOPRESTI A L, et al. Magnesium bisglycinate supplementation in healthy adults reporting poor sleep: A randomized, placebo-controlled trial</a> [J]. Nature and Science of Sleep, 2025, 17: 111–121.",
+    "来源": "",
     "anchor": "c-6-5",
     "level": "B",
     "src_done": true
@@ -1302,12 +1302,12 @@
     "总结性建议": "骨密度低、25-羟基维生素 D水平低，有骨折、骨裂风险。",
     "具体地": "<p>如果平时体检有骨密度低的情况，平时久坐办公，很少晒太阳，强烈建议去医院抽血检测一下自己的 25-羟基维生素 D，如果测出来低，一定要补充。本人的教训就是由于骨密度低，导致滚泡沫轴时导致肋骨骨裂，休养了一个月才逐渐恢复锻炼。</p><p>大家可以去内分泌科，抽血查 25-羟基维生素 D。我之前查出来只有 28 nmol/L，属于缺乏，近几年体检也一直提示骨密度低，大家一定要注意。查出来低就按医生给的剂量补，三到六个月复查一次；正常就不用长期吃。</p><table><thead><tr><th>状态</th><th>25(OH)D（ng/mL）</th><th>25(OH)D（nmol/L）</th><th>说明</th></tr></thead><tbody><tr><td>缺乏</td><td>＜12</td><td>＜30</td><td>需要尽快补充</td></tr><tr><td>不足</td><td>12 ~ ＜20</td><td>30 ~ ＜50</td><td>亚临床不足，训练人群建议纠正</td></tr><tr><td>充足（基础达标）</td><td>≥20</td><td>≥50</td><td>IOM、国内WS/T 677‑2020标准</td></tr></tbody></table>",
     "为什么": "25-羟基维生素 D 水平低会导致肌肉力量下降、容易疲劳，运动后酸痛持续更久，肌肉抽筋风险升高；长期缺乏会增加骨量流失、骨痛、应力损伤、骨质疏松风险；维生素 D 缺乏人群睾酮常偏低（男性）；炎症调控失衡，肌腱、关节的慢性劳损不容易恢复。自己缺不缺，别靠「我晒了太阳应该不缺」来判断，抽个血就知道。",
-    "主观证据等级": "A",
-    "来源": "Holick M F, Binkley N C, Bischoff-Ferrari H A, et al. Evaluation, treatment, and prevention of vitamin D deficiency: an Endocrine Society clinical practice guideline [J]. The Journal of Clinical Endocrinology &amp; Metabolism, 2011, 96 (7): 1911-1930.",
+    "主观证据等级": "A <a href=\"https://pubmed.ncbi.nlm.nih.gov/21646368/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：Holick M F, Binkley N C, Bischoff-Ferrari H A, et al. Evaluation, treatment, and prevention of vitamin D deficiency: an Endocrine Society clinical practice guideline</a> [J]. The Journal of Clinical Endocrinology &amp; Metabolism, 2011, 96 (7): 1911-1930.",
+    "来源": "",
     "mirror_title": "久坐办公人群的训练风险",
     "mirror_sec": "伤痛与安全",
     "anchor": "c-6-6",
-    "level": "A",
+    "level": "B",
     "src_done": true,
     "mirror_label": "07 节 · 第 1 条",
     "mirror_anchor": "c-7-1"
@@ -1323,8 +1323,8 @@
     "总结性建议": "鱼油的有效成分是 EPA + DHA（Omega‑3 多不饱和脂肪酸），它的价值是降低炎症、辅助恢复、保护血管，属于「稳态调节剂」。鱼油要看的只有一样：里面 EPA 加 DHA 一共多少克。",
     "具体地": "每天 EPA + DHA 合计 1–2g。买的时候直接翻到成分表，找这两个词，加一下。",
     "为什么": "Omega‑6（大豆油、玉米油、花生油，外卖、油炸、精加工食品里很多）会促炎，Omega‑3（EPA/DHA）和 Omega‑6 竞争通路，下调过度的炎症反应，可以防止炎症过度、拖成慢性劳损；同时，鱼油辅助甘油三酯下调，保护血管。",
-    "主观证据等级": "B",
-    "来源": "KERKSICK C M, WILBORN C D, STOUT J R, et al. ISSN exercise &amp; sports nutrition review update: research &amp; recommendations [J]. Journal of the International Society of Sports Nutrition, 2017, 14 (1): 33.",
+    "主观证据等级": "B <a href=\"https://pubmed.ncbi.nlm.nih.gov/30068354/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：KERKSICK C M, WILBORN C D, STOUT J R, et al. ISSN exercise &amp; sports nutrition review update: research &amp; recommendations</a> [J]. Journal of the International Society of Sports Nutrition, 2017, 14 (1): 33.",
+    "来源": "",
     "anchor": "c-6-7",
     "level": "B",
     "src_done": true
@@ -1340,10 +1340,10 @@
     "总结性建议": "顺序是吃够、睡够、练对，然后才是补剂。上面一层没做，下面这一层的钱全打水漂。",
     "具体地": "先回 04 节确认吃够了（四条判据都成立），再回 05 节确认睡眠，再回 02 节确认训练。三样都过关，再来买这五个。",
     "为什么": "补剂的作用有多大，取决于它下面那三层垫得有多实。而「反正便宜，先买了吃着」，通常就是交智商税的第一步。",
-    "主观证据等级": "A",
-    "来源": "ERKSICK C M, WILBORN C D, STOUT J R, et al. ISSN exercise &amp; sports nutrition review update: research &amp; recommendations[J]. Journal of the International Society of Sports Nutrition, 2017, 14(1): 33.",
+    "主观证据等级": "A <a href=\"https://pubmed.ncbi.nlm.nih.gov/30068354/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：ERKSICK C M, WILBORN C D, STOUT J R, et al. ISSN exercise &amp; sports nutrition review update: research &amp; recommendations</a> [J]. Journal of the International Society of Sports Nutrition, 2017, 14(1): 33.",
+    "来源": "",
     "anchor": "c-6-8",
-    "level": "A",
+    "level": "B",
     "src_done": true
    }
   ]
@@ -1365,10 +1365,10 @@
     "总结性建议": "骨密度低、25-羟基维生素 D水平低，有骨折、骨裂风险。",
     "具体地": "<p>如果平时体检有骨密度低的情况，平时久坐办公，很少晒太阳，强烈建议去医院抽血检测一下自己的 25-羟基维生素 D，如果测出来低，一定要补充。本人的教训就是由于骨密度低，导致滚泡沫轴时导致肋骨骨裂，休养了一个月才逐渐恢复锻炼。</p><p>大家可以去内分泌科，抽血查 25-羟基维生素 D。我之前查出来只有 28 nmol/L，属于缺乏，近几年体检也一直提示骨密度低，大家一定要注意。查出来低就按医生给的剂量补，三到六个月复查一次；正常就不用长期吃。</p><table><thead><tr><th>状态</th><th>25(OH)D（ng/mL）</th><th>25(OH)D（nmol/L）</th><th>说明</th></tr></thead><tbody><tr><td>缺乏</td><td>＜12</td><td>＜30</td><td>需要尽快补充</td></tr><tr><td>不足</td><td>12 ~ ＜20</td><td>30 ~ ＜50</td><td>亚临床不足，训练人群建议纠正</td></tr><tr><td>充足（基础达标）</td><td>≥20</td><td>≥50</td><td>IOM、国内WS/T 677‑2020标准</td></tr></tbody></table>",
     "为什么": "25-羟基维生素 D 水平低会导致肌肉力量下降、容易疲劳，运动后酸痛持续更久，肌肉抽筋风险升高；长期缺乏会增加骨量流失、骨痛、应力损伤、骨质疏松风险；维生素 D 缺乏人群睾酮常偏低（男性）；炎症调控失衡，肌腱、关节的慢性劳损不容易恢复。自己缺不缺，别靠「我晒了太阳应该不缺」来判断，抽个血就知道。",
-    "主观证据等级": "A",
-    "来源": "Holick M F, Binkley N C, Bischoff-Ferrari H A, et al. Evaluation, treatment, and prevention of vitamin D deficiency: an Endocrine Society clinical practice guideline [J]. The Journal of Clinical Endocrinology &amp; Metabolism, 2011, 96 (7): 1911-1930.",
+    "主观证据等级": "A <a href=\"https://pubmed.ncbi.nlm.nih.gov/21646368/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：Holick M F, Binkley N C, Bischoff-Ferrari H A, et al. Evaluation, treatment, and prevention of vitamin D deficiency: an Endocrine Society clinical practice guideline</a> [J]. The Journal of Clinical Endocrinology &amp; Metabolism, 2011, 96 (7): 1911-1930.",
+    "来源": "",
     "anchor": "c-7-1",
-    "level": "A",
+    "level": "B",
     "src_done": true
    },
    {
@@ -1382,8 +1382,8 @@
     "总结性建议": "一定不要过度憋气，大重量可以单次短暂瓦氏呼吸（）。发力时呼气、还原时吸气，这是默认做法，新手注意力容易放在动作上，而忘记呼吸，导致过度憋气。",
     "具体地": "<p>瓦氏 = 吸一口气、声门关闭、主动向内压膈肌，升高腹内压 IAP，给脊柱提供刚性支撑，提升躯干稳定性、允许输出更大力量；代价是血压大幅升高。大重量、要稳定核心的那一两下可以短憋，但憋完立刻呼气，不要连续多组憋。任何时候出现头晕、眼前发黑、耳鸣，立刻停下、把重量放下，不要「再试一组看看」。</p><ul><li data-i=\"1\">禁忌：高血压、心律失常、动脉瘤 / 卒中史、青光眼 / 眼底病变、近期眼部手术不要瓦式呼吸。</li></ul>",
     "为什么": "憋气会升高胸腔和颅内的压力，可能带来头晕、眼前发黑、血压骤变；对已经有耳石症的人，还可能直接诱发眩晕。我在 6月和7月两次触发耳石症，都是前一天练胸过度憋气，虽然没有证据表明二者关联，但个人认为，由于自身骨密度低导致耳石附着力不足，叠加上憋气升高的颅压，可能构成了触发耳石症的因素。当然，憋气还会导致颅压过高，过度憋气可能会对血管造成损伤。",
-    "主观证据等级": "B",
-    "来源": "Hackett D A, Chow C M. The Valsalva maneuver: its effect on intra-abdominal pressure and safety issues during resistance exercise [J]. Journal of Strength and Conditioning Research, 2013, 27 (8): 2338–2345.",
+    "主观证据等级": "B <a href=\"https://pubmed.ncbi.nlm.nih.gov/23222073/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：Hackett D A, Chow C M. The Valsalva maneuver: its effect on intra-abdominal pressure and safety issues during resistance exercise</a> [J]. Journal of Strength and Conditioning Research, 2013, 27 (8): 2338–2345.",
+    "来源": "",
     "anchor": "c-7-2",
     "level": "B",
     "src_done": true
@@ -1399,8 +1399,8 @@
     "总结性建议": "关节内疼痛：优先降负荷 / 改动作；出现危险信号，停止负重，尽快评估。",
     "具体地": "<p>注意区分肌腱附着点痛（肌腱病）≠ 关节腔内痛（软骨、滑膜、半月板、关节面），具体疼痛位置的定位参见下一条。</p><ul><li data-i=\"1\">分级判断（关节痛，0–10 分）</li><li data-i=\"1\">1–2 分：仅在极限角度、大重量下轻微隐痛；热身之后消失；训练结束不加重，第二天无持续关节痛。不直接停，但禁止满幅度、大重量冲击：缩短活动范围、减重、换掉这个诱发关节挤压的动作。可以保留无痛区间的训练。</li><li data-i=\"1\">3–4 分：发力 / 承重到某个角度，关节里面疼；热身也不能完全消失；训练结束后几小时关节里面持续不舒服。停用该负重动作，不刺激这个关节；同肌群选择对该关节零挤压的替代动作，维持肌肉刺激。</li><li data-i=\"1\">≥5 分：关节内部尖锐痛、研磨痛；负重即痛；训练后持续疼，夜里还有不适感。停止所有对该关节的负重训练，不要继续刺激；去医院做检查，待康复后再训练。</li></ul>",
     "为什么": "<ul><li data-i=\"1\">重要误区一：“多活动把关节磨开”：关节软骨经不起反复挤压摩擦，持续负重刺激会加速退变。</li><li data-i=\"1\">重要误区二：“不痛就代表没事”：早期软骨损伤经常是负重才痛、休息不痛，属于预警信号。</li></ul>",
-    "主观证据等级": "B",
-    "来源": "Hainline B, et al. Clinical Practice Guideline: Evaluation and Management of Acute Musculoskeletal Injury [J]. Medicine &amp; Science in Sports &amp; Exercise, 2019, 51 (11):2247–2259.",
+    "主观证据等级": "B <a href=\"https://pubmed.ncbi.nlm.nih.gov/30681429/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：Hainline B, et al. Clinical Practice Guideline: Evaluation and Management of Acute Musculoskeletal Injury</a> [J]. Medicine &amp; Science in Sports &amp; Exercise, 2019, 51 (11):2247–2259.",
+    "来源": "",
     "anchor": "c-7-3",
     "level": "B",
     "src_done": true
@@ -1523,8 +1523,8 @@
     "总结性建议": "去健身房一定要做好消毒，建议用次氯酸，而不是酒精。",
     "具体地": "<ul><li data-i=\"1\">买<strong>次氯酸片自己兑</strong>，比买瓶装的便宜很多</li><li data-i=\"1\"><strong>自己带一条毛巾</strong>，用来擦器械，也用来擦手，<strong>定时清洗</strong></li><li data-i=\"1\">用之前把握把、座椅、靠背擦一遍，练完擦手。</li></ul>",
     "为什么": "健身房里常见的是<strong>真菌感染</strong>（脚气、体癣这类），而不只是细菌。酒精对杀真菌效果有限。次氯酸广谱、起效快、对皮肤刺激也小，在健身房这个场景更合适，所以建议用次氯酸而不是酒精。",
-    "主观证据等级": "B",
-    "来源": "Ripa R, et al. Hygiene Practices Against Dermatophytic Fungi: A Review of Strategies to Combat Antifungal Resistance [J]. Journal of Fungi, 2025, 11 (5):427.",
+    "主观证据等级": "B <a href=\"https://pubmed.ncbi.nlm.nih.gov/40906175/\" target=\"_blank\" rel=\"noopener noreferrer\">- <strong>来源</strong>：Ripa R, et al. Hygiene Practices Against Dermatophytic Fungi: A Review of Strategies to Combat Antifungal Resistance</a> [J]. Journal of Fungi, 2025, 11 (5):427.",
+    "来源": "",
     "anchor": "c-8-5",
     "level": "B",
     "src_done": true

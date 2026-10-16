@@ -22,6 +22,9 @@ def esc(s):
 
 def inline(s):
     s = esc(s)
+    # markdown 链接 → <a>：来源里的书（豆瓣）和论文（PubMed/DOI）都靠这个变成可点
+    s = re.sub(r"\[([^\]]+)\]\((https?://[^)\s]+)\)",
+               r'<a href="\2" target="_blank" rel="noopener noreferrer">\1</a>', s)
     return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
 
 
