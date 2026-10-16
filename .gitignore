@@ -3,3 +3,9 @@ __pycache__/
 .sync-conflict-*
 .stversions/
 .DS_Store
+
+# 写作过程文件（只保留在本地，不公开）
+docs/
+findings.md
+progress.md
+task_plan.md
