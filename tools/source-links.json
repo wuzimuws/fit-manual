@@ -73,5 +73,110 @@
   "match": "Exercise-stimulated interleukin-15 is controlled by AMPK",
   "url": "https://pubmed.ncbi.nlm.nih.gov/25902870/",
   "kind": "paper"
+ },
+ {
+  "match": "克利尔 J. 掌控习惯",
+  "url": "https://book.douban.com/subject/34326931/",
+  "kind": "book"
+ },
+ {
+  "match": "冯·勒费尔霍尔茨 C. 健身营养全书",
+  "url": "https://book.douban.com/subject/30157798/",
+  "kind": "book"
+ },
+ {
+  "match": "巴尔斯 B J, 盖奇 N M. 认知、脑与意识",
+  "url": "https://book.douban.com/subject/10536853/",
+  "kind": "book"
+ },
+ {
+  "match": "艾伦 D. 搞定Ⅰ",
+  "url": "https://book.douban.com/subject/26612471/",
+  "kind": "book"
+ },
+ {
+  "match": "莫兰 Ó. 力量训练解剖全书",
+  "url": "https://book.douban.com/subject/35619733/",
+  "kind": "book"
+ },
+ {
+  "match": "赫尔姆斯 E, 摩根 A, 瓦尔迪兹 A. 肌肉与力量全书",
+  "url": "https://book.douban.com/subject/35170843/",
+  "kind": "book"
+ },
+ {
+  "match": "中国营养学会。中国居民膳食指南",
+  "url": "https://book.douban.com/subject/35885945/",
+  "kind": "book"
+ },
+ {
+  "match": "中国营养学会. (2022). 中国居民膳食指南",
+  "url": "https://book.douban.com/subject/35885945/",
+  "kind": "book"
+ },
+ {
+  "match": "WALKER M P. Why we sleep",
+  "url": "https://book.douban.com/subject/27172136/",
+  "kind": "book"
+ },
+ {
+  "match": "GAGE N M, BAARS B J. Fundamentals of cognitive neuroscience",
+  "url": "https://book.douban.com/subject/10563872/",
+  "kind": "book"
+ },
+ {
+  "match": "Cook G. Movement: Functional Movement Systems",
+  "url": "https://book.douban.com/subject/6523686/",
+  "kind": "book"
+ },
+ {
+  "match": "McGill S M. Low Back Disorders",
+  "url": "https://book.douban.com/subject/31075827/",
+  "kind": "book"
+ },
+ {
+  "match": "Neumann D A. Kinesiology of the Musculoskeletal System",
+  "url": "https://book.douban.com/subject/5459095/",
+  "kind": "book"
+ },
+ {
+  "match": "Recommended amount of sleep for a healthy adult",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/26039963/",
+  "kind": "paper"
+ },
+ {
+  "match": "Hydration and muscular performance",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/17887814/",
+  "kind": "paper"
+ },
+ {
+  "match": "The interactive effect of sustained sleep restriction",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/38766755/",
+  "kind": "paper"
+ },
+ {
+  "match": "The NOVA food classification system",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/28322183/",
+  "kind": "paper"
+ },
+ {
+  "match": "ACSM position stand: Exercise and fluid replacement",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/17277604/",
+  "kind": "paper"
+ },
+ {
+  "match": "ISSN position stand: Protein and exercise",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/28642676/",
+  "kind": "paper"
+ },
+ {
+  "match": "ISSN position stand: probiotics",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/31864419/",
+  "kind": "paper"
+ },
+ {
+  "match": "ISSN position stand: caffeine and exercise performance",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/33388079/",
+  "kind": "paper"
  }
 ]

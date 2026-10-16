@@ -26,19 +26,28 @@ MAP = os.path.join(ROOT, "tools", "source-links.json")
 RE_MJ = re.compile(r"^(.*?)\s*(\[[MJ]\b.*)$")
 
 
+RE_PREFIX = re.compile(r"^(\s*- \*\*来源\*\*：)(.*)$")
+
+
 def wrap(line):
-    """把一条引用行变成 markdown 链接；已有链接的返回 None。"""
+    """把一条引用行变成 markdown 链接；已有链接的返回 None。
+
+    ⚠️「  - **来源**：」这个栏位前缀必须留在链接外面。第一版把整行（含前缀）套进链接，
+    结果变成 `[- **来源**：作者…](url) [M]…`——栏位标签被吞进链接文字里，
+    解析器认不出这一栏，check.sh 的「来源豁免半角标点」也跟着失效。
+    """
     if "](http" in line:
         return None
-    s = line.strip()
+    m0 = RE_PREFIX.match(line)
+    prefix, body = (m0.group(1), m0.group(2)) if m0 else ("", line)
+    s = body.strip()
     if not s or s in ("无",) or "待你补" in s:
         return None
     m = RE_MJ.match(s)
-    if m:                                   # 有 [M]/[J]：只链作者+标题那一段
+    if m:                                   # 有 [M]/[J]：只链作者+标题那一段，[M] 留在链接外
         head, tail = m.group(1).strip(), m.group(2).strip()
-        # 「作者. 标题」——把标题单独拎出来链（作者也一起链进去更省事，读起来也顺）
-        return f"[{head}]({{URL}}) {tail}"
-    return f"[{s}]({{URL}})"                # 没方括号：整行链
+        return f"{prefix}[{head}]({{URL}}) {tail}"
+    return f"{prefix}[{s}]({{URL}})"        # 没方括号（APA 格式）：整段引用链起来
 
 
 def main():
