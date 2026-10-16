@@ -15,6 +15,9 @@ import refs  # noqa: E402  与 build_book.py 共用解析 / 镜像展开逻辑
 # 给了 App Store / 官网链接就改这一行（目前是 # 占位）。
 JISHIBEN_URL = "https://nutridaily.cn/"
 
+# 顶栏 GitHub 图标按钮指向的地址 —— 本指南的开源仓库。
+GITHUB_URL = "https://github.com/wuzimuws/fit-manual"
+
 # 顶栏「记食本」按钮的图标：与官网 nutridaily.cn 同源的品牌图标（三色饼图）。
 # 和 FAVICON 一样内嵌成 data-URI，页面仍然只有一个文件。换图标就换 tools/assets/ 里那张图。
 _ICON_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -245,6 +248,15 @@ border-radius:6px;padding:2px 7px;white-space:nowrap}
 .top-title{font-size:15px;font-weight:600;white-space:nowrap;color:var(--dim);
 text-decoration:none}
 .top-title:hover{color:var(--ink)}
+/* 窄屏（<560px）：顶栏固定项 logo40+标题180+GitHub37+记食本87+间隙52+内边距48=446px，
+   在真机 390px 下会横向溢出 56px。这里收掉手机上没用的搜索框、书名缩成简称；
+   桌面端一点不变。（实测数据来自 iframe 探针 —— --window-size 在 macOS 会被钳到 500px，测不准） */
+.top-title .t-short{display:none}
+@media(max-width:560px){
+.top-title .t-full{display:none}
+.top-title .t-short{display:inline}
+.top-in input[type=search]{display:none}
+}
 .top-in input[type=search]{width:auto;flex:1;min-width:0;max-width:330px;margin-left:auto}
 .doc{padding:4px 0 22px;border-bottom:1px solid var(--line);margin-bottom:24px}
 h1{margin:0 0 10px;font-size:27px;letter-spacing:-.5px}
@@ -276,6 +288,9 @@ font-family:inherit;white-space:nowrap;
 transition:background .2s,color .2s,border-color .2s}
 .top-link:hover{background:#3E8C57;border-color:#3E8C57;color:#fff}
 .top-link img{width:17px;height:17px;display:block;flex:none}
+.top-link svg{width:17px;height:17px;display:block;flex:none;fill:currentColor}
+/* 顶栏纯图标按钮（GitHub）：左右内边距收窄，视觉上接近方形 */
+.top-gh{padding:5px 9px;gap:0}
 /* 回到顶部：滚过一屏才出现，右下角固定 */
 #toTop{position:fixed;right:24px;bottom:24px;width:44px;height:44px;border-radius:50%;
 background:var(--acc);border:1px solid var(--acc);color:#fff;font-size:19px;font-weight:700;
@@ -418,8 +433,10 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
 </style></head><body>
 <header class="topbar"><div class="top-in">
   <span class="logo">健身</span>
-  <a class="top-title" href="#" title="回到全书">高性价比新手小白健身指南</a>
+  <a class="top-title" href="#" title="回到全书"><span class="t-full">高性价比新手小白健身指南</span><span class="t-short">健身指南</span></a>
   <input type="search" id="q" placeholder="搜索条目（可跨章）">
+  <a class="top-link top-gh" href="__GITHUB__" target="_blank" rel="noopener noreferrer"
+     title="本指南的 GitHub 仓库" aria-label="本指南的 GitHub 仓库"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false"><path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/></svg></a>
   <a class="top-link" href="__JISHIBEN__" target="_blank" rel="noopener noreferrer"
      title="作者自己开发的饮食记录 App"><img src="__JISHIBEN_ICON__" alt="" width="17" height="17">记食本</a>
 </div></header>
@@ -651,6 +668,7 @@ def main():
                .replace("__SECTIONS__", str(len(secs)))
                .replace("__JISHIBEN__", JISHIBEN_URL)
                .replace("__JISHIBEN_ICON__", JISHIBEN_ICON)
+               .replace("__GITHUB__", GITHUB_URL)
                .replace("__DESC__", _esc(re.sub(r"<[^>]+>", "", lede).replace("&nbsp;", " ").strip()[:120]))
                .replace("__AUTHOR__", "指南作者")
                .replace("__FAVICON__", FAVICON))
