@@ -99,18 +99,21 @@ for path in EXTRA:
     if not os.path.exists(path):
         continue
     t = open(path, encoding="utf-8").read()
-    # 半角标点不得夹在中文里
-    for m_ in re.finditer(r"[\u4e00-\u9fff][,;:!?]|[,;:!?][\u4e00-\u9fff]", t):
-        err.append(f"{fn}: 中文里混了半角标点「{m_.group(0)}」")
+    # 半角标点不得夹在中文里。但文献列表整行先摘掉——GB/T 7714 的引用写法
+    # 就是用半角「:」和「,」（北京: 科学出版社 / 张静, 译），那是规范不是笔误，
+    # 跟正文「来源」栏同一个道理（附录的「本指南引用的书籍／论文」两节）。
+    t_ = re.sub(r"^- \[.*\\\[[MJ]\\\].*$", "", t, flags=re.M)
+    for m_ in re.finditer(r"[\u4e00-\u9fff][,;:!?]|[,;:!?][\u4e00-\u9fff]", t_):
+        err.append(f"{path}: 中文里混了半角标点「{m_.group(0)}」")
 
     # 行内 ①②③ 枚举（同一行 ≥2 个）应拆成子项
     for ln_ in t.split("\n"):
         if len(re.findall(r"[①-⑨]", ln_)) >= 2:
-            err.append(f"{fn}: 行内枚举「{ln_.strip()[:34]}…」应拆成子项")
+            err.append(f"{path}: 行内枚举「{ln_.strip()[:34]}…」应拆成子项")
 
     # 不要用「（N）」行式枚举——统一用「  - 」子项，否则网页上没有项目符号
     for m_ in re.finditer(r"^\s*（\d+）", t, re.M):
-        err.append(f"{fn}: 行首枚举「{m_.group(0).strip()}」应改成「  - 」子项")
+        err.append(f"{path}: 行首枚举「{m_.group(0).strip()}」应改成「  - 」子项")
 
     for w in ["我觉得", "其实", "我建议", "我发现"]:
         if w in t:
