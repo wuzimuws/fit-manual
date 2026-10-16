@@ -449,7 +449,7 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
       <div class="disc"><div class="disc-h">免责声明</div>__DISCLAIMER__</div>
     </div>
     <div id="body"></div>
-    <footer>共 __TOTAL__ 条 · __SECTIONS__ 节 · 作者个人经验，仅供参考</footer>
+    <footer>共 __TOTAL__ 条 · __SECTIONS__ 节 · 作者个人经验，仅供参考 · <a href="https://fit.nutridaily.cn/" target="_blank" rel="noopener">在线版</a></footer>
     <button id="toTop" type="button" aria-label="回到顶部" title="回到顶部">↑</button>
 </div></main>
 <script>
