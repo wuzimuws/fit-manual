@@ -116,28 +116,28 @@
  },
  {
   "match": "WALKER M P. Why we sleep",
-  "url": "https://book.douban.com/subject/27172136/",
-  "kind": "book"
+  "url": "https://www.simonandschuster.com/books/Why-We-Sleep/Matthew-Walker/9781501144325",
+  "kind": "book-publisher"
  },
  {
   "match": "GAGE N M, BAARS B J. Fundamentals of cognitive neuroscience",
-  "url": "https://book.douban.com/subject/10563872/",
-  "kind": "book"
+  "url": "https://shop.elsevier.com/books/fundamentals-of-cognitive-neuroscience/gage/978-0-12-803813-0",
+  "kind": "book-publisher"
  },
  {
   "match": "Cook G. Movement: Functional Movement Systems",
-  "url": "https://book.douban.com/subject/6523686/",
-  "kind": "book"
+  "url": "https://www.otpbooks.com/product/gray-cook-movement-book",
+  "kind": "book-publisher"
  },
  {
   "match": "McGill S M. Low Back Disorders",
-  "url": "https://book.douban.com/subject/31075827/",
-  "kind": "book"
+  "url": "https://us.humankinetics.com/products/low-back-disorders-4th-edition-with-hkpropel-access",
+  "kind": "book-publisher"
  },
  {
   "match": "Neumann D A. Kinesiology of the Musculoskeletal System",
-  "url": "https://book.douban.com/subject/5459095/",
-  "kind": "book"
+  "url": "https://shop.elsevier.com/books/neumann-s-kinesiology-of-the-musculoskeletal-system/neumann/978-0-323-71859-2",
+  "kind": "book-publisher"
  },
  {
   "match": "Recommended amount of sleep for a healthy adult",
@@ -177,6 +177,21 @@
  {
   "match": "ISSN position stand: caffeine and exercise performance",
   "url": "https://pubmed.ncbi.nlm.nih.gov/33388079/",
+  "kind": "paper"
+ },
+ {
+  "match": "Chronotype and social jetlag",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/31336976/",
+  "kind": "paper"
+ },
+ {
+  "match": "The influence of intensity and timing of daily light exposure",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/33262011/",
+  "kind": "paper"
+ },
+ {
+  "match": "The effect of resistance exercise on sleep",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/28919335/",
   "kind": "paper"
  }
 ]
