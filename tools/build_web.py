@@ -235,7 +235,7 @@ def disclaimer():
 
 
 TPL = r"""<!DOCTYPE html>
-<html lang="zh-CN"><head><meta charset="utf-8">
+<html lang="zh-CN"><head><meta charset="utf-8">__BAIDU_TONGJI__
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>__TITLE__</title>
 <meta name="description" content="__DESC__">
@@ -640,7 +640,7 @@ function draw(){
   syncToc(); spy(); toTopSync();
 }
 draw();
-</script>__BAIDU_TONGJI__</body></html>"""
+</script></body></html>"""
 
 
 def _js_check(html):
