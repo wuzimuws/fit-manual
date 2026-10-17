@@ -18,6 +18,20 @@ JISHIBEN_URL = "https://nutridaily.cn/"
 # 顶栏 GitHub 图标按钮指向的地址 —— 本指南的开源仓库。
 GITHUB_URL = "https://github.com/wuzimuws/fit-manual"
 
+# 百度统计站点 ID（tongji.baidu.com → 管理 → 站点管理 → 新增站点，代码里 hm.js? 后面那串 32 位十六进制）。
+# 留空 = 不注入统计代码，页面保持"单文件零外部请求"；填上后重建即生效
+# （代价：每个页面多一个到 hm.baidu.com 的外部请求 + 一个 cookie）。
+BAIDU_ID = ""
+BAIDU_SNIPPET = "" if not BAIDU_ID else (
+    "<script>var _hmt=_hmt||[];(function(){"
+    "var hm=document.createElement(\"script\");"
+    "hm.async=true;"
+    "hm.src=\"https://hm.baidu.com/hm.js?" + BAIDU_ID + "\";"
+    "var s=document.getElementsByTagName(\"script\")[0];"
+    "s.parentNode.insertBefore(hm,s);"
+    "})();</script>"
+)
+
 # 顶栏「记食本」按钮的图标：与官网 nutridaily.cn 同源的品牌图标（三色饼图）。
 # 和 FAVICON 一样内嵌成 data-URI，页面仍然只有一个文件。换图标就换 tools/assets/ 里那张图。
 _ICON_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -626,7 +640,7 @@ function draw(){
   syncToc(); spy(); toTopSync();
 }
 draw();
-</script></body></html>"""
+</script>__BAIDU_TONGJI__</body></html>"""
 
 
 def _js_check(html):
@@ -669,6 +683,7 @@ def main():
                .replace("__JISHIBEN__", JISHIBEN_URL)
                .replace("__JISHIBEN_ICON__", JISHIBEN_ICON)
                .replace("__GITHUB__", GITHUB_URL)
+               .replace("__BAIDU_TONGJI__", BAIDU_SNIPPET)
                .replace("__DESC__", _esc(re.sub(r"<[^>]+>", "", lede).replace("&nbsp;", " ").strip()[:120]))
                .replace("__AUTHOR__", "指南作者")
                .replace("__FAVICON__", FAVICON))
