@@ -21,7 +21,7 @@ GITHUB_URL = "https://github.com/wuzimuws/fit-manual"
 # 百度统计站点 ID（tongji.baidu.com → 管理 → 站点管理 → 新增站点，代码里 hm.js? 后面那串 32 位十六进制）。
 # 留空 = 不注入统计代码，页面保持"单文件零外部请求"；填上后重建即生效
 # （代价：每个页面多一个到 hm.baidu.com 的外部请求 + 一个 cookie）。
-BAIDU_ID = ""
+BAIDU_ID = "37a50617991d766e2d06e498f09378a6"
 BAIDU_SNIPPET = "" if not BAIDU_ID else (
     "<script>var _hmt=_hmt||[];(function(){"
     "var hm=document.createElement(\"script\");"
@@ -648,16 +648,21 @@ def _js_check(html):
     import shutil, subprocess, tempfile
     if not shutil.which("node"):
         print("   （未装 node，跳过 JS 语法检查）"); return
-    js = html[html.index("<script>") + 8: html.rindex("</script>")]
-    with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8") as f:
-        f.write(js); path = f.name
-    try:
-        r = subprocess.run(["node", "--check", path], capture_output=True, text=True)
-        if r.returncode:
-            print("❌ JS 语法错误："); print(r.stderr.strip()[:600]); raise SystemExit(1)
-        print("   JS 语法 ✅")
-    finally:
-        os.unlink(path)
+    # 逐个 <script> 块单独检查 —— 不能从第一个 <script> 切到最后一个 </script>：
+    # 页面上有多块 inline JS 时，中间夹的 </script><script> 会被当成同一个 js 文件，报 Unexpected token '<'。
+    blocks = re.findall(r"<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>", html, re.S)
+    if not blocks:
+        print("   （没有内联 script 块，跳过 JS 语法检查）"); return
+    for i, js in enumerate(blocks, 1):
+        with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8") as f:
+            f.write(js); path = f.name
+        try:
+            r = subprocess.run(["node", "--check", path], capture_output=True, text=True)
+            if r.returncode:
+                print(f"❌ JS 语法错误（第 {i} 个 script 块）："); print(r.stderr.strip()[:600]); raise SystemExit(1)
+        finally:
+            os.unlink(path)
+    print(f"   JS 语法 ✅（{len(blocks)} 个内联块）")
 
 
 def main():
