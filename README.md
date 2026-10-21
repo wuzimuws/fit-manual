@@ -52,6 +52,7 @@
 
 - **抖音**：@豆父骑士
 - **抖音号**：DoufuQS
+- **网站**：https://fit.nutridaily.cn/
 
 > 打开抖音 → 搜索页 → 扫一扫，或直接搜抖音号 `DoufuQS`
 

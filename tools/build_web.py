@@ -68,8 +68,16 @@ def inline(s):
     def _a(m):
         txt = m.group(1).replace("\\[", "[").replace("\\]", "]")
         return f'<a href="{m.group(2)}" target="_blank" rel="noopener noreferrer">{txt}</a>'
+    # 相对链接（LICENSE 之类）在单文件页面和 PDF 里没有落点，只留文字
+    s = re.sub(r"\[([^\]]+)\]\((?!https?://|#)[^)\s]+\)", r"\1", s)
     s = re.sub(r"\[((?:[^\[\]]|\\[\[\]])+)\]\((https?://[^)\s]+)\)", _a, s)
-    return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
+    s = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
+    # 行内代码 `xxx`（README 里写抖音号用了反引号）
+    s = re.sub(r"`([^`]+)`", r"<code>\1</code>", s)
+    # 裸网址自动成链接（跳过已经在 href="…" 或 <a>…</a> 里的）
+    s = re.sub(r'(?<![">=/\w])(https?://[^\s<）)，。；]+)',
+               r'<a href="\1" target="_blank" rel="noopener noreferrer">\1</a>', s)
+    return s
 
 
 def md_block(txt, heads=True):
@@ -224,6 +232,23 @@ def front_matter():
     body = t[m.end():].split("\n---")[0]
     paras = [p.strip() for p in body.split("\n") if p.strip()]
     return m.group(1).strip(), "".join(f"<p>{inline(p)}</p>" for p in paras)
+
+
+def footer_meta():
+    """页脚那行署名。全部从 README 抽——© 行、许可协议名、抖音号，改 README 就跟着变。"""
+    path = os.path.join(ROOT, "README.md")
+    t = open(path, encoding="utf-8").read() if os.path.exists(path) else ""
+    bits = []
+    m = re.search(r"©\s*\d{4}\s*[^\n|<]+", t)
+    if m:
+        bits.append(m.group(0).strip())
+    m = re.search(r"CC BY[-A-Z0-9\s.]+", t)
+    if m:
+        bits.append(m.group(0).strip())
+    m = re.search(r"抖音号\*\*[：:]\s*`?([A-Za-z0-9_]+)`?", t)
+    if m:
+        bits.append("抖音 " + m.group(1))
+    return " · ".join(bits)
 
 
 def disclaimer():
@@ -444,6 +469,7 @@ padding:30px 34px;margin-top:34px}
 .page th{background:#f6f4f0}
 .page blockquote{margin:12px 0;padding:10px 16px;border-left:3px solid var(--acc);background:#f4f8f6;color:var(--dim)}
 footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
+footer .foot-meta{margin-top:7px;font-size:12px;color:#a09a8e}
 </style></head><body>
 <header class="topbar"><div class="top-in">
   <span class="logo">健身</span>
@@ -480,7 +506,7 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
       <div class="disc"><div class="disc-h">免责声明</div>__DISCLAIMER__</div>
     </div>
     <div id="body"></div>
-    <footer>共 __TOTAL__ 条 · __SECTIONS__ 节 · 作者个人经验，仅供参考 · <a href="https://fit.nutridaily.cn/" target="_blank" rel="noopener">在线版</a></footer>
+    <footer><div>共 __TOTAL__ 条 · __SECTIONS__ 节 · 作者个人经验，仅供参考 · <a href="https://fit.nutridaily.cn/" target="_blank" rel="noopener">在线版</a></div><div class="foot-meta">__FOOTMETA__</div></footer>
     <button id="toTop" type="button" aria-label="回到顶部" title="回到顶部">↑</button>
 </div></main>
 <script>
@@ -691,7 +717,8 @@ def main():
                .replace("__BAIDU_TONGJI__", BAIDU_SNIPPET)
                .replace("__DESC__", _esc(re.sub(r"<[^>]+>", "", lede).replace("&nbsp;", " ").strip()[:120]))
                .replace("__AUTHOR__", "指南作者")
-               .replace("__FAVICON__", FAVICON))
+               .replace("__FAVICON__", FAVICON)
+               .replace("__FOOTMETA__", footer_meta()))
     os.makedirs(os.path.join(ROOT, "web"), exist_ok=True)
     json.dump(secs, open(os.path.join(ROOT, "web", "data.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)

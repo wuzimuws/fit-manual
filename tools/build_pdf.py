@@ -72,6 +72,21 @@ h1, h2, h3, h4, .lv, .k, .cover-meta { font-family: "PingFang SC", "Hiragino San
 .toc .th { font-size: 9.6pt; color: #4a463f; margin: 0 0 1mm; line-height: 1.7; }
 .toc .th b { color: #1a6b4a; font-weight: 700; }
 
+/* ── 关注作者 / 版权页 ── */
+.about { page-break-after: always; }
+.about h2 { font-size: 17pt; margin: 0 0 6mm; }
+.about .qr { float: right; width: 42mm; margin: 0 0 4mm 7mm; }
+.about .qr img { width: 100%; border: 0.6pt solid #e6e2db; border-radius: 2mm; }
+.about .qr figcaption { font-size: 8pt; color: #8b857a; text-align: center; margin-top: 1.5mm; }
+.about p { font-size: 10pt; line-height: 1.85; margin: 0 0 3mm; }
+.about .kv { font-size: 10pt; margin: 0 0 1.6mm; }
+.about .kv b { font-family: "PingFang SC", sans-serif; color: #1a6b4a; }
+.about a { color: #1a6b4a; text-decoration: none; }
+.about .lic { margin-top: 7mm; padding-top: 4mm; border-top: 0.6pt solid #e6e2db; }
+.about .lic ul { margin: 1mm 0 0; padding-left: 5mm; font-size: 9.4pt; line-height: 1.8; }
+.about .copy { margin-top: 6mm; font-size: 9.6pt; color: #4a463f; }
+.about .copy b { font-family: "PingFang SC", sans-serif; }
+
 /* ── 正文 ── */
 section.sec { page-break-before: always; }
 section.sec:first-of-type { page-break-before: auto; }
@@ -117,6 +132,54 @@ th { background: #f6f4f0; font-family: "PingFang SC", sans-serif; font-weight: 6
 """
 
 
+def readme_block(title):
+    """从 README.md 里取某节（## 标题 到下一个 ## 之间）的内容。"""
+    path = os.path.join(ROOT, "README.md")
+    if not os.path.exists(path):
+        return ""
+    t = open(path, encoding="utf-8").read()
+    m = re.search(r"(?m)^## " + re.escape(title) + r"\s*$(.*?)(?=^## |\Z)", t, re.S)
+    return m.group(1).strip() if m else ""
+
+
+def about_page():
+    """「关注作者 / 版权」页。内容全部取自 README，改 README 就跟着变。"""
+    follow = readme_block("关注作者")
+    lic = readme_block("许可")
+    if not follow and not lic:
+        return ""
+
+    # 二维码：README 里写的是 <img src="assets/douyin-card.jpg">，
+    # 打印时换成 file:// 绝对路径，Chrome 才读得到本地图。
+    qr_html = ""
+    for m in re.finditer(r'<img[^>]*src="([^"]+)"[^>]*>', follow):
+        src = m.group(1)
+        abs_path = os.path.join(ROOT, src)
+        cap = "抖音号 DoufuQS"
+        if os.path.exists(abs_path):
+            qr_html = (f'<figure class="qr"><img src="file://{abs_path}" alt="抖音账号名片">'
+                       f'<figcaption>{cap}</figcaption></figure>')
+        follow = follow.replace(m.group(0), "")
+
+    def para(s):
+        s = s.strip()
+        if not s or s == "---" or s.startswith("<"):
+            return ""
+        if s.startswith(("- ", "* ")):
+            s2 = re.sub(r"^[-*]\s+", "", s)
+            return f'<div class="kv">· {inline(s2)}</div>'
+        if s.startswith(">"):
+            return f'<p style="color:#6f6a61">{inline(s.lstrip("> ").strip())}</p>'
+        return f"<p>{inline(s)}</p>"
+
+    follow_html = "".join(para(l) for l in follow.split("\n"))
+    lic_html = "".join(para(l) for l in lic.split("\n"))
+
+    return (f'<div class="about"><h2>关注作者 · 版权</h2>{qr_html}'
+            f'{follow_html}'
+            f'<div class="lic">{lic_html}</div></div>')
+
+
 def cite_links(html, cur):
     """把正文里的「第 N 条」变成 PDF 内部跳转链接（href="#c-节-条"）。"""
     def f(m):
@@ -144,7 +207,45 @@ def render_field(it, f, idx):
     return f'<div class="f"><div class="k">{f}</div><div class="v">{body}</div></div>'
 
 
+def _need_pymupdf():
+    """页码靠 pymupdf 盖章。当前解释器没装的话，自动切到项目里的 .venv 重跑一遍。"""
+    try:
+        import pymupdf  # noqa: F401
+        return
+    except ImportError:
+        venv = os.path.join(ROOT, ".venv", "bin", "python")
+        if os.path.exists(venv) and not os.environ.get("_PDF_VENV"):
+            os.environ["_PDF_VENV"] = "1"
+            os.execv(venv, [venv, os.path.abspath(__file__)] + sys.argv[1:])
+        raise
+
+
+def stamp_pages(pdf_path):
+    """给每页盖页码。封面不盖。页脚居中「3 / 52」，浅灰 8pt。"""
+    import pymupdf
+    doc = pymupdf.open(pdf_path)
+    n = doc.page_count
+    for i, page in enumerate(doc):
+        if i == 0:                      # 封面不盖
+            continue
+        label = f"{i + 1} / {n}"
+        w = pymupdf.get_text_length(label, fontname="helv", fontsize=8)
+        page.insert_text(((page.rect.width - w) / 2, page.rect.height - 22),
+                         label, fontname="helv", fontsize=8,
+                         color=(0.66, 0.64, 0.60))
+    tmp = pdf_path + ".tmp"
+    doc.save(tmp, garbage=3, deflate=True)
+    doc.close()
+    os.replace(tmp, pdf_path)
+    return n
+
+
 def main():
+    try:
+        _need_pymupdf()
+    except ImportError:
+        print("⚠️ 没有 pymupdf，页码会跳过。装一下：")
+        print("   python3 -m venv .venv && .venv/bin/pip install pymupdf")
     secs, index, problems = refs.load()
     # 调试用：--only 4 只印第 4 节，--out /tmp/x.pdf 换输出路径
     only = None
@@ -201,6 +302,11 @@ def main():
         # 免责声明
         if disc:
             parts.append(f'<div class="disc"><div class="disc-h">免责声明</div>{disc}</div>')
+
+        # 关注作者 / 版权
+        ap = about_page()
+        if ap:
+            parts.append(ap)
 
         # 目录
         parts.append('<div class="toc"><h2>目录</h2>')
@@ -265,8 +371,13 @@ def main():
     if r.returncode != 0 or not os.path.exists(out):
         print("❌ Chrome 打印失败：\n" + (r.stderr or "")[:800])
         return 1
+    try:
+        pages = stamp_pages(out)
+    except Exception as e:
+        pages = 0
+        print(f"⚠️ 页码没盖上：{e}")
     sz = os.path.getsize(out) / 1024 / 1024
-    print(f"✅ {title}.pdf  ({sz:.1f} MB)")
+    print(f"✅ {title}.pdf  ({sz:.1f} MB, {pages or '?'} 页，页码已盖)")
     print(f"   {len(secs)} 节 / {total} 条 → {out}")
     return 0
 
