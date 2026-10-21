@@ -265,6 +265,7 @@ TPL = r"""<!DOCTYPE html>
 <title>__TITLE__</title>
 <meta name="description" content="__DESC__">
 <meta name="author" content="__AUTHOR__">
+<meta name="book-version" content="__VER__">
 <meta property="og:type" content="article">
 <meta property="og:title" content="__TITLE__">
 <meta property="og:description" content="__DESC__">
@@ -325,6 +326,7 @@ border:1px solid rgba(62,140,87,.34);background:rgba(62,140,87,.2);color:#3E8C57
 font-size:12.5px;font-weight:500;padding:5px 12px;border-radius:999px;text-decoration:none;
 font-family:inherit;white-space:nowrap;
 transition:background .2s,color .2s,border-color .2s}
+.ver-tag{font-size:11px;color:#a09a8e;white-space:nowrap;letter-spacing:.2px}
 .top-link:hover{background:#3E8C57;border-color:#3E8C57;color:#fff}
 .top-link img{width:17px;height:17px;display:block;flex:none}
 .top-link svg{width:17px;height:17px;display:block;flex:none;fill:currentColor}
@@ -472,7 +474,7 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
 footer .foot-meta{margin-top:7px;font-size:12px;color:#a09a8e}
 </style></head><body>
 <header class="topbar"><div class="top-in">
-  <span class="logo">健身</span>
+  <span class="logo">健身</span><span class="ver-tag">__VER__版</span>
   <a class="top-title" href="#" title="回到全书"><span class="t-full">高性价比新手小白健身指南</span><span class="t-short">健身指南</span></a>
   <input type="search" id="q" placeholder="搜索条目（可跨章）">
   <a class="top-link top-gh" href="__GITHUB__" target="_blank" rel="noopener noreferrer"
@@ -506,7 +508,7 @@ footer .foot-meta{margin-top:7px;font-size:12px;color:#a09a8e}
       <div class="disc"><div class="disc-h">免责声明</div>__DISCLAIMER__</div>
     </div>
     <div id="body"></div>
-    <footer><div>共 __TOTAL__ 条 · __SECTIONS__ 节 · 作者个人经验，仅供参考 · <a href="https://fit.nutridaily.cn/" target="_blank" rel="noopener">在线版</a></div><div class="foot-meta">__FOOTMETA__</div></footer>
+    <footer><div>共 __TOTAL__ 条 · __SECTIONS__ 节 · 作者个人经验，仅供参考 · <a href="https://fit.nutridaily.cn/" target="_blank" rel="noopener">在线版</a></div><div class="foot-meta">__FOOTMETA__ · __VER__版</div></footer>
     <button id="toTop" type="button" aria-label="回到顶部" title="回到顶部">↑</button>
 </div></main>
 <script>
@@ -718,7 +720,8 @@ def main():
                .replace("__DESC__", _esc(re.sub(r"<[^>]+>", "", lede).replace("&nbsp;", " ").strip()[:120]))
                .replace("__AUTHOR__", "指南作者")
                .replace("__FAVICON__", FAVICON)
-               .replace("__FOOTMETA__", footer_meta()))
+               .replace("__FOOTMETA__", footer_meta())
+               .replace("__VER__", refs.BOOK_VERSION))
     os.makedirs(os.path.join(ROOT, "web"), exist_ok=True)
     json.dump(secs, open(os.path.join(ROOT, "web", "data.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)

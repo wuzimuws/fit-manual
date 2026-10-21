@@ -54,6 +54,8 @@ h1, h2, h3, h4, .lv, .k, .cover-meta { font-family: "PingFang SC", "Hiragino San
               max-width: 145mm; }
 .cover .sub p { margin: 0 0 3mm; }
 .cover-meta { font-size: 9.5pt; color: #6f6a61; letter-spacing: 0.3pt; }
+.cover-ver { margin-top: 4mm; font-size: 9.5pt; color: #1a6b4a; letter-spacing: 0.3pt;
+             font-family: "PingFang SC", sans-serif; font-weight: 600; }
 .cover .rule { width: 42mm; height: 2.6pt; background: #1a6b4a; margin: 0 0 9mm; }
 
 /* ── 免责声明页 ── */
@@ -177,7 +179,9 @@ def about_page():
 
     return (f'<div class="about"><h2>关注作者 · 版权</h2>{qr_html}'
             f'{follow_html}'
-            f'<div class="lic">{lic_html}</div></div>')
+            f'<div class="lic">{lic_html}'
+            f'<div class="copy" style="color:#8b857a;font-size:9pt">'
+            f'本书为 {refs.BOOK_VERSION}版</div></div></div>')
 
 
 def cite_links(html, cur):
@@ -297,6 +301,7 @@ def main():
   <h1>{esc(title)}</h1>
   <div class="sub">{lede}</div>
   <div class="cover-meta">{len(secs)} 节 · {total} 条 · A {nA} / B {nB} / C {nC}</div>
+  <div class="cover-ver">{refs.BOOK_VERSION}版</div>
 </div>""")
 
         # 免责声明
