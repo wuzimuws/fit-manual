@@ -11,3 +11,4 @@ progress.md
 task_plan.md
 .print.html
 *.pdf
+.venv/
