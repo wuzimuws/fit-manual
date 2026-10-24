@@ -5,7 +5,7 @@
 产物：  web/index.html   单文件、零依赖、可直接丢到 GitHub Pages
         web/data.json   中间数据，便于排查
 """
-import os, re, json, sys, base64
+import os, re, json, sys, base64, shutil
 from html import escape as _esc
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -31,6 +31,12 @@ BAIDU_SNIPPET = "" if not BAIDU_ID else (
     "s.parentNode.insertBefore(hm,s);"
     "})();</script>"
 )
+
+# ICP 备案号 ——《非经营性互联网信息服务备案管理办法》第十三条要求：
+# 网站首页底部中央标明备案编号，并链接到工信部备案系统。子域名无需单独备案，
+# 沿用主域名 nutridaily.cn 的备案号；两个站点标注同一个号。
+ICP_BEIAN = "津ICP备2026014482号-1"
+ICP_BEIAN_URL = "https://beian.miit.gov.cn/"
 
 # 顶栏「记食本」按钮的图标：与官网 nutridaily.cn 同源的品牌图标（三色饼图）。
 # 和 FAVICON 一样内嵌成 data-URI，页面仍然只有一个文件。换图标就换 tools/assets/ 里那张图。
@@ -78,6 +84,21 @@ def inline(s):
     s = re.sub(r'(?<![">=/\w])(https?://[^\s<）)，。；]+)',
                r'<a href="\1" target="_blank" rel="noopener noreferrer">\1</a>', s)
     return s
+
+
+def figure(alt, src, cap):
+    """长图展示：正文里只放一张限高的缩略卡，点开进全屏 lightbox 看完整原图。
+
+    图片放 tools/assets/img/，构建时整目录复制到 web/img/，页面用相对路径引用。
+    故意不做 data-URI 内联：三张竖版长图内联会把单页从 190KB 撑到 1.4MB，
+    而且内联后无法懒加载，手机首屏白等。
+    """
+    alt_s = esc(alt)
+    return (f'<figure class="fig">'
+            f'<button class="fig-open" type="button" data-full="{esc(src)}" aria-label="放大查看：{alt_s}">'
+            f'<img src="{esc(src)}" alt="{alt_s}" loading="lazy" decoding="async">'
+            f'<span class="fig-hint">点击查看完整大图</span></button>'
+            f'<figcaption>{inline(cap or alt)}</figcaption></figure>')
 
 
 def md_block(txt, heads=True):
@@ -134,6 +155,12 @@ def md_block(txt, heads=True):
                 buf.append("<li>" + inline(re.sub(r"^\s*\d+\. ", "", lines[i]).strip()) + "</li>")
                 i += 1
             out.append("<ol>" + "".join(buf) + "</ol>")
+            continue
+        # 图片：![alt](路径 "说明") —— 单独成行，独占一个 block
+        m = re.match(r'^!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)$', st)
+        if m:
+            out.append(figure(m.group(1), m.group(2), m.group(3) or ""))
+            i += 1
             continue
         out.append("<p>" + inline(st) + "</p>")
         i += 1
@@ -470,7 +497,35 @@ padding:30px 34px;margin-top:34px}
 .page th{background:#f6f4f0}
 .page blockquote{margin:12px 0;padding:10px 16px;border-left:3px solid var(--acc);background:#f4f8f6;color:var(--dim)}
 footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
+/* 长图：正文里只露一截，点开进全屏看图（三张竖版长图合计 900KB，不能内联也不能全展开） */
+/* 含长图的条目：标签换到图上方，让图吃满卡片宽度
+   （原本 .f 是「.k 96px + .v 自适应」的两栏 flex，手机上 .v 只剩 198px，图被挤成细条） */
+.f:has(.fig){display:block}
+.f:has(.fig) > .k{display:block;width:auto;margin-bottom:4px}
+.fig{margin:16px 0 22px}
+.fig-open{display:block;position:relative;width:100%;padding:0;border:1px solid rgba(26,107,74,.16);
+  border-radius:12px;background:#fff;overflow:hidden;cursor:zoom-in;line-height:0}
+.fig-open img{display:block;width:100%;height:auto;max-height:380px;object-fit:cover;object-position:top center}
+.fig-open::after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.94))}
+.fig-hint{position:absolute;left:50%;bottom:11px;transform:translateX(-50%);z-index:1;
+  padding:5px 12px;border-radius:999px;background:rgba(26,107,74,.92);color:#fff;
+  font-size:12px;line-height:1.45;white-space:nowrap}
+.fig-open:hover{border-color:var(--acc)}
+.fig-open:hover .fig-hint{background:#155c3f}
+.fig figcaption{margin-top:7px;font-size:12.5px;color:var(--dim);text-align:center}
+#lightbox{position:fixed;inset:0;z-index:300;display:none;background:rgba(12,18,15,.94);overflow:auto}
+#lightbox.on{display:block}
+#lbBar{position:sticky;top:0;z-index:1;display:flex;justify-content:flex-end;padding:9px 14px;
+  background:rgba(12,18,15,.88)}
+#lbBar button{border:0;border-radius:999px;padding:7px 15px;font-family:inherit;font-size:13px;
+  background:rgba(255,255,255,.18);color:#fff;cursor:pointer}
+#lbBar button:hover{background:rgba(255,255,255,.32)}
+#lbImg{display:block;width:100%;max-width:1200px;height:auto;margin:0 auto 20px}
 footer .foot-meta{margin-top:7px;font-size:12px;color:#a09a8e}
+footer .foot-legal{margin-top:5px;font-size:12px;color:#a09a8e}
+footer .foot-legal a{color:inherit;text-decoration:none;border-bottom:1px solid rgba(0,0,0,.14)}
+footer .foot-legal a:hover{color:var(--acc);border-bottom-color:var(--acc)}
 </style></head><body>
 <header class="topbar"><div class="top-in">
   <span class="logo">健身</span>
@@ -507,8 +562,12 @@ footer .foot-meta{margin-top:7px;font-size:12px;color:#a09a8e}
       <div class="disc"><div class="disc-h">免责声明</div>__DISCLAIMER__</div>
     </div>
     <div id="body"></div>
-    <footer><div>共 __TOTAL__ 条 · __SECTIONS__ 节 · 作者个人经验，仅供参考 · <a href="https://fit.nutridaily.cn/" target="_blank" rel="noopener">在线版</a></div><div class="foot-meta">__FOOTMETA__ · __VER__版</div></footer>
+    <footer><div>共 __TOTAL__ 条 · __SECTIONS__ 节 · 作者个人经验，仅供参考 · <a href="https://fit.nutridaily.cn/" target="_blank" rel="noopener">在线版</a></div><div class="foot-meta">__FOOTMETA__ · __VER__版</div><div class="foot-legal"><a href="__ICP_URL__" target="_blank" rel="noopener">__ICP__</a></div></footer>
     <button id="toTop" type="button" aria-label="回到顶部" title="回到顶部">↑</button>
+    <div id="lightbox" role="dialog" aria-modal="true" aria-label="查看完整大图">
+      <div id="lbBar"><button type="button" id="lbClose">关闭 ✕</button></div>
+      <img id="lbImg" alt="">
+    </div>
 </div></main>
 <script>
 const DATA=__DATA__, PAGES=__PAGES__, TOTAL=__TOTAL__;
@@ -563,6 +622,22 @@ addEventListener("scroll",()=>{if(raf)return;
 const toTop=$("#toTop");
 function toTopSync(){toTop.classList.toggle("show",scrollY>500);}
 toTop.onclick=()=>window.scrollTo({top:0,behavior:"smooth"});
+// 长图 lightbox：点缩略卡 → 全屏滚动看原图；Esc / 点背景 / 关闭按钮都能退
+const lb=$("#lightbox"), lbImg=$("#lbImg"), lbClose=$("#lbClose");
+if(lb){
+  document.addEventListener("click",e=>{
+    const b=e.target.closest?e.target.closest(".fig-open"):null;
+    if(!b)return;
+    lbImg.src=b.dataset.full;
+    const im=b.querySelector("img"); lbImg.alt=im?im.alt:"";
+    lb.classList.add("on"); document.body.style.overflow="hidden"; lb.scrollTop=0; lbClose.focus();
+  });
+  const lbShut=()=>{lb.classList.remove("on"); lbImg.removeAttribute("src");
+    document.body.style.overflow="";};
+  lbClose.onclick=lbShut;
+  lb.addEventListener("click",e=>{if(e.target===lb)lbShut();});
+  addEventListener("keydown",e=>{if(e.key==="Escape"&&lb.classList.contains("on"))lbShut();});
+}
 function spy(){                                        /* 滚动时把选中标志挪到当前读到的条目 */
   const cards=[...document.querySelectorAll(".card")];
   if(!cards.length)return;
@@ -720,8 +795,18 @@ def main():
                .replace("__AUTHOR__", "指南作者")
                .replace("__FAVICON__", FAVICON)
                .replace("__FOOTMETA__", footer_meta())
-               .replace("__VER__", refs.BOOK_VERSION))
+               .replace("__VER__", refs.BOOK_VERSION)
+               .replace("__ICP__", ICP_BEIAN)
+               .replace("__ICP_URL__", ICP_BEIAN_URL))
     os.makedirs(os.path.join(ROOT, "web"), exist_ok=True)
+    # 长图资源：tools/assets/img → web/img（页面按相对路径引用，不做 data-URI 内联）
+    src_img = os.path.join(ROOT, "tools", "assets", "img")
+    if os.path.isdir(src_img):
+        dst_img = os.path.join(ROOT, "web", "img")
+        os.makedirs(dst_img, exist_ok=True)
+        for fn in sorted(os.listdir(src_img)):
+            if fn.lower().endswith((".webp", ".png", ".jpg", ".jpeg", ".svg")):
+                shutil.copy2(os.path.join(src_img, fn), os.path.join(dst_img, fn))
     json.dump(secs, open(os.path.join(ROOT, "web", "data.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
     outp = os.path.join(ROOT, "web", "index.html")
