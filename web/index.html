@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8"><script>var _hmt=_hmt||[];(function(){var hm=document.createElement("script");hm.async=true;hm.src="https://hm.baidu.com/hm.js?37a50617991d766e2d06e498f09378a6";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s);})();</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>高性价比新手小白健身指南 20261026版</title>
+<title>高性价比新手小白健身指南</title>
 <meta name="description" content="给刚开始想健身的新手小白：不谈天赋，不谈具体训练动作，简单聊一聊一些对新手可能有用、可能无用的知识。作者练了一年，遇到一些伤痛，踩过许多坑，也看过一些书和论文。这本指南就当作自己一年来的小总结吧。">
 <meta name="author" content="指南作者">
 <meta name="book-version" content="20261026">
@@ -27,6 +27,9 @@ border-radius:6px;padding:2px 7px;white-space:nowrap}
 .top-title{font-size:15px;font-weight:600;white-space:nowrap;color:var(--dim);
 text-decoration:none}
 .top-title:hover{color:var(--ink)}
+/* 书名后面跟版本号：比书名小一档、浅一档，不抢注意力；窄屏隐藏（顶栏宽度已卡到 390px 上限） */
+.top-title .t-ver{font-size:12px;font-weight:500;color:#857f72;margin-left:8px;
+letter-spacing:.2px;vertical-align:1px}
 /* 窄屏（<560px）：顶栏固定项 logo40+标题180+GitHub37+记食本87+间隙52+内边距48=446px，
    在真机 390px 下会横向溢出 56px。这里收掉手机上没用的搜索框、书名缩成简称；
    桌面端一点不变。（实测数据来自 iframe 探针 —— --window-size 在 macOS 会被钳到 500px，测不准） */
@@ -34,6 +37,7 @@ text-decoration:none}
 @media(max-width:560px){
 .top-title .t-full{display:none}
 .top-title .t-short{display:inline}
+.top-title .t-ver{display:none}
 .top-in input[type=search]{display:none}
 }
 .top-in input[type=search]{width:auto;flex:1;min-width:0;max-width:330px;margin-left:auto}
@@ -241,7 +245,7 @@ footer .foot-legal a:hover{color:var(--acc);border-bottom-color:var(--acc)}
 </style></head><body>
 <header class="topbar"><div class="top-in">
   <span class="logo">健身</span>
-  <a class="top-title" href="#" title="回到全书"><span class="t-full">高性价比新手小白健身指南</span><span class="t-short">健身指南</span></a>
+  <a class="top-title" href="#" title="回到全书"><span class="t-full">高性价比新手小白健身指南</span><span class="t-short">健身指南</span><span class="t-ver">20261026版</span></a>
   <input type="search" id="q" placeholder="搜索条目（可跨章）">
   <a class="top-link top-gh" href="https://github.com/wuzimuws/fit-manual" target="_blank" rel="noopener noreferrer"
      title="本指南的 GitHub 仓库" aria-label="本指南的 GitHub 仓库"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false"><path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/></svg></a>
