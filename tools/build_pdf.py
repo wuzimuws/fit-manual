@@ -26,7 +26,7 @@ import tempfile
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import refs  # noqa: E402
 from build_web import (  # noqa: E402  复用网页版那套 markdown → HTML 渲染
-    FIELDS, esc, md_block, inline, link_cites,
+    FIELDS, esc, md_block, inline, link_cites, ICP_BEIAN, ICP_BEIAN_URL,
 )
 
 ROOT = refs.ROOT
@@ -190,7 +190,9 @@ def about_page():
             f'{follow_html}'
             f'<div class="lic">{lic_html}'
             f'<div class="copy" style="color:#8b857a;font-size:9pt">'
-            f'本书为 {refs.BOOK_VERSION}版</div></div></div>')
+            f'本书为 {refs.BOOK_VERSION}版'
+            f'　·　<a href="{ICP_BEIAN_URL}" style="color:#8b857a">{ICP_BEIAN}</a>'
+            f'</div></div></div>')
 
 
 def cite_links(html, cur):
