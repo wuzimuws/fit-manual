@@ -289,7 +289,7 @@ def disclaimer():
 TPL = r"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">__BAIDU_TONGJI__
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>__TITLE__</title>
+<title>__TITLE_VER__</title>
 <meta name="description" content="__DESC__">
 <meta name="author" content="__AUTHOR__">
 <meta name="book-version" content="__VER__">
@@ -780,6 +780,8 @@ def main():
     html = (TPL.replace("__DATA__", json.dumps(secs, ensure_ascii=False))
                .replace("__PAGES__", json.dumps(pages, ensure_ascii=False))
                .replace("__TITLE__", title)
+               # 浏览器标签页标题带上版本号（正文 H1 保持干净，作者要求标题旁不放版本标）
+               .replace("__TITLE_VER__", f"{title} {refs.BOOK_VERSION}版")
                .replace("__LEDE__", lede)
                .replace("__DISCLAIMER__", disclaimer())
                .replace("__NA__", str(sum(1 for s in secs for i in s["items"] if i["level"]=="A")))
