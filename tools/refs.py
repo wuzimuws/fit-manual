@@ -16,7 +16,7 @@ import re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 B = os.path.join(ROOT, "book")
 # 版本号：网页、PDF 的封面/页脚都从这里取，改这一行两边同步
-BOOK_VERSION = "20261021"
+BOOK_VERSION = "20261026"
 
 FIELDS = ["总结性建议", "具体地", "为什么", "主观证据等级", "来源"]
 RE_REF = re.compile(r"<!-- 引用：(\d{1,2}) 节第 (\d+) 条 -->")
