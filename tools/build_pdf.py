@@ -131,6 +131,15 @@ th { background: #f6f4f0; font-family: "PingFang SC", sans-serif; font-weight: 6
 
 .foot { margin-top: 10mm; padding-top: 3mm; border-top: 0.6pt solid #e6e2db;
         font-size: 8.5pt; color: #9b968b; }
+
+/* 长图：A4 一页放不下，构建时按页高切片逐页连续排（见 slice_figures） */
+.f:has(.fig) { display: block; }
+.f:has(.fig) .k { width: auto; margin: 0 0 1mm; }
+.fig { margin: 2mm 0 3mm; }
+.fig-page { page-break-after: always; page-break-inside: avoid; }
+.fig-page.fig-last { page-break-after: auto; }
+.fig-page img { display: block; width: 100%; }
+.fig-cap { font-size: 8.4pt; color: #6f6a61; line-height: 1.6; margin: 0 0 2mm; }
 """
 
 
@@ -209,6 +218,80 @@ def render_field(it, f, idx):
     if f == "总结性建议":
         return f'<div class="f hl"><div class="v">{body}</div></div>'
     return f'<div class="f"><div class="k">{f}</div><div class="v">{body}</div></div>'
+
+
+# ── 长图进 PDF ──────────────────────────────────────────────────────────────
+# 网页里的速查图是 1200×4000~5400 的竖版长图，A4 正文区只有 176×261mm，一张图
+# 要跨 3~4 页。Chrome 打印不会把同一个 <img> 拆到两页，超出的部分直接被裁掉，
+# 所以这里先按「一页正好放下」的高度把图切成几片，再逐片排在连续页上。
+A4_CONTENT_W_MM = 210 - 17 * 2        # 176mm
+A4_CONTENT_H_MM = 297 - 19 - 17       # 261mm
+FIG_TILE_PX = 1700                    # 1200 宽下约 249mm，留 12mm 给说明行和舍入
+FIG_CAP_PX = 70                       # 第一片顶部让给说明文字
+_FIG_TMP = None
+
+
+def _resolve_img(src):
+    """网页里写 img/x.webp（相对 web/）；本地源图在 tools/assets/img/。"""
+    if src.startswith("file://"):
+        return src[7:]
+    for base in (os.path.join(ROOT, "web"), ROOT,
+                 os.path.join(ROOT, "tools", "assets")):
+        p = os.path.join(base, src)
+        if os.path.exists(p):
+            return p
+    return None
+
+
+def slice_figures(html):
+    """把 <figure class="fig"> 换成逐页切片，长图在 A4 上不被裁。"""
+    from PIL import Image
+    global _FIG_TMP
+    tmpdir = _FIG_TMP
+    if tmpdir is None:
+        tmpdir = _FIG_TMP = tempfile.mkdtemp(prefix="fitpdf-fig-")
+    seq = [0]
+
+    def one(m):
+        inner = m.group(1)
+        sm = re.search(r'<img[^>]*src="([^"]+)"', inner)
+        if not sm:
+            return ""
+        path = _resolve_img(sm.group(1))
+        if not path:
+            print("⚠️ PDF 找不到图片：" + sm.group(1))
+            return ""
+        alt_m = re.search(r'<img[^>]*alt="([^"]*)"', inner)
+        alt = alt_m.group(1) if alt_m else ""
+        cap_m = re.search(r"<figcaption>(.*?)</figcaption>", inner, re.S)
+        cap = cap_m.group(1).strip() if cap_m else ""
+
+        im = Image.open(path).convert("RGB")
+        w, h = im.size
+        tiles, y, first = [], 0, True
+        while y < h:
+            limit = FIG_TILE_PX - (FIG_CAP_PX if first else 0)
+            box = (0, y, w, min(y + limit, h))
+            name = "fig%d.jpg" % seq[0]
+            seq[0] += 1
+            # 切片存 JPEG q90：同一份 PDF 用 WebP 切片是 7.8MB，JPEG 只要 4.2MB，
+            # 1200px 宽的表格图在这个质量下放大看依然清晰。
+            im.crop(box).save(os.path.join(tmpdir, name), "JPEG",
+                              quality=90, optimize=True)
+            tiles.append(("file://" + os.path.join(tmpdir, name), first))
+            y = box[3]
+            first = False
+
+        out = ['<div class="fig">']
+        for i, (src, is_first) in enumerate(tiles):
+            cls = "fig-page" + (" fig-last" if i == len(tiles) - 1 else "")
+            head = '<div class="fig-cap">%s</div>' % cap if (is_first and cap) else ""
+            out.append('<div class="%s">%s<img src="%s" alt="%s"></div>'
+                       % (cls, head, src, alt))
+        out.append("</div>")
+        return "".join(out)
+
+    return re.sub(r'<figure class="fig">(.*?)</figure>', one, html, flags=re.S)
 
 
 def _need_pymupdf():
@@ -357,6 +440,7 @@ def main():
     parts.append('<div class="foot">本 PDF 由原稿自动生成；站内「第 N 条」和目录都是内部跳转链接，点得动。</div>')
     parts.append("</body></html>")
     html = "\n".join(parts)
+    html = slice_figures(html)          # 长图按页高切片，否则 A4 上会被裁掉
 
     tmp = os.path.join(ROOT, ".print.html")
     open(tmp, "w", encoding="utf-8").write(html)

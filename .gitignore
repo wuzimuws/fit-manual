@@ -12,3 +12,4 @@ task_plan.md
 .print.html
 *.pdf
 .venv/
+*.bak*
