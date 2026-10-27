@@ -37,6 +37,10 @@ BAIDU_SNIPPET = "" if not BAIDU_ID else (
 # 沿用主域名 nutridaily.cn 的备案号；两个站点标注同一个号。
 ICP_BEIAN = "津ICP备2026014482号-1"
 ICP_BEIAN_URL = "https://beian.miit.gov.cn/"
+# 公安联网备案（2026-10-27 通过）：号与查询链接都从备案后台复制，图标用官方 36×40 PNG
+POLICE_BEIAN = "津公网安备12011002026175号"
+POLICE_BEIAN_URL = "https://beian.mps.gov.cn/#/query/webSearch?code=12011002026175"
+POLICE_BEIAN_ICON = "img/beian-gongan.png"
 
 # 顶栏「记食本」按钮的图标：与官网 nutridaily.cn 同源的品牌图标（三色饼图）。
 # 和 FAVICON 一样内嵌成 data-URI，页面仍然只有一个文件。换图标就换 tools/assets/ 里那张图。
@@ -528,8 +532,10 @@ footer{color:var(--dim);font-size:13px;padding:30px 0 50px;text-align:center}
 #lbImg{display:block;width:100%;max-width:1200px;height:auto;margin:0 auto 20px}
 footer .foot-meta{margin-top:7px;font-size:12px;color:#a09a8e}
 footer .foot-legal{margin-top:5px;font-size:12px;color:#a09a8e}
-footer .foot-legal a{color:inherit;text-decoration:none;border-bottom:1px solid rgba(0,0,0,.14)}
+footer .foot-legal a{color:inherit;text-decoration:none;border-bottom:1px solid rgba(0,0,0,.14);display:inline-flex;align-items:center;gap:4px}
 footer .foot-legal a:hover{color:var(--acc);border-bottom-color:var(--acc)}
+footer .foot-legal a + a{margin-left:14px}
+footer .foot-legal img{width:16px;height:auto;flex:0 0 auto}
 </style></head><body>
 <header class="topbar"><div class="top-in">
   <span class="logo">健身</span>
@@ -566,7 +572,7 @@ footer .foot-legal a:hover{color:var(--acc);border-bottom-color:var(--acc)}
       <div class="disc"><div class="disc-h">免责声明</div>__DISCLAIMER__</div>
     </div>
     <div id="body"></div>
-    <footer><div>共 __TOTAL__ 条 · __SECTIONS__ 节 · 作者个人经验，仅供参考 · <a href="https://fit.nutridaily.cn/" target="_blank" rel="noopener">在线版</a></div><div class="foot-meta">__FOOTMETA__ · __VER__版</div><div class="foot-legal"><a href="__ICP_URL__" target="_blank" rel="noopener">__ICP__</a></div></footer>
+    <footer><div>共 __TOTAL__ 条 · __SECTIONS__ 节 · 作者个人经验，仅供参考 · <a href="https://fit.nutridaily.cn/" target="_blank" rel="noopener">在线版</a></div><div class="foot-meta">__FOOTMETA__ · __VER__版</div><div class="foot-legal"><a href="__POLICE_URL__" target="_blank" rel="noreferrer"><img src="__POLICE_ICON__" alt="" width="16" height="18">__POLICE__</a><a href="__ICP_URL__" target="_blank" rel="noopener">__ICP__</a></div></footer>
     <button id="toTop" type="button" aria-label="回到顶部" title="回到顶部">↑</button>
     <div id="lightbox" role="dialog" aria-modal="true" aria-label="查看完整大图">
       <div id="lbBar"><button type="button" id="lbClose">关闭 ✕</button></div>
@@ -801,7 +807,10 @@ def main():
                .replace("__FOOTMETA__", footer_meta())
                .replace("__VER__", refs.BOOK_VERSION)
                .replace("__ICP__", ICP_BEIAN)
-               .replace("__ICP_URL__", ICP_BEIAN_URL))
+               .replace("__ICP_URL__", ICP_BEIAN_URL)
+               .replace("__POLICE__", POLICE_BEIAN)
+               .replace("__POLICE_URL__", POLICE_BEIAN_URL)
+               .replace("__POLICE_ICON__", POLICE_BEIAN_ICON))
     os.makedirs(os.path.join(ROOT, "web"), exist_ok=True)
     # 长图资源：tools/assets/img → web/img（页面按相对路径引用，不做 data-URI 内联）
     src_img = os.path.join(ROOT, "tools", "assets", "img")
