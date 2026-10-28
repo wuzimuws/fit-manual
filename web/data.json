@@ -789,14 +789,20 @@
    {
     "name": "一样一样说清楚",
     "lead": "",
-    "n": 9,
+    "n": 8,
     "id": "t-4-4"
+   },
+   {
+    "name": "吃的时间",
+    "lead": "",
+    "n": 2,
+    "id": "t-4-5"
    },
    {
     "name": "一份可以直接照抄的清单",
     "lead": "",
     "n": 1,
-    "id": "t-4-5"
+    "id": "t-4-6"
    }
   ],
   "items": [
@@ -1128,12 +1134,12 @@
     "title": "练之前要不要吃东西？",
     "sec_no": 4,
     "sec": "饮食",
-    "theme": "一样一样说清楚",
+    "theme": "吃的时间",
     "file": "04-饮食.md",
     "mirror": null,
     "总结性建议": "两种都行，练前吃不吃不影响你长多少肌肉。挑你练得下去的那种。",
     "具体地": "<ul><li data-i=\"1\">空腹练：早上起来直接去，不晕不虚、重量不掉，就这么练。</li><li data-i=\"1\">吃了再练：练前 1–2 小时吃点碳水（一碗饭、两个包子、一根香蕉都算），适合训练超过一小时、组数多、或者空腹做的时候发虚的人。</li><li data-i=\"1\">怕「吃了练会变胖」的，这个担心可以放下——决定胖瘦的是全天吃了多少，练前那顿影响很小。</li><li data-i=\"1\">不管空腹还是吃过，蛋白质一天吃够 1.5 倍体重，比练前吃不吃重要得多。</li></ul>",
-    "为什么": "2025 年一篇系统综述把空腹和进食状态下的力量训练放在一起比，去脂体重、肌肉横截面积、力量三项都没有显著差异（p 分别是 0.436、0.366、0.318）；同期一项 12 周随机对照试验也发现，两组股四头肌厚度（+1.21 vs +1.18 cm）、卧推（+10.5 vs +4.9 kg）、腿屈伸（+28.5 vs +29.3 kg）都涨了，组间没有差别。唯一偏向空腹的指标是体脂（p = 0.043），但这个 meta 只纳入 4 篇研究、其中 3 篇偏倚风险高，方向可以参考，精度别当真。练前那顿真正起作用的地方是当次表现——长时间有氧练前进食能提升表现，短时长的没有差别，力量训练这边还缺高质量的直接研究。",
+    "为什么": "2025 年一篇系统综述把空腹和进食状态下的力量训练放在一起比，去脂体重、肌肉横截面积、力量三项都没有显著差异（p 分别是 0.436、0.366、0.318）；同期一项 12 周随机对照试验也发现，两组股四头肌厚度（+1.21 vs +1.18 cm）、卧推（+10.5 vs +4.9 kg）、腿屈伸（+28.5 vs +29.3 kg）都涨了，组间没有差别。唯一偏向空腹的指标是体脂（p = 0.043），但这个 meta 只纳入 4 篇研究、其中 3 篇偏倚风险高，方向可以参考，精度别当真。练前那顿真正起作用的地方是当次表现——长时间有氧练前进食能提升表现，短时长的没有差别，力量训练这边还缺高质量的直接研究。这套证据都来自早晨空腹（overnight fasted），傍晚训练前吃不吃还没有直接研究；如果你在意的是减脂，把一天的热量往前放，比纠结练前那一顿更有意义（见第 <a data-go=\"c-4-21\" title=\"跳到 4. 三餐的热量该怎么分配？\">21</a> 条）。",
     "主观证据等级": "B",
     "来源": "<a href=\"https://pubmed.ncbi.nlm.nih.gov/41316673/\" target=\"_blank\" rel=\"noopener noreferrer\">VIEIRA A F, BLANCO-RAMBO E, MACEDO R C O, et al. Resistance training performed in the fasted state compared to the fed state on body composition and strength in adults: a systematic review with meta-analysis [J]. Journal of Bodywork and Movement Therapies, 2025, 45: 99-109.</a><br><a href=\"https://pubmed.ncbi.nlm.nih.gov/40335157/\" target=\"_blank\" rel=\"noopener noreferrer\">VIEIRA A F, BLANCO-RAMBO E, BANDEIRA-GUIMARÃES M, et al. Impact of overnight fasted state versus fed state on adaptations to resistance training: a randomized clinical trial [J]. International Journal of Sport Nutrition and Exercise Metabolism, 2025, 35(4): 291-302.</a><br><a href=\"https://pubmed.ncbi.nlm.nih.gov/29315892/\" target=\"_blank\" rel=\"noopener noreferrer\">AIRD T P, DAVIES R W, CARSON B P. Effects of fasted vs fed-state exercise on performance and post-exercise metabolism: a systematic review and meta-analysis [J]. Scandinavian Journal of Medicine &amp; Science in Sports, 2018, 28(5): 1476-1493.</a>",
     "anchor": "c-4-20",
@@ -1142,6 +1148,23 @@
    },
    {
     "no": 21,
+    "title": "三餐的热量该怎么分配？",
+    "sec_no": 4,
+    "sec": "饮食",
+    "theme": "吃的时间",
+    "file": "04-饮食.md",
+    "mirror": null,
+    "总结性建议": "<strong>早 30%、午 40%、晚 30%</strong>，就这一套。练早上、练下午、练晚上都用它。",
+    "具体地": "<table><thead><tr><th>餐次</th><th>占比</th><th>这样安排的效果</th></tr></thead><tbody><tr><td>早饭</td><td><strong>30%</strong></td><td>上午不饿，午饭前不失控</td></tr><tr><td>午饭</td><td><strong>40%</strong></td><td>全天最大一份，下午有能量</td></tr><tr><td>晚饭</td><td><strong>30%</strong></td><td>吃得不撑、不影响睡觉</td></tr></tbody></table><p>比例是个起点，不是开关：饿了就前后挪，一天吃够、不失控，比具体几比几重要。练前那一顿吃不吃、吃多少，见第 <a data-go=\"c-4-20\" title=\"跳到 4. 练之前要不要吃东西？\">20</a> 条；要加餐也从当天总量里出，不算额外一份。</p><ul><li data-i=\"1\">减脂：缺口先定住。想白天更饱、少失控，就往早、午挪；挪完晚上训练发虚、练后特别饿，就挪回来。</li><li data-i=\"1\">增肌：只看全天总量够不够（体重和力量有没有往上走），比例怎么分都行，别让某一餐撑到吃不下下一餐。</li><li data-i=\"1\">两种人一样：蛋白质分到每餐里，别白天几乎不吃、晚上一次补齐。</li></ul>",
+    "为什么": "<ul><li data-i=\"1\">减脂这边的最新证据不支持“必须早吃”：2024 年 JAMA Network Open 的 meta 里，涉及热量分配的 4 项随机试验（272 人）合起来看，把热量往前放的组多减 1.75 kg（95% CI −2.37 到 −1.13），但作者给这块证据的确定性评的是<strong>低</strong>，并明确说不能据此推出最佳比例，也不能把体重变化都当脂肪变化。</li><li data-i=\"1\">更能说明问题的是一个等热量交叉试验：30 名超重或肥胖成人，两种分法各吃 4 周——早 45% / 午 35% / 晚 20% 对早 20% / 午 35% / 晚 45%——体重下降和全天能量消耗<strong>都没有显著差异</strong>，但早餐吃得多那一组<strong>饥饿感和食欲明显更低</strong>。所以“白天多吃”的价值在食欲和能不能坚持，不在多烧热量。</li><li data-i=\"1\">增肌这边，没有任何试验证明某个早午晚热量比例能把增肌最大化。有依据的是蛋白质：ISSN 立场文件建议多数运动人群全天 1.4–2.0 g/kg，分散到全天吃，每次 20–40 g、间隔 3–4 小时；但“严格平均分配是否一定多长肌肉”，长期研究结论并不一致。实用重点是每餐都吃到蛋白质，别指望晚餐一次补齐。</li></ul>",
+    "主观证据等级": "C",
+    "来源": "<a href=\"https://pmc.ncbi.nlm.nih.gov/articles/PMC11530941/\" target=\"_blank\" rel=\"noopener noreferrer\">LIU H Y, ESO A A, COOK N, et al. Meal timing and anthropometric and metabolic outcomes: a systematic review and meta-analysis [J]. JAMA Network Open, 2024, 7(11): e2442163.</a><br><a href=\"https://pubmed.ncbi.nlm.nih.gov/36087576/\" target=\"_blank\" rel=\"noopener noreferrer\">RUDDICK-COLLINS L C, MORGAN P J, FYFE C L, et al. Timing of daily calorie loading affects appetite and hunger responses without changes in energy metabolism in healthy subjects with obesity [J]. Cell Metabolism, 2022, 34(10): 1472-1485.e6.</a><br><a href=\"https://pmc.ncbi.nlm.nih.gov/articles/PMC5477153/\" target=\"_blank\" rel=\"noopener noreferrer\">JÄGER R, KERKSICK C M, CAMPBELL B I, et al. International Society of Sports Nutrition position stand: protein and exercise [J]. Journal of the International Society of Sports Nutrition, 2017, 14: 20.</a><br><a href=\"https://pmc.ncbi.nlm.nih.gov/articles/PMC7285146/\" target=\"_blank\" rel=\"noopener noreferrer\">HUDSON J L, BERGIA R E, CAMPBELL W W. Protein distribution and muscle-related outcomes: does the evidence support the concept? [J]. Nutrients, 2020, 12(5): 1441.</a>",
+    "anchor": "c-4-21",
+    "level": "C",
+    "src_done": true
+   },
+   {
+    "no": 22,
     "title": "一份可参考的一日饮食清单",
     "sec_no": 4,
     "sec": "饮食",
@@ -1153,7 +1176,7 @@
     "为什么": "大家可以根据第 <a data-go=\"c-4-17\" title=\"跳到 4. 有没有食材清单方便采购？\">17</a> 条推荐的清单中自行搭配，只要计算后热量达标、三大营养素达标即可！",
     "主观证据等级": "B",
     "来源": "无",
-    "anchor": "c-4-21",
+    "anchor": "c-4-22",
     "level": "B",
     "src_done": true
    }

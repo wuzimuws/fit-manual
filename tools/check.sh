@@ -197,7 +197,10 @@ for fn in files + EXTRA:
         continue
     t = open(path, encoding="utf-8").read()
     for m in re.finditer(r"(\d+) 条", t):
-        if int(m.group(1)) > 20:
+        # 「见第 21 条」「第 21 条」是站内引用，不是总数声明，跳过
+        if t[max(0, m.start() - 2):m.start()] == "第 ":
+            continue
+        if int(m.group(1)) > total:
             err.append(f"{path}: 过期条数声明「{m.group(0)}」")
 
 mir = sum(len(RE_MIRROR.findall(open(os.path.join(B, f), encoding="utf-8").read())) for f in files)
